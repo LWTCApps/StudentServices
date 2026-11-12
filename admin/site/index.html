@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Site content | LWTC Financial Aid</title><meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../../assets/fav.png">
+<link rel="stylesheet" href="../../assets/brand-fonts.css"><link rel="stylesheet" href="../../assets/admin.css?v=20261030">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="bar" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<div class="wrap">
+  <header class="top"><a href="../../" aria-label="Financial Aid home"><span class="logo" role="img" aria-label="Lorenzo Walker Technical College"></span></a><div class="who">Signing in…</div></header>
+  <nav class="main" aria-label="Administration"></nav>
+  <main id="main">
+    <h1>Site content</h1>
+    <p class="sub">The words and contact details students see on the home page and at the top of every form. Changes go live as soon as you save.</p>
+    <div id="errs"></div>
+    <form id="siteForm" novalidate>
+      <h2>Announcement banner</h2>
+      <div class="card">
+        <label class="chk"><input type="checkbox" id="bEnabled"><span>Show a banner across the top of the home page<small>For closures, deadlines or anything students must see first.</small></span></label>
+        <div class="grid2"><div id="bText"></div><div id="bLevel"></div></div>
+        <div id="bUntil" style="max-width:260px"></div>
+      </div>
+      <h2>Home page</h2>
+      <div class="card" id="homeCard"></div>
+      <h2>Office details</h2>
+      <div class="card" id="officeCard"></div>
+      <div class="sticky" style="margin-top:24px"><button class="btn" type="submit" id="save">Save site content</button> <span id="saveMsg" class="muted" role="status"></span></div>
+    </form>
+    <section id="terms" hidden>
+      <h2>Term list</h2>
+      <div class="card" id="termsCard"></div>
+    </section>
+    <section id="docs" hidden>
+      <h2>Document uploads</h2>
+      <div class="card" id="docsCard"></div>
+    </section>
+  </main>
+</div>
+<script src="../../assets/admin.js?v=20261104"></script>
+<script>
+(function(){
+  var el=ADM.el,$=ADM.$,inputs={};
+  function mk(host,key,label,type,hint,opts){
+    var c;opts=opts||{};
+    if(type==='textarea'){c=el('textarea');c.maxLength=opts.max||600}
+    else if(type==='select'){c=el('select');(opts.options||[]).forEach(function(o){var op=el('option',null,o[1]);op.value=o[0];c.appendChild(op)})}
+    else{c=el('input');c.type=type||'text';if(opts.max)c.maxLength=opts.max}
+    var w=ADM.field(label,c,hint,'f_'+key.replace(/\W/g,'_'));w.style.marginBottom='12px';host.appendChild(w);inputs[key]=c;return c;
+  }
+  function build(site){
+    var h=$('#homeCard'),o=$('#officeCard');h.textContent='';o.textContent='';
+    var b=$('#bText');b.textContent='';var bl=$('#bLevel');bl.textContent='';var bu=$('#bUntil');bu.textContent='';
+    $('#bEnabled').checked=!!site.banner.enabled;inputs['banner.enabled']=$('#bEnabled');
+    mk(b,'banner.text','Banner message','text','Keep it short.',{max:400}).value=site.banner.text;
+    mk(bl,'banner.level','Style','select','',{options:[['info','Information (blue)'],['warning','Warning (amber)']]}).value=site.banner.level;
+    mk(bu,'banner.until','Hide it automatically after','date','Optional. The banner disappears the day after this date.').value=site.banner.until;
+    var H=site.home;
+    mk(h,'home.title','Page title','text','',{max:80}).value=H.title;
+    mk(h,'home.intro','Introduction under the title','textarea','',{max:600}).value=H.intro;
+    mk(h,'home.formsTitle','Heading above the forms','text','',{max:80}).value=H.formsTitle;
+    mk(h,'home.formsIntro','Text under that heading','textarea','',{max:400}).value=H.formsIntro;
+    mk(h,'home.moreText','Line under the form cards','text','Leave empty to show nothing.',{max:200}).value=H.moreText;
+    mk(h,'home.helpTitle','Help box heading','text','',{max:100}).value=H.helpTitle;
+    mk(h,'home.helpText','Help box text','textarea','',{max:600}).value=H.helpText;
+    var O=site.office;
+    mk(o,'office.name','Office name','text','',{max:80}).value=O.name;
+    mk(o,'office.address1','Street address','text','',{max:80}).value=O.address1;
+    mk(o,'office.address2','City, state, ZIP','text','',{max:80}).value=O.address2;
+    mk(o,'office.phone','Phone','text','Digits, spaces and - ( ) + only.',{max:30}).value=O.phone;
+    mk(o,'office.hours','Hours','text','',{max:80}).value=O.hours;
+    mk(o,'footer.text','Footer text','text','Shown at the bottom of the home page and forms.',{max:200}).value=site.footer.text;
+  }
+  function val(k){var c=inputs[k];return c.type==='checkbox'?c.checked:c.value}
+  function payload(){
+    return {home:{title:val('home.title'),intro:val('home.intro'),formsTitle:val('home.formsTitle'),formsIntro:val('home.formsIntro'),moreText:val('home.moreText'),helpTitle:val('home.helpTitle'),helpText:val('home.helpText')},
+      office:{name:val('office.name'),address1:val('office.address1'),address2:val('office.address2'),phone:val('office.phone'),hours:val('office.hours')},
+      banner:{enabled:val('banner.enabled'),text:val('banner.text'),level:val('banner.level'),until:val('banner.until')},footer:{text:val('footer.text')}};
+  }
+  $('#siteForm').addEventListener('submit',function(e){
+    e.preventDefault();var er=$('#errs');er.textContent='';$('#saveMsg').textContent='Saving\u2026';$('#save').disabled=true;
+    ADM.api('/api/admin/site',{body:{site:payload()}}).then(function(j){build(j.site);$('#saveMsg').textContent='';ADM.toast('Saved. The home page now shows this.')}).catch(function(x){
+      $('#saveMsg').textContent='';
+      if(x&&x.errors){var b=el('div','errs');b.setAttribute('role','alert');b.appendChild(el('strong',null,'Fix these first:'));var u=el('ul');x.errors.forEach(function(r){u.appendChild(el('li',null,r.message))});b.appendChild(u);er.appendChild(b);b.scrollIntoView({block:'center'})}
+      else ADM.toast(ADM.errText(x),true);
+    }).then(function(){$('#save').disabled=false});
+  });
+  function docs(d){
+    var host=$('#docsCard');host.textContent='';$('#docs').hidden=false;
+    if(!d.available)host.appendChild(el('div','banner warn','Document storage (R2) is not connected, so uploads are switched off on every form. See the guide, "Connect document storage".'));
+    host.appendChild(el('p',null,'Students can upload '+d.types.join(', ').toUpperCase()+' files. Files are private: only people with the "Open uploaded documents" permission can open them, and every opening is logged.'));
+    var row=el('div','toolbar');var mb=el('input');mb.type='number';mb.min=1;mb.max=25;mb.value=d.maxMB;mb.style.maxWidth='110px';mb.setAttribute('aria-label','Largest file in MB');
+    row.appendChild(el('label',null,'Largest file (MB):'));row.appendChild(mb);var sv=el('button','btn alt small','Save');sv.type='button';sv.disabled=!d.available;
+    sv.addEventListener('click',function(){ADM.api('/api/admin/documents/settings',{body:{maxMB:Number(mb.value)}}).then(function(){ADM.toast('Saved.')}).catch(function(e){ADM.toast(e&&e.field?'Enter a whole number from 1 to 25.':ADM.errText(e),true)})});row.appendChild(sv);host.appendChild(row);
+    host.appendChild(el('h3',null,'Delete old documents'));
+    host.appendChild(el('p','hint','Delete uploaded documents older than a number of days (and abandoned uploads that were never submitted). Check your records-retention policy first. This cannot be undone.'));
+    var r2=el('div','toolbar');var dy=el('input');dy.type='number';dy.min=1;dy.max=3650;dy.value=365;dy.style.maxWidth='110px';dy.setAttribute('aria-label','Older than this many days');
+    r2.appendChild(el('label',null,'Older than (days):'));r2.appendChild(dy);
+    var pv=el('button','btn alt small','Preview');pv.type='button';pv.disabled=!d.available;var del=el('button','btn danger small','Delete them');del.type='button';del.disabled=true;
+    var res=el('p','muted');res.setAttribute('aria-live','polite');
+    pv.addEventListener('click',function(){ADM.api('/api/admin/documents/purge',{body:{olderThanDays:Number(dy.value),dryRun:true}}).then(function(j){res.textContent=j.documents+' document'+(j.documents===1?'':'s')+' older than '+dy.value+' days, and '+j.abandoned+' abandoned upload'+(j.abandoned===1?'':'s')+', would be deleted.';del.disabled=!(j.documents||j.abandoned)}).catch(function(e){res.textContent=ADM.errText(e)})});
+    del.addEventListener('click',function(){if(!window.confirm('Permanently delete these documents? This cannot be undone.'))return;ADM.api('/api/admin/documents/purge',{body:{olderThanDays:Number(dy.value)}}).then(function(j){res.textContent='Deleted '+j.deleted+' document'+(j.deleted===1?'':'s')+' and '+j.abandoned+' abandoned upload'+(j.abandoned===1?'':'s')+'.';del.disabled=true}).catch(function(e){res.textContent=ADM.errText(e)})});
+    r2.appendChild(pv);r2.appendChild(del);host.appendChild(r2);host.appendChild(res);
+  }
+  /* ---- term list (the manual term dropdown and the terms the Worker accepts when no schedule is live) ---- */
+  var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'],TC=null,TV=0;
+  function easternYM(){var p=new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit'}).formatToParts(new Date()),g=function(t){return +p.filter(function(x){return x.type===t})[0].value};return {y:g('year'),m:g('month')}}
+  function tname(i){return ['Spring','Summer','Fall'][((i%3)+3)%3]+' '+Math.floor(i/3)}
+  function tlist(c){var e=easternYM(),cur=e.y*3+(e.m>=c.fallStart?2:e.m>=c.summerStart?1:0),out=[];for(var i=cur+c.ahead;i>=cur-c.back;i--)out.push({n:tname(i),now:i===cur});return out}
+  function terms(j){
+    TC=j.config;TV=j.config.version;var host=$('#termsCard');host.textContent='';$('#terms').hidden=false;
+    host.appendChild(el('p',null,'The terms students can choose on the form when the course schedule is not being used (manual mode). When a schedule is published, students choose from the terms in your schedule file instead.'));
+    var g=el('div','grid2');host.appendChild(g);
+    function num(label,key,hint,max){var c=el('input');c.type='number';c.min=0;c.max=max;c.value=TC[key];c.addEventListener('input',function(){TC[key]=c.value===''?NaN:Number(c.value);draw()});var w=ADM.field(label,c,hint,'t_'+key);w.style.marginBottom='12px';g.appendChild(w)}
+    function mon(label,key,hint,lo){var c=el('select');MONTHS.forEach(function(m,i){if(i+1<lo)return;var o=el('option',null,m);o.value=i+1;c.appendChild(o)});c.value=TC[key];c.addEventListener('change',function(){TC[key]=Number(c.value);draw()});var w=ADM.field(label,c,hint,'t_'+key);w.style.marginBottom='12px';g.appendChild(w)}
+    num('Terms to show ahead','ahead','How many future terms after the current one (0 to 8).',8);
+    num('Past terms to show','back','How many earlier terms (0 to 12).',12);
+    mon('Summer starts in','summerStart','Spring runs from January until Summer starts.',2);
+    mon('Fall starts in','fallStart','Summer runs until Fall starts; Fall runs to December.',3);
+    var pv=el('div');pv.setAttribute('aria-live','polite');host.appendChild(pv);
+    function draw(){
+      pv.textContent='';var ok=[TC.ahead,TC.back,TC.summerStart,TC.fallStart].every(function(x){return Number.isInteger(x)})&&TC.fallStart>TC.summerStart;
+      if(!ok){pv.appendChild(el('div','banner warn','Check the numbers: whole numbers only, and Fall must start after Summer.'));return}
+      var l=tlist(TC);pv.appendChild(el('h3',null,'Students will be offered ('+l.length+', newest first)'));
+      var ch=el('div','chips');l.forEach(function(t){var c=el('span','chip',t.n+(t.now?' · current term':''));if(t.now)c.style.background='var(--gold-a)';ch.appendChild(c)});pv.appendChild(ch);
+      pv.appendChild(el('p','hint','Terms one step beyond either end are still accepted on submit, so a form opened just as a term changes still goes through.'));
+    }
+    draw();
+    var row=el('div','toolbar');var sv=el('button','btn','Save term list');sv.type='button';
+    sv.addEventListener('click',function(){
+      ADM.api('/api/admin/terms',{body:{baseVersion:TV,config:{ahead:TC.ahead,back:TC.back,summerStart:TC.summerStart,fallStart:TC.fallStart}}}).then(function(r){TC=r.config;TV=r.config.version;ADM.toast('Saved. The form now offers '+r.terms.length+' terms.');draw()}).catch(function(e){ADM.toast(e&&e.errors?e.errors[0].message:ADM.errText(e),true)});
+    });
+    row.appendChild(sv);if(TC.updatedBy)row.appendChild(el('span','hint','Last saved by '+TC.updatedBy+' on '+ADM.fmt(TC.updatedAt)+'.'));host.appendChild(row);
+  }
+  ADM.init({page:'content'}).then(function(){
+    var jobs=[];
+    if(ADM.can('site.content')){jobs.push(ADM.api('/api/admin/site').then(function(j){build(j.site)}));jobs.push(ADM.api('/api/admin/terms').then(terms).catch(function(e){var h=$('#termsCard');$('#terms').hidden=false;h.textContent='';h.appendChild(el('div','banner warn',e&&e.error==='not_found'?'The Term list needs Worker version 2026-11-03.1 or later. The Worker that is running is older. Update worker.financial-aid.js and reload.':ADM.errText(e)))}))}else $('#siteForm').hidden=true;
+    if(ADM.can('documents.manage'))jobs.push(ADM.api('/api/admin/documents').then(docs));
+    if(!jobs.length){var m=$('main');m.textContent='';m.appendChild(el('h1',null,'No access to this area'));m.appendChild(el('p','sub','Your role doesn\u2019t include site content or document storage.'))}
+    return Promise.all(jobs);
+  }).catch(function(e){if(e&&!e.auth&&!e.forbidden)ADM.toast(ADM.errText(e),true)});
+})();
+</script>
+</body>
+</html>

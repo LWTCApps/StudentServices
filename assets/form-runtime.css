@@ -1,0 +1,34 @@
+/* Styles for the shared form runtime (extra questions, document uploads, QR codes). Uses each page's brand variables. */
+.qsec{font:400 20px/1.2 var(--display);margin:24px 0 12px}
+.qfield .req,.dcard .req{color:var(--error)}
+.qfield fieldset.qset{border:0;margin:0;padding:0;min-width:0}
+.qfield fieldset.qset legend{font-weight:700;font-size:15px;padding:0;margin-bottom:4px}
+.qfield .qchoices{display:flex;flex-wrap:wrap;gap:4px 20px}
+.qfield.wide{grid-column:1/-1}
+.qfield textarea{width:100%;font:inherit;color:var(--ink);background:#fff;border:2px solid var(--line);border-radius:4px;padding:11px 12px}
+.qfield.has-error input:not([type=checkbox]):not([type=radio]),.qfield.has-error select,.qfield.has-error textarea{border-color:var(--error)}
+.qfield .err{display:none;color:var(--error);font-size:14px;font-weight:600;margin-top:4px}
+.qfield.has-error .err{display:block}
+.dcard{border:2px solid var(--line);border-radius:12px;padding:16px;margin:0 0 16px;background:#fff}
+.dcard h3{font:700 18px/1.25 var(--text);margin:0 0 4px}
+.dcard .hint{margin:2px 0 8px;color:var(--muted);font-size:15px}
+.dcard .dinput{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;clip:rect(0 0 0 0)}
+.dcard .dinput:focus-visible+label{outline:3px solid var(--focus);outline-offset:2px}
+.dcard .btn.small{display:inline-flex;font:700 15px/1 var(--text);border:2px solid var(--ink);border-radius:48px;padding:10px 18px;min-height:40px;cursor:pointer;background:transparent;color:var(--ink);align-items:center}
+.dcard ul.dfiles{list-style:none;margin:0 0 8px;padding:0}
+.dcard ul.dfiles li{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:6px 10px;background:var(--surface);border-radius:8px;margin-bottom:6px}
+.dcard .fname{font-weight:700;overflow-wrap:anywhere}.dcard .fsize{color:var(--muted)}
+.dcard .link-btn{border:0;background:none;color:var(--link);text-decoration:underline;font:inherit;cursor:pointer;padding:2px 4px}
+.dcard .dmsg{min-height:1.4em;font-weight:600;font-size:15px}.dcard .dmsg.ok{color:var(--ok,#2F6B1F)}.dcard .dmsg.bad{color:var(--error)}
+.dcard .err{display:none;color:var(--error);font-weight:600;font-size:14px;margin-top:4px}
+.dcard.has-error{border-color:var(--error)}.dcard.has-error .err{display:block}
+.qr-fig{display:flex;flex-direction:column;align-items:center;gap:4px;flex:none;width:112px}
+.qr-fig svg{width:96px;height:96px;display:block;border:1px solid var(--line);border-radius:4px}
+.qr-fig figcaption{font-size:12px;color:var(--muted);text-align:center;line-height:1.25}
+
+.opt .wq{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}.opt .wq>div:first-child{flex:1 1 220px;min-width:0}
+.opt a{font-weight:700}.opt p a{overflow-wrap:anywhere}
+[hidden]{display:none!important}
+.cfg-help{color:var(--muted);font-size:14px;margin-top:2px}
+.qfield .qchoices .chk{display:inline-flex;flex-direction:row;align-items:center;gap:10px;min-height:44px;padding:4px 6px 4px 0}
+.qfield .qchoices .chk span{font-size:16px}

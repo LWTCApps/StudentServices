@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="color-scheme" content="light">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Financial Aid Submissions | Lorenzo Walker Technical College</title>
+<link rel="icon" type="image/png" href="../assets/fav.png">
+<link rel="stylesheet" href="../assets/brand-fonts.css?v=20261028">
+<link rel="stylesheet" href="../assets/print-sheet.css?v=20261028">
+
+<style>
+:root{
+  color-scheme:light;
+  --ink:#231F20;--paper:#FFFFFF;--surface:#F7F5F4;--line:#DDD8D6;--muted:#5D5557;--link:#2B6580;--error:#B3261E;--focus:#3A7B96;
+  --orange-a:#F58220;--orange-b:#F05A2B;--green-a:#BDD14F;--green-b:#6EA141;--gold-a:#FFC45A;--gold-b:#F9A03C;--blue-a:#54ADC3;--blue-b:#3A7B96;
+  --display:"Alfa Slab One","Clarendon Black",Rockwell,"Roboto Slab",Georgia,serif;
+  --text:"Source Sans 3","Source Sans Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{background:#fff;height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100%;background:#fff;color:var(--ink);font:400 16px/1.5 var(--text)}
+a{color:var(--link)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.bar{height:8px;display:flex}.bar i{flex:1}
+.h-orange{background:linear-gradient(90deg,var(--orange-a),var(--orange-b))}.h-green{background:linear-gradient(90deg,var(--green-a),var(--green-b))}.h-gold{background:linear-gradient(90deg,var(--gold-a),var(--gold-b))}.h-blue{background:linear-gradient(90deg,var(--blue-a),var(--blue-b))}
+.logo{display:block;width:200px;aspect-ratio:720/309;background:center/contain no-repeat url(../assets/lwtc-logo.png)}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0;flex-wrap:wrap}
+.who{font-size:14px;color:var(--muted);text-align:right}.who strong{color:var(--ink)}
+h1{font:400 clamp(26px,4vw,38px)/1.1 var(--display);margin:8px 0 4px}
+.sub{margin:0 0 20px;color:var(--muted)}
+.banner{display:none;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-weight:600;border:2px solid #F9A03C;background:#FFF6E8}
+.banner.show{display:block}
+
+/* form tabs */
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:2px solid var(--line);margin-bottom:16px}
+.tab{font:700 16px var(--text);background:transparent;color:var(--muted);border:0;border-bottom:4px solid transparent;margin-bottom:-2px;padding:10px 16px;cursor:pointer;display:flex;gap:8px;align-items:center}
+.tab b{font:400 14px var(--display);background:var(--surface);border-radius:48px;padding:2px 10px;color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:#F37026}
+.tab:hover{color:var(--ink)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px}
+.fdd{position:relative}
+.fdd>summary{list-style:none;cursor:pointer;display:inline-flex;gap:8px;align-items:center;font:700 15px var(--text);border:2px solid var(--line);border-radius:48px;padding:8px 16px;background:#fff;min-height:42px}
+.fdd>summary::-webkit-details-marker{display:none}
+.fdd>summary::after{content:"\25BE";font-size:12px}
+.fdd[open]>summary{border-color:var(--ink)}
+.fdd.on>summary{border-color:#F37026;background:#FFF3EA}
+.fdd>summary b{background:#F37026;color:#fff;border-radius:48px;padding:0 8px;font-size:13px;min-width:20px;text-align:center}
+.fdd .menu{position:absolute;z-index:30;top:calc(100% + 6px);left:0;min-width:260px;max-width:min(380px,92vw);max-height:340px;overflow:auto;background:#fff;border:2px solid var(--ink);border-radius:12px;padding:8px 10px;box-shadow:0 12px 30px rgba(0,0,0,.18)}
+.fdd .menu label{display:flex;gap:10px;align-items:flex-start;font-weight:600;font-size:15px;padding:6px 4px;margin:0;cursor:pointer;border-radius:6px}
+.fdd .menu label:hover{background:var(--surface)}
+.fdd .menu input{width:20px;height:20px;margin-top:1px;flex:none;accent-color:#3A7B96}
+.fdd .menu .n{margin-left:auto;color:var(--muted);font-weight:400;padding-left:10px}
+.fdd .menu .zero{opacity:.55}
+.fdd .menu .mfoot{border-top:1px solid var(--line);margin-top:6px;padding-top:6px;text-align:right}
+.linkbtn{border:0;background:none;color:var(--link,#1F5F7A);text-decoration:underline;font:inherit;font-weight:600;cursor:pointer;padding:4px 6px}
+tr.grouprow th .gname{white-space:normal}
+
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.stat{border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:48px;padding:7px 14px;font:600 15px var(--text);cursor:pointer;display:flex;gap:8px;align-items:center}
+.stat b{font:400 16px var(--display)}
+.stat[aria-pressed="true"]{border-color:var(--ink);background:var(--surface)}
+.tools{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:flex-end}
+.tools .grow{flex:1 1 260px;max-width:420px}
+.tools label{display:block;font-weight:700;font-size:13px;color:var(--muted);margin-bottom:2px}
+input[type=search],input[type=text],input[type=number],input[type=tel],input[type=email],input[type=date],select,textarea{font:inherit;color:var(--ink);background:#fff;border:2px solid var(--line);border-radius:4px;padding:10px 12px;min-height:44px;width:100%}
+.btn{font:700 15px/1 var(--text);border:0;border-radius:48px;padding:13px 22px;min-height:44px;cursor:pointer;color:#231F20;background:linear-gradient(90deg,var(--orange-a),var(--orange-b))}
+.btn.alt{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+.btn[disabled]{opacity:.6;cursor:progress}
+table{width:100%;border-collapse:collapse}
+thead th{text-align:left;font-size:13px;color:var(--muted);padding:8px 12px;border-bottom:2px solid var(--line);white-space:nowrap}
+tbody td{padding:12px;border-bottom:1px solid var(--line);vertical-align:top}
+tbody tr.item{cursor:pointer}tbody tr.item:hover{background:var(--surface)}
+tbody tr:focus-visible{outline-offset:-3px}
+tr.grouprow th{text-align:left;background:var(--surface);padding:12px;border-bottom:1px solid var(--line);border-top:2px solid var(--ink);font-weight:700}
+tr.grouprow .gname{font:400 18px var(--display);margin-right:12px}
+tr.grouprow .gmeta{font-weight:600;color:var(--muted);font-size:14px;margin-right:12px}
+.tablewrap{overflow-x:auto;border:2px solid var(--line);border-radius:12px}
+.pill{display:inline-block;border-radius:48px;padding:2px 12px;font-weight:700;font-size:13px;color:#231F20;white-space:nowrap}
+.s-New{background:linear-gradient(90deg,var(--orange-a),var(--orange-b))}.s-In-review{background:linear-gradient(90deg,var(--blue-a),var(--blue-b))}
+.s-Funding-on-file{background:linear-gradient(90deg,var(--green-a),var(--green-b))}.s-Balance-due{background:linear-gradient(90deg,var(--gold-a),var(--gold-b))}
+.s-Complete{background:var(--line);color:var(--ink)}
+.formtag{display:inline-block;border:2px solid var(--line);border-radius:4px;padding:0 8px;font-weight:700;font-size:13px;white-space:nowrap}
+.muted{color:var(--muted)}.empty{padding:40px 16px;text-align:center;color:var(--muted)}
+.mono{font-variant-numeric:tabular-nums}
+@media(max-width:760px){.hide-s{display:none}}
+
+dialog{width:min(820px,calc(100vw - 24px));max-height:calc(100vh - 24px);border:2px solid var(--ink);border-radius:12px;padding:0;background:#fff;color:var(--ink)}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+.dhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:18px 20px;border-bottom:1px solid var(--line)}
+.dhead h2{font:400 24px/1.1 var(--display);margin:0 0 4px}
+.dbody{padding:16px 20px;overflow:auto;max-height:calc(100vh - 220px)}
+.sect{font:400 17px/1.2 var(--display);margin:18px 0 10px;display:flex;gap:10px;align-items:center}
+.sect:first-child{margin-top:0}
+.lockbadge{font:700 12px var(--text);border:2px solid var(--line);border-radius:48px;padding:1px 10px;color:var(--muted)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;margin-bottom:8px}
+.fgrid.locked{background:var(--surface);border-radius:8px;padding:12px}
+.fld{min-width:0}
+.fld.wide{grid-column:1/-1}
+.fld>label,.fld>.lab{display:block;font-weight:700;font-size:14px;margin-bottom:2px}
+.fld .req{color:var(--error)}
+.fld .val{padding:10px 0;overflow-wrap:anywhere;white-space:pre-wrap}
+.fgrid.locked .val{padding:2px 0}
+.fld.changed input,.fld.changed select,.fld.changed fieldset{border-color:#F37026;box-shadow:0 0 0 2px color-mix(in srgb,#F37026 25%,transparent)}
+.fld.bad input,.fld.bad select,.fld.bad fieldset{border-color:var(--error);box-shadow:0 0 0 2px color-mix(in srgb,var(--error) 25%,transparent)}
+.fld .ferr{display:none;color:var(--error);font-weight:600;font-size:14px;margin-top:2px}
+.fld.bad .ferr{display:block}
+fieldset.checks{border:2px solid var(--line);border-radius:4px;padding:6px 10px;margin:0;min-width:0}
+fieldset.checks label{display:flex;gap:10px;align-items:flex-start;padding:5px 0;font-weight:600;cursor:pointer}
+fieldset.checks input{width:20px;height:20px;min-height:0;margin:2px 0 0;flex:none;accent-color:#6EA141}
+.dirty{font-weight:700;color:#C2410C}
+.fld.legacy select{border-color:#F9A03C;background:#FFF6E8}
+.fld.legacy::after{content:"Not in the current list. Choose an option before saving.";display:block;font-size:13px;font-weight:600;color:#9A5B00;margin-top:2px}
+.review{background:var(--surface);border-radius:8px;padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.review label{display:block;font-weight:700;font-size:14px;margin-bottom:2px}
+.review .full{grid-column:1/-1}
+@media(max-width:620px){.review,.fgrid{grid-template-columns:1fr}}
+.dfoot{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;align-items:center;padding:14px 20px;border-top:1px solid var(--line)}
+.files{margin:2px 0 0;padding-left:18px}.files li{margin:3px 0}
+.msg{font-weight:600;min-height:1.4em}.msg.err{color:var(--error)}
+.reviewed{font-size:14px;color:var(--muted);margin:8px 0 0}
+/* ---- Printing ----
+   Forms with a paper layout print through assets/print-sheet.css (the .print-sheet mode).
+   Anything else prints the open detail window, as below. */
+@media print{
+  body:not(.print-sheet)>.bar,body:not(.print-sheet)>.wrap{display:none!important}
+  body:not(.print-sheet):not(.print-export) *{visibility:hidden}
+  body:not(.print-sheet):not(.print-export) dialog,body:not(.print-sheet):not(.print-export) dialog *{visibility:visible}
+  body:not(.print-sheet) dialog{position:absolute;inset:0 auto auto 0;margin:0;width:100%;max-height:none;border:0;border-radius:0}
+  body:not(.print-sheet) dialog::backdrop{background:none;display:none}
+  body:not(.print-sheet) .dbody{max-height:none;overflow:visible}
+  body:not(.print-sheet) .dfoot,body:not(.print-sheet) .dhead .btn,body:not(.print-sheet) .review{display:none!important}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<link rel="stylesheet" href="../assets/console-export.css?v=20261104">
+</head>
+<body>
+<div class="bar" aria-hidden="true"><i class="h-orange"></i><i class="h-green"></i><i class="h-gold"></i><i class="h-blue"></i></div>
+<div class="wrap">
+  <header class="top">
+    <a href="../" aria-label="Financial Aid home"><span class="logo" role="img" aria-label="Lorenzo Walker Technical College"></span></a>
+    <div class="who">Signed in as <strong id="me">…</strong><br><a href="../">Financial Aid home</a> &middot; <a href="schedule/" id="schedLink" hidden>Schedule admin</a><span id="schedSep" hidden> &middot; </span><a href="/cdn-cgi/access/logout">Sign out</a></div>
+  </header>
+
+  <main>
+    <h1>Submissions</h1>
+    <p class="sub">Every Financial Aid form, newest first. Choose a form type, then select a row to review it and set its status.</p>
+
+    <div class="banner" id="banner" role="status"></div>
+
+    <div class="tabs" id="tabs" role="tablist" aria-label="Form type"></div>
+    <div class="stats" id="stats" role="group" aria-label="Filter by status"></div>
+    <div class="tools">
+      <div class="grow"><label for="q">Search</label><input type="search" id="q" placeholder="Name, student ID, reference, details"></div>
+      <div><label for="sort">Sort</label>
+        <select id="sort">
+          <option value="form-new">Form type, then newest</option>
+          <option value="form-name">Form type, then student A–Z</option>
+          <option value="prog-new">Program, then newest</option>
+          <option value="prog-name">Program, then student A–Z</option>
+          <option value="term">Term (newest first)</option>
+          <option value="new">Newest first</option>
+          <option value="old">Oldest first</option>
+          <option value="name">Student A–Z</option>
+          <option value="status">Status</option>
+        </select></div>
+      <button class="btn alt" id="refresh" type="button">Refresh</button>
+      <button class="btn" id="exportBtn" type="button" hidden>Export results…</button>
+    </div>
+
+    <div class="filters" id="filters" role="group" aria-label="Filter submissions"></div>
+    <p class="muted" id="resultCount" role="status" aria-live="polite" style="font-size:15px;margin:0 0 10px"></p>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr id="thead"></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="empty" id="empty" hidden></div>
+    </div>
+    <p class="muted" id="updated" style="font-size:14px;margin-top:12px"></p>
+  </main>
+</div>
+
+<dialog id="dlg" aria-labelledby="dTitle">
+  <div class="dhead">
+    <div><h2 id="dTitle"></h2><div class="muted" id="dRef"></div></div>
+    <button class="btn alt" id="dClose" type="button">Close</button>
+  </div>
+  <div class="dbody">
+    <div id="dFields"></div>
+    <div class="review">
+      <div><label for="fStatus">Status</label><select id="fStatus"></select></div>
+      <div id="balWrap"><label for="fBal">Balance due ($)</label><input type="number" id="fBal" min="0" step="0.01" inputmode="decimal"></div>
+      <div class="full"><label for="fNotes">Staff notes</label><textarea id="fNotes" rows="3" maxlength="2000"></textarea></div>
+    </div>
+    <p class="reviewed" id="dReviewed"></p>
+  </div>
+  <div class="dfoot">
+    <span><span class="dirty" id="dDirty"></span> <span class="msg" id="dMsg" role="status"></span></span>
+    <span style="display:flex;gap:10px"><button class="btn alt" id="dPrint" type="button">Print</button><button class="btn" id="dSave" type="button">Save changes</button></span>
+  </div>
+</dialog>
+
+
+<script src="../assets/console-export.js?v=20261104"></script>
+<script src="../assets/qrcode.js?v=20261030"></script>
+<script src="../assets/form-runtime.js?v=20261030"></script>
+<script src="../assets/form-defaults.js?v=20261030"></script>
+<script src="../assets/print-sheet.js?v=20261030"></script>
+<script>
+(function(){
+  var STATUSES=['New','In review','Funding on file','Balance due','Complete'];
+  var $=function(s){return document.querySelector(s)};
+  var forms=[];            // registry from the Worker: [{id,label,balanceDue}]
+  var items=[],formFilter='all',statusFilter='All',current=null,failures=0,timer=null,loading=false;
+  var lastList=[],lastGroupBy=null;
+  function newSet(){return Object.create(null)}
+  var selected={program:newSet(),term:newSet(),fund:newSet(),fafsa:newSet(),docs:newSet()},builtSig='';
+
+  function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
+  function slug(s){return String(s||'New').replace(/\s+/g,'-')}
+  function fmtD(v){if(!v)return '';var p=String(v).slice(0,10).split('-');if(p.length!==3)return v;return new Date(+p[0],+p[1]-1,+p[2]).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
+  function fmtDT(v){if(!v)return '';var d=new Date(v);return isNaN(d)?v:d.toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}
+  var ME={perms:[],menus:{},can:function(k){return this.perms.indexOf(k)>-1}};
+  function api(path,opts){
+    opts=opts||{};opts.credentials='same-origin';
+    return fetch(path,opts).then(function(r){
+      if(r.status===401){throw {auth:true}}
+      return r.json().catch(function(){return {}}).then(function(j){if(r.status===403)throw {forbidden:true,permission:j.permission};if(!r.ok||j.ok===false)throw {status:r.status,field:j.field,error:j.error};return j});
+    });
+  }
+  function banner(msg){var b=$('#banner');b.textContent=msg||'';b.classList.toggle('show',!!msg)}
+  function st(i){return i.status||'New'}
+
+  /* ---- form types: every registered form, plus any type found in the data ---- */
+  function formKeys(){
+    var keys=forms.map(function(f){return f.id}),seen={};
+    keys.forEach(function(k){seen[k]=1});
+    var extra=[];
+    items.forEach(function(i){var k=i.formType||'';if(!seen[k]){seen[k]=1;extra.push(k)}});
+    extra.sort();
+    return keys.concat(extra);
+  }
+  function formInfo(key){
+    for(var n=0;n<forms.length;n++)if(forms[n].id===key)return forms[n];
+    var sample=items.filter(function(i){return (i.formType||'')===key})[0];
+    return {id:key,label:(sample&&sample.formLabel)||key||'Unspecified',balanceDue:false};
+  }
+  function inScopeForm(i){return formFilter==='all'||(i.formType||'')===formFilter}
+
+  function renderTabs(){
+    var box=$('#tabs');box.innerHTML='';
+    function tab(key,label,count){
+      var b=el('button','tab');b.type='button';b.setAttribute('role','tab');b.setAttribute('aria-selected',String(formFilter===key));
+      b.appendChild(el('span',null,label));b.appendChild(el('b',null,String(count)));
+      b.addEventListener('click',function(){formFilter=key;statusFilter='All';render()});
+      box.appendChild(b);
+    }
+    tab('all','All forms',items.length);
+    formKeys().forEach(function(k){
+      tab(k,formInfo(k).label,items.filter(function(i){return (i.formType||'')===k}).length);
+    });
+  }
+  /* ---- filter menus: tick any number of options; a submission matches if it has any ticked value in each menu ---- */
+  function fv(i,key){var f=(i.fields||[]).filter(function(x){return x.key===key})[0];return f?f.value:undefined}
+  var FAFSA_OLD={'I applied':'I have submitted my FAFSA','I will apply':'I will submit my FAFSA','I will not apply':'I will not submit my FAFSA'};
+  function termKey(t){var m=/^(Spring|Summer|Fall) (\d{4})$/.exec(t||'');return m?(+m[2])*3+['Spring','Summer','Fall'].indexOf(m[1]):-1}
+  function one(v){return (v==null||v==='')?[]:[String(v)]}
+  var FACETS=[
+    {key:'program',label:'Program',get:function(i){return one(fv(i,'program'))},order:function(a,b){return a.localeCompare(b,'en',{sensitivity:'base'})}},
+    {key:'term',label:'Term',get:function(i){return one(fv(i,'term'))},order:function(a,b){return termKey(b)-termKey(a)||a.localeCompare(b)}},
+    {key:'fund',label:'Way of paying',get:function(i){var v=fv(i,'fundingSources');return Array.isArray(v)?v.map(String):one(v)},order:function(a,b){return a.localeCompare(b,'en',{sensitivity:'base'})}},
+    {key:'fafsa',label:'FAFSA',get:function(i){var v=fv(i,'fafsaStatus');return one(FAFSA_OLD[v]||v)},order:function(a,b){return a.localeCompare(b)}},
+    {key:'docs',label:'Documents',get:function(i){var n=(i.print&&i.print.documents&&i.print.documents.length)||0;return n?['Has uploaded documents']:['No uploaded documents']},order:function(a,b){return a.localeCompare(b)},only:function(){return items.filter(inScopeForm).some(function(i){return i.print&&i.print.documents&&i.print.documents.length})}}
+  ];
+  function activeCount(){return FACETS.reduce(function(n,f){return n+Object.keys(selected[f.key]).length},0)}
+  /** Does a submission pass every filter? `skip` leaves one filter out, to count what each option would add. */
+  function passes(i,skip){
+    if(!inScopeForm(i))return false;
+    if(skip!=='status'&&statusFilter!=='All'&&st(i)!==statusFilter)return false;
+    var q=$('#q').value.trim().toLowerCase();if(q&&haystack(i).indexOf(q)<0)return false;
+    for(var n=0;n<FACETS.length;n++){
+      var f=FACETS[n],sel=selected[f.key];if(f.key===skip||!Object.keys(sel).length)continue;
+      if(!f.get(i).some(function(v){return sel[v]}))return false;
+    }
+    return true;
+  }
+  function facetOptions(f){
+    var seen={};items.filter(inScopeForm).forEach(function(i){f.get(i).forEach(function(v){seen[v]=1})});
+    Object.keys(selected[f.key]).forEach(function(v){seen[v]=1});          // keep a ticked option even if nothing has it right now
+    return Object.keys(seen).sort(f.order);
+  }
+  function renderFilters(){
+    var host=$('#filters'),active=FACETS.filter(function(f){return (!f.only||f.only())&&facetOptions(f).length});
+    var sig=active.map(function(f){return f.key+':'+facetOptions(f).join('\u0001')}).join('|');
+    if(sig!==builtSig){
+      var openKey=(host.querySelector('details[open]')||{dataset:{}}).dataset.key;
+      host.textContent='';builtSig=sig;
+      active.forEach(function(f){
+        var d=document.createElement('details');d.className='fdd';d.dataset.key=f.key;
+        var sm=document.createElement('summary');sm.appendChild(el('span',null,f.label));sm.appendChild(el('b',null,''));d.appendChild(sm);
+        var menu=el('div','menu');menu.setAttribute('role','group');menu.setAttribute('aria-label',f.label);
+        facetOptions(f).forEach(function(v){
+          var l=document.createElement('label'),c=document.createElement('input');c.type='checkbox';c.value=v;c.dataset.f=f.key;
+          c.addEventListener('change',function(){if(c.checked)selected[f.key][v]=1;else delete selected[f.key][v];render()});
+          l.appendChild(c);l.appendChild(el('span',null,v));l.appendChild(el('span','n',''));menu.appendChild(l);
+        });
+        var ft=el('div','mfoot'),cl=el('button','linkbtn','Clear '+f.label.toLowerCase());cl.type='button';cl.addEventListener('click',function(){selected[f.key]=newSet();render()});ft.appendChild(cl);menu.appendChild(ft);
+        d.appendChild(menu);if(openKey===f.key)d.open=true;host.appendChild(d);
+      });
+      var all=el('button','btn alt','Clear all filters');all.type='button';all.id='clearAll';all.addEventListener('click',function(){FACETS.forEach(function(f){selected[f.key]=newSet()});statusFilter='All';$('#q').value='';render()});host.appendChild(all);
+    }
+    // update in place so a ticked box keeps keyboard focus
+    active.forEach(function(f){
+      var d=host.querySelector('details[data-key="'+f.key+'"]');if(!d)return;
+      var rest=items.filter(function(i){return passes(i,f.key)}),n=Object.keys(selected[f.key]).length;
+      d.classList.toggle('on',n>0);var b=d.querySelector('summary b');b.textContent=n?String(n):'';b.hidden=!n;
+      [].forEach.call(d.querySelectorAll('label'),function(l){
+        var c=l.querySelector('input'),cnt=rest.filter(function(i){return f.get(i).indexOf(c.value)>-1}).length;
+        c.checked=!!selected[f.key][c.value];l.querySelector('.n').textContent=String(cnt);l.classList.toggle('zero',cnt===0&&!c.checked);
+      });
+    });
+    var ca=$('#clearAll');if(ca)ca.hidden=!(activeCount()||statusFilter!=='All'||$('#q').value.trim());
+  }
+  document.addEventListener('click',function(e){[].forEach.call(document.querySelectorAll('.fdd[open]'),function(d){if(!d.contains(e.target))d.open=false})});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){var o=document.querySelector('.fdd[open]');if(o){o.open=false;o.querySelector('summary').focus()}}});
+
+  function renderStats(){
+    var box=$('#stats');box.innerHTML='';
+    ['All'].concat(STATUSES).forEach(function(s){
+      var n=items.filter(function(i){return passes(i,'status')&&(s==='All'||st(i)===s)}).length;
+      var b=el('button','stat');b.type='button';b.setAttribute('aria-pressed',String(statusFilter===s));
+      b.appendChild(el('span',null,s));b.appendChild(el('b',null,String(n)));
+      b.addEventListener('click',function(){statusFilter=s;render()});box.appendChild(b);
+    });
+  }
+
+  /* ---- filtering and sorting ---- */
+  function haystack(i){return [i.studentName,i.studentId,i.reference,i.email,i.phone,i.summary,i.formLabel].concat((i.fields||[]).map(function(f){return Array.isArray(f.value)?f.value.join(' '):f.value})).join(' ').toLowerCase()}
+  function visible(){return items.filter(function(i){return passes(i)})}
+  function byNewest(a,b){return String(b.submitted).localeCompare(String(a.submitted))}
+  function byOldest(a,b){return String(a.submitted).localeCompare(String(b.submitted))}
+  function byName(a,b){return String(a.studentName).localeCompare(String(b.studentName),'en',{sensitivity:'base'})||byNewest(a,b)}
+  function byStatus(a,b){return STATUSES.indexOf(st(a))-STATUSES.indexOf(st(b))||byNewest(a,b)}
+  function progOf(i){var v=fv(i,'program');return v?String(v):''}
+  function byProgram(a,b){var x=progOf(a),y=progOf(b);if(!x&&!y)return 0;if(!x)return 1;if(!y)return -1;return x.localeCompare(y,'en',{sensitivity:'base'})}
+  function byTerm(a,b){return termKey(String(fv(b,'term')||''))-termKey(String(fv(a,'term')||''))||byName(a,b)}
+  var SORTS={'form-new':byNewest,'form-name':byName,'new':byNewest,'old':byOldest,'name':byName,'status':byStatus,
+    'prog-new':function(a,b){return byProgram(a,b)||byNewest(a,b)},'prog-name':function(a,b){return byProgram(a,b)||byName(a,b)},'term':byTerm};
+
+  function render(){
+    renderTabs();renderStats();renderFilters();
+    var mode=$('#sort').value,byForm=mode.indexOf('form-')===0,byProg=mode.indexOf('prog-')===0,grouped=byForm;
+    var list=visible().sort(SORTS[mode]);
+    lastList=list;lastGroupBy=byForm?function(i){return i.formLabel||'Unspecified'}:byProg?function(i){return progOf(i)||'No program (other forms)'}:null;
+    var xb=$('#exportBtn');if(xb)xb.disabled=!list.length;
+    var showFormCol=!byForm&&formFilter==='all';
+    var total=items.filter(inScopeForm).length;
+    $('#resultCount').textContent=(list.length===total?'Showing all ':'Showing '+list.length+' of ')+total+(total===1?' submission':' submissions')+(activeCount()||statusFilter!=='All'||$('#q').value.trim()?' (filtered)':'');
+    var th=$('#thead');th.innerHTML='';
+    [['Submitted',''],['Student',''],showFormCol?['Form','']:null,['Details','hide-s'],['Status','']].forEach(function(c){
+      if(!c)return;var h=el('th',c[1],c[0]);th.appendChild(h);
+    });
+    var cols=th.children.length,tb=$('#rows');tb.innerHTML='';
+
+    function addRow(i){
+      var tr=document.createElement('tr');tr.className='item';tr.tabIndex=0;tr.setAttribute('role','button');
+      tr.setAttribute('aria-label','Review '+i.studentName+', '+i.formLabel);
+      tr.appendChild(el('td','mono',fmtDT(i.submitted)));
+      var c2=el('td');c2.appendChild(el('strong',null,i.studentName||''));c2.appendChild(el('div','muted',(i.studentId||'')+' \u00b7 '+(i.reference||'')));tr.appendChild(c2);
+      if(showFormCol){var cf=el('td');cf.appendChild(el('span','formtag',i.formLabel));tr.appendChild(cf)}
+      tr.appendChild(el('td','hide-s',i.summary||''));
+      var c6=el('td');c6.appendChild(el('span','pill s-'+slug(st(i)),st(i)));tr.appendChild(c6);
+      tr.addEventListener('click',function(){openItem(i)});
+      tr.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openItem(i)}});
+      tb.appendChild(tr);
+    }
+
+    if(grouped&&formFilter==='all'){
+      formKeys().forEach(function(k){
+        var g=list.filter(function(i){return (i.formType||'')===k});
+        if(!g.length)return;
+        var tr=document.createElement('tr');tr.className='grouprow';
+        var h=document.createElement('th');h.colSpan=cols;h.scope='colgroup';
+        h.appendChild(el('span','gname',formInfo(k).label));
+        h.appendChild(el('span','gmeta',g.length+(g.length===1?' submission':' submissions')));
+        var nNew=g.filter(function(i){return st(i)==='New'}).length;
+        if(nNew)h.appendChild(el('span','gmeta',nNew+' new'));
+        tr.appendChild(h);tb.appendChild(tr);
+        g.forEach(addRow);
+      });
+    }else if(byProg){
+      var last=null,grp=[];
+      function flush(){
+        if(last===null)return;
+        var tr=document.createElement('tr');tr.className='grouprow';var h=document.createElement('th');h.colSpan=cols;h.scope='colgroup';
+        h.appendChild(el('span','gname',last||'No program (other forms)'));h.appendChild(el('span','gmeta',grp.length+(grp.length===1?' submission':' submissions')));
+        var nNew=grp.filter(function(i){return st(i)==='New'}).length;if(nNew)h.appendChild(el('span','gmeta',nNew+' new'));
+        tr.appendChild(h);tb.appendChild(tr);grp.forEach(addRow);grp=[];
+      }
+      list.forEach(function(i){var k=progOf(i);if(last!==null&&k!==last)flush();last=k;grp.push(i)});flush();
+    }else list.forEach(addRow);
+
+    var em=$('#empty');em.hidden=list.length>0;
+    em.textContent=items.length?'No submissions match these filters.':'No submissions yet.';
+  }
+
+  function load(manual){
+    if(loading)return;loading=true;
+    if(manual)$('#refresh').disabled=true;
+    api('/api/staff/submissions').then(function(j){
+      failures=0;banner('');items=j.items||[];render();
+      $('#updated').textContent='Updated '+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})+'. Refreshes automatically every minute.';
+    }).catch(function(e){
+      if(e&&e.auth){banner('Your sign-in expired. Reload the page to sign in again.');return}
+      if(e&&e.forbidden){banner('You don\u2019t have permission to see submissions. Ask a Financial Aid administrator to give you access.');return}
+      failures++;banner('Reconnecting\u2026 showing the last data we received.');
+    }).then(function(){loading=false;$('#refresh').disabled=false;schedule()});
+  }
+  function schedule(){clearTimeout(timer);var wait=Math.min(60000*Math.pow(2,failures),300000);timer=setTimeout(function(){if(document.visibilityState==='visible'&&!$('#dlg').open)load();else schedule()},wait)}
+
+  var inputs={};   // key -> {field, get(), box}
+
+  function sameVal(a,b){
+    if(Array.isArray(a)||Array.isArray(b)){return (a||[]).slice().sort().join('\u0001')===(b||[]).slice().sort().join('\u0001')}
+    return String(a==null?'':a).trim()===String(b==null?'':b).trim();
+  }
+  function changedKeys(){
+    return Object.keys(inputs).filter(function(k){return !sameVal(inputs[k].get(),inputs[k].field.value)});
+  }
+  function refreshDirty(){
+    var ch=changedKeys();
+    Object.keys(inputs).forEach(function(k){inputs[k].box.classList.toggle('changed',ch.indexOf(k)>-1)});
+    if(ch.length&&$('#dMsg').textContent.indexOf('Saved')===0)setMsg('');
+    $('#dDirty').textContent=ch.length?(ch.length+(ch.length===1?' value changed':' values changed')+' \u2013 not saved yet'):'';
+  }
+  function fieldBox(f){
+    var box=el('div','fld'+(f.type==='multiselect'?' wide':''));
+    var id='f_'+(f.key||Math.random().toString(36).slice(2));
+    if(f.type==='files'){
+      box.className+=' wide';box.appendChild(el('span','lab',f.label));
+      var ul=el('ul','files');
+      (f.value||[]).forEach(function(d){
+        var li=el('li');
+        var size=d.size?' ('+(d.size<1048576?Math.max(1,Math.round(d.size/1024))+' KB':(d.size/1048576).toFixed(1)+' MB')+')':'';
+        li.appendChild(el('strong',null,d.label||'Document'));li.appendChild(document.createTextNode(' \u2014 '));
+        if(ME.can('documents.view')&&current){
+          var a=el('a',null,(d.name||'file')+size);a.href='/api/staff/documents/'+encodeURIComponent(current.reference)+'/'+encodeURIComponent(d.id)+'?form='+encodeURIComponent(current.formType||'');a.setAttribute('download',d.name||'');a.rel='noopener';li.appendChild(a);
+        }else li.appendChild(document.createTextNode((d.name||'file')+size+' (you don\u2019t have permission to open documents)'));
+        ul.appendChild(li);
+      });
+      if(!(f.value||[]).length)ul.appendChild(el('li',null,'\u2014'));
+      box.appendChild(ul);return box;
+    }
+    if(!f.editable){
+      box.appendChild(el('span','lab',f.label));
+      box.appendChild(el('div','val',f.value||'\u2014'));
+      return box;
+    }
+    var lab=el('label',null,f.label);lab.htmlFor=id;
+    if(f.required){var r=el('span','req',' *');r.setAttribute('aria-hidden','true');lab.appendChild(r)}
+    var get,ctrl;
+    if(f.type==='select'){
+      ctrl=document.createElement('select');ctrl.id=id;
+      var blank=el('option',null,f.required?'Choose\u2026':'Not selected');blank.value='';ctrl.appendChild(blank);
+      (f.options||[]).forEach(function(o){var op=el('option',null,o);op.value=o;ctrl.appendChild(op)});
+      // An older row can hold a value that is no longer offered (for example a program typed by hand).
+      // Show it so nothing looks blank, and flag it so staff pick a current option when they save.
+      if(f.value&&(f.options||[]).indexOf(f.value)<0){
+        var old=el('option',null,f.value+' (no longer offered)');old.value=f.value;ctrl.appendChild(old);
+        box.classList.add('legacy');
+      }
+      ctrl.value=f.value||'';get=function(){return ctrl.value};
+      box.appendChild(lab);box.appendChild(ctrl);
+    }else if(f.type==='multiselect'){
+      var fs=document.createElement('fieldset');fs.className='checks';fs.id=id;fs.setAttribute('role','group');fs.setAttribute('aria-label',f.label);
+      var lg=el('div','lab',f.label);box.appendChild(lg);
+      var cbs=[];
+      (f.options||[]).forEach(function(o){
+        var l=document.createElement('label'),c=document.createElement('input');c.type='checkbox';c.value=o;
+        c.checked=(f.value||[]).indexOf(o)>-1;cbs.push(c);l.appendChild(c);l.appendChild(el('span',null,o));fs.appendChild(l);
+      });
+      get=function(){return cbs.filter(function(c){return c.checked}).map(function(c){return c.value})};
+      box.appendChild(fs);ctrl=fs;
+    }else{
+      ctrl=document.createElement('input');ctrl.id=id;
+      ctrl.type=f.type==='tel'?'tel':f.type==='email'?'email':f.type==='date'?'date':'text';
+      if(f.max)ctrl.maxLength=f.max;
+      ctrl.value=f.value||'';get=function(){return ctrl.value};
+      if(f.type==='email')ctrl.autocomplete='off';
+      box.appendChild(lab);box.appendChild(ctrl);
+    }
+    box.appendChild(el('div','ferr','Check this value.'));
+    ctrl.addEventListener('input',function(){box.classList.remove('bad');refreshDirty()});
+    ctrl.addEventListener('change',function(){box.classList.remove('bad');if((f.options||[]).indexOf(get())>-1)box.classList.remove('legacy');refreshDirty()});
+    inputs[f.key]={field:f,get:get,box:box};
+    return box;
+  }
+  function buildFields(i){
+    var host=$('#dFields');host.innerHTML='';inputs={};
+    var fields=i.fields||[];
+    if(!fields.length){
+      fields=[['Student ID',i.studentId],['Phone',i.phone],['Email',i.email]].map(function(r){return {label:r[0],value:r[1],editable:false,section:''}});
+    }
+    var last=null,grid=null;
+    fields.forEach(function(f){
+      var sec=f.section||'Details';
+      if(sec!==last){
+        last=sec;
+        var locked=/\(locked\)\s*$/.test(sec);
+        var h=el('h3','sect',sec.replace(/\s*\(locked\)\s*$/,''));
+        if(locked)h.appendChild(el('span','lockbadge','Signed by the student \u2013 locked'));
+        host.appendChild(h);grid=el('div','fgrid'+(locked?' locked':''));host.appendChild(grid);
+      }
+      grid.appendChild(fieldBox(f));
+    });
+    refreshDirty();
+  }
+  function openItem(i){
+    current=i;var info=formInfo(i.formType||'');
+    $('#dTitle').textContent=i.studentName||'';
+    $('#dRef').textContent=i.formLabel+' \u00b7 '+(i.reference||'')+' \u00b7 submitted '+fmtDT(i.submitted);
+    buildFields(i);
+    var sel=$('#fStatus');sel.innerHTML='';
+    STATUSES.forEach(function(s){var o=el('option',null,s);o.value=s;sel.appendChild(o)});
+    sel.value=st(i);
+    $('#balWrap').hidden=!info.balanceDue;
+    $('#fBal').value=(i.balanceDue===''||i.balanceDue==null)?'':i.balanceDue;
+    $('#fNotes').value=i.staffNotes||'';
+    $('#dReviewed').textContent=i.reviewedBy?('Last reviewed by '+i.reviewedBy+(i.reviewedAt?' on '+fmtDT(i.reviewedAt):'')+'.'):'Not reviewed yet.';
+    setMsg('');$('#dlg').showModal();
+  }
+  function setMsg(t,err){var m=$('#dMsg');m.textContent=t||'';m.classList.toggle('err',!!err)}
+
+  // Quick checks so obvious mistakes are caught before sending; the Worker re-checks everything.
+  function badFields(){
+    var bad=[];
+    Object.keys(inputs).forEach(function(k){
+      var f=inputs[k].field,v=inputs[k].get(),ok=true,sv=Array.isArray(v)?v.length:String(v).trim();
+      if(f.required&&!sv)ok=false;
+      if(ok&&sv&&f.type==='email'&&!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v))ok=false;
+      if(ok&&sv&&f.type==='tel'&&String(v).replace(/\D/g,'').length<10)ok=false;
+      inputs[k].box.classList.toggle('bad',!ok);
+      if(!ok)bad.push(k);
+    });
+    return bad;
+  }
+  function applySaved(item){
+    if(!item)return;
+    ['studentName','studentId','phone','email','summary'].forEach(function(k){if(item[k]!=null)current[k]=item[k]});
+    (current.fields||[]).forEach(function(f){if(f.editable&&item.values&&Object.prototype.hasOwnProperty.call(item.values,f.key))f.value=item.values[f.key]});
+    if(item.dropAddOverride){
+      var ex=(current.fields||[]).filter(function(f){return f.key==='dropAddOverride'})[0];
+      if(ex)ex.value=item.dropAddOverride;
+      else{
+        var at=-1;(current.fields||[]).forEach(function(f,i){if(f.section==='Student')at=i});
+        current.fields.splice(at+1,0,{key:'dropAddOverride',label:'Drop/add override (staff)',section:'Student',type:'readonly',editable:false,required:false,value:item.dropAddOverride});
+      }
+    }
+  }
+
+  $('#dClose').addEventListener('click',function(){if(changedKeys().length&&!window.confirm('Discard your unsaved changes?'))return;$('#dlg').close()});
+
+  /* ---- Print: the paper document ----
+     Financial Responsibility submissions print as the Financial Aid form (assets/print-sheet.js),
+     filled in with the saved values. Anything else prints the detail window. */
+  function sheetValues(i){
+    var m={};(i.fields||[]).forEach(function(f){if(f.key)m[f.key]=f.value});
+    var pr=i.print||{};
+    var base={
+      studentName:m.studentName||i.studentName,studentId:m.studentId||i.studentId,phone:m.phone||i.phone,email:m.email||i.email,
+      initials:String(m.initials||'').split(',').map(function(x){return x.trim()}),
+      signature:m.signature,signatureDate:m.signatureDate,printedName:m.printedName,
+      under18:String(m.under18||'').toLowerCase()==='yes',guardianSignature:m.guardianSignature,guardianDate:m.guardianDate,
+      agreed:pr.agreed||[],customAnswers:pr.customAnswers||[],documents:pr.documents||[]
+    };
+    if((i.formType||'')!=='financial-responsibility')return base;
+    base.term=m.term;base.dropAddEnds=m.dropAddEnds;base.program=m.program;base.startDate=m.startDate;
+    base.fafsaStatus=m.fafsaStatus;base.fundingSources=Array.isArray(m.fundingSources)?m.fundingSources:[];base.otherFunding=m.otherFunding;
+    base.section=m.section;base.dropAddBasis=m.dropAddBasis;base.dropAddOverride=m.dropAddOverride;
+    base.additionalSections=m.additionalSections?String(m.additionalSections).split('\n').filter(Boolean):[];
+    // Office-use box: only what the console already knows. The rest is left for staff to complete by hand.
+    base.office={docOnFile:st(i)==='Funding on file',balanceDue:(i.balanceDue===''||i.balanceDue==null)?'':Number(i.balanceDue).toFixed(2),reviewedBy:i.reviewedBy||'',reviewedAt:i.reviewedAt||''};
+    return base;
+  }
+  // Only submissions saved with their full set of values (new format) can print as the form.
+  function printable(i){var keys={};(i.fields||[]).forEach(function(f){if(f.key)keys[f.key]=1});return !!(window.LWTCSheet&&keys.signature&&keys.initials)}
+  $('#dPrint').addEventListener('click',function(){
+    if(!current)return;
+    if(changedKeys().length&&!window.confirm('You have unsaved changes. Print the last saved version?'))return;
+    var i=current,fin=(i.formType||'')==='financial-responsibility';
+    if(printable(i)){
+      setMsg('');
+      // print it with the wording the student saw: the version of the form it was submitted under
+      var v=(i.print&&i.print.formVersion)||0;
+      api('/api/staff/form-config/'+encodeURIComponent(i.formType)+(v?'?version='+v:'')).catch(function(){return null}).then(function(j){
+        var cfg=j&&j.config?j.config:(fin?window.LWTC_DEFAULT_FINANCIAL:null);
+        var meta={config:cfg,office:j&&j.office,title:i.formLabel+' - '+(i.studentName||'')+' - '+(i.reference||''),note:i.reference?('Ref. '+i.reference+' \u00b7 received '+fmtDT(i.submitted)):''};
+        if(fin)window.LWTCSheet.print(sheetValues(i),meta);else window.LWTCSheet.printGeneric(sheetValues(i),meta);
+      });
+      return;
+    }
+    document.body.classList.remove('print-sheet');
+    if(fin)setMsg('This submission was saved before its full answers were stored, so it prints as a detail sheet. New submissions print as the form.');
+    window.print();
+  });
+  $('#dSave').addEventListener('click',function(){
+    if(!current)return;
+    var ch=changedKeys();
+    if(ch.length){
+      var bad=badFields();
+      if(bad.length){setMsg('Fix the highlighted values first.',true);try{inputs[bad[0]].box.scrollIntoView({block:'center'})}catch(_){}return}
+    }
+    var btn=$('#dSave');btn.disabled=true;setMsg('Saving\u2026');
+    var body={id:current.id,formType:current.formType||'',status:$('#fStatus').value,balanceDue:$('#balWrap').hidden?'':$('#fBal').value,staffNotes:$('#fNotes').value};
+    // The drop/add end date normally comes from the course schedule. Changing it by hand is an override and needs a reason.
+    if(ch.indexOf('dropAddEnds')>-1){
+      var why=window.prompt('The drop/add end date normally comes from the course schedule.\n\nWhy is it being changed for this student? (This is recorded with your name.)');
+      if(why===null){btn.disabled=false;setMsg('');return}
+      if(why.trim().length<5){btn.disabled=false;setMsg('Enter a short reason for changing the drop/add date.',true);return}
+      var prev=(current.fields||[]).filter(function(f){return f.key==='dropAddOverride'})[0];
+      body.dropAddOverride={from:inputs.dropAddEnds.field.value,note:why.trim(),previous:prev?prev.value:''};
+    }
+    if(ch.length){
+      body.values={};
+      Object.keys(inputs).forEach(function(k){body.values[k]=inputs[k].get()});
+    }
+    api('/api/staff/update',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(function(j){
+      current.status=body.status;current.balanceDue=body.balanceDue;current.staffNotes=body.staffNotes;
+      current.reviewedBy=$('#me').textContent;current.reviewedAt=new Date().toISOString();
+      applySaved(j.item);
+      $('#dTitle').textContent=current.studentName||'';
+      buildFields(current);render();
+      setMsg(ch.length?'Saved. '+ch.length+(ch.length===1?' value':' values')+' updated.':'Saved.');
+      $('#dReviewed').textContent='Last reviewed by '+current.reviewedBy+' just now.';
+    }).catch(function(e){
+      if(e&&e.field&&inputs[e.field]){inputs[e.field].box.classList.add('bad');setMsg('That value isn\u2019t accepted. Check the highlighted field.',true);return}
+      setMsg(e&&e.auth?'Your sign-in expired. Reload the page.':e&&e.forbidden?'You don\u2019t have permission to make that change.':'Couldn\u2019t save. Try again.',true);
+    }).then(function(){btn.disabled=false});
+  });
+  $('#refresh').addEventListener('click',function(){load(true)});
+  /* ---- export the list as it is on screen: same filters, same order ---- */
+  var XKEY='lwtc.export.v1',xdlg=null;
+  function xload(){try{return JSON.parse(localStorage.getItem(XKEY))||{}}catch(e){return {}}}
+  function xsave(o){try{localStorage.setItem(XKEY,JSON.stringify(o))}catch(e){}}
+  function filterParts(){
+    var parts=[];FACETS.forEach(function(f){var v=Object.keys(selected[f.key]).sort(f.order);if(v.length)parts.push(f.label+': '+v.join(', '))});
+    if(statusFilter!=='All')parts.push('Status: '+statusFilter);return parts;
+  }
+  function scopeText(){return formFilter==='all'?'All forms':formInfo(formFilter).label}
+  function sortText(){var o=$('#sort').options[$('#sort').selectedIndex];return o?o.textContent:''}
+  function openExport(){
+    if(!lastList.length)return;
+    var saved=xload(),fmt=saved.fmt||'xlsx',touched=false;
+    if(!xdlg){xdlg=document.createElement('dialog');xdlg.id='exportDlg';xdlg.setAttribute('aria-labelledby','xTitle');document.body.appendChild(xdlg)}
+    xdlg.textContent='';
+    var h=el('div','xh','Export results');h.id='xTitle';xdlg.appendChild(h);
+    var body=el('div','xb'),foot=el('div','xf');
+    var sum=el('div','xsum'),parts=filterParts(),q=$('#q').value.trim();
+    var l1=el('div');l1.appendChild(el('b',null,lastList.length+(lastList.length===1?' submission':' submissions')));l1.appendChild(document.createTextNode(' \u00b7 '+scopeText()));sum.appendChild(l1);
+    var l2=el('div');l2.appendChild(el('b',null,'Filters: '));l2.appendChild(document.createTextNode((parts.length?parts.join(' \u00b7 '):'none')+(q?' \u00b7 Search: \u201c'+q+'\u201d':'')));sum.appendChild(l2);
+    var l3=el('div');l3.appendChild(el('b',null,'Order: '));l3.appendChild(document.createTextNode(sortText()));sum.appendChild(l3);
+    body.appendChild(sum);
+    var fs=el('fieldset');fs.appendChild(el('legend',null,'Format'));var grid=el('div','fmts');
+    [['pdf','Branded PDF','A report with the LWTC logo and colours, ready to print or save as a PDF'],['xlsx','Excel','A modern .xlsx workbook with real dates and filter buttons'],['csv','CSV','Plain data for any program'],['sheets','Google Sheets','Copies the table and opens a new Google Sheet']].forEach(function(f){
+      var lb=el('label','fmt'),r=el('input');r.type='radio';r.name='xfmt';r.value=f[0];r.checked=f[0]===fmt;lb.appendChild(r);var t=el('span',null,f[1]);t.appendChild(el('small',null,f[2]));lb.appendChild(t);grid.appendChild(lb);
+    });
+    fs.appendChild(grid);body.appendChild(fs);
+    var cs=el('fieldset');cs.appendChild(el('legend',null,'Columns'));var cols=el('div','cols'),boxes=[];
+    var groups={};LWTCExport.columns.forEach(function(c){(groups[c.group]=groups[c.group]||[]).push(c)});
+    Object.keys(groups).forEach(function(g){
+      var d=el('div','cg');d.appendChild(el('h4',null,g));
+      groups[g].forEach(function(c){var lb=el('label'),cb=el('input');cb.type='checkbox';cb.value=c.id;lb.appendChild(cb);lb.appendChild(el('span',null,c.label));d.appendChild(lb);boxes.push(cb);
+        cb.addEventListener('change',function(){touched=true;var st=xload();st.cols=st.cols||{};st.cols[kind()]=chosen();xsave(st)})});
+      cols.appendChild(d);
+    });
+    cs.appendChild(cols);var note=el('p','note');cs.appendChild(note);body.appendChild(cs);
+    body.appendChild(el('p','note','Exports contain student information. Store and share them securely, and delete them when you no longer need them. Each export is recorded in the activity log.'));
+    function kind(){return fmtNow()==='pdf'?'pdf':'table'}
+    function fmtNow(){return xdlg.querySelector('input[name=xfmt]:checked').value}
+    function chosen(){return boxes.filter(function(b){return b.checked}).map(function(b){return b.value})}
+    function applyCols(){var st=xload(),k=kind(),want=(st.cols&&st.cols[k])||LWTCExport.defaults[k==='pdf'?'pdf':'table'];boxes.forEach(function(b){b.checked=want.indexOf(b.value)>-1});describe()}
+    function describe(){var f=fmtNow();note.textContent=f==='pdf'?'The PDF is laid out landscape. About 9 columns read comfortably; more columns use smaller text. Choose "Save as PDF" in the print window.':f==='sheets'?'Copies the table to your clipboard and opens a new Google Sheet. Click cell A1 and press Ctrl+V (\u2318V on a Mac).':f==='xlsx'?'Includes a second sheet, "About this export", listing the filters used.':'UTF-8 with a byte-order mark, so Excel reads accents correctly.'}
+    [].forEach.call(xdlg.querySelectorAll('input[name=xfmt]'),function(){});
+    grid.addEventListener('change',function(){applyCols()});
+    var err=el('div','xerr');err.setAttribute('role','alert');foot.appendChild(err);
+    var cancel=el('button','btn alt','Cancel');cancel.type='button';cancel.addEventListener('click',function(){xdlg.close()});
+    var go=el('button','btn','Export');go.type='button';foot.appendChild(cancel);foot.appendChild(go);
+    xdlg.appendChild(body);xdlg.appendChild(foot);
+    applyCols();
+    go.addEventListener('click',function(){
+      var f=fmtNow(),ids=chosen();err.textContent='';
+      if(!ids.length){err.textContent='Choose at least one column.';return}
+      var st=xload();st.fmt=f;xsave(st);
+      go.disabled=true;go.textContent='Preparing\u2026';
+      api('/api/staff/export',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({format:f,form:formFilter,count:lastList.length,filters:filterParts().join('; '),searched:!!q})}).then(function(){
+        var list=lastList.slice(),m=LWTCExport.matrix(list,ids),groupBy=lastGroupBy;
+        var aboutParts=[['Exported',new Date().toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short'})],['Exported by',ME.email||''],['Submissions',String(list.length)],['Form',scopeText()],['Filters',parts.length?parts.join(' | '):'none'],['Search',q||'none'],['Order',sortText()],['','' ],['Notice','Contains student information. Store and share securely.']];
+        var scope=scopeText(),name=function(ext){return LWTCExport.fileName(formFilter==='all'?'results':scope,ext)};
+        if(f==='csv'){LWTCExport.download(LWTCExport.csv(m),name('csv'),'text/csv;charset=utf-8');xdlg.close();banner('Exported '+list.length+' submissions to CSV.');setTimeout(function(){banner('')},5000)}
+        else if(f==='xlsx'){LWTCExport.download(LWTCExport.xlsx(m,aboutParts),name('xlsx'),'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');xdlg.close();banner('Exported '+list.length+' submissions to Excel.');setTimeout(function(){banner('')},5000)}
+        else if(f==='pdf'){xdlg.close();return LWTCExport.printReport(m,{title:'Form results',scope:scope,sort:sortText(),filters:parts.concat(q?['Search: \u201c'+q+'\u201d']:[]),by:ME.email,groups:groupBy?list.map(groupBy):null,fileTitle:name('pdf').replace(/\.pdf$/,'')})}
+        else{
+          var tsv=LWTCExport.tsv(m);
+          if(tsv.length>1800000||!navigator.clipboard){LWTCExport.download(LWTCExport.csv(m),name('csv'),'text/csv;charset=utf-8');xdlg.close();banner('That is too much to paste, so a CSV was downloaded instead. In Google Sheets choose File, Import, Upload, and pick it.');return}
+          return navigator.clipboard.writeText(tsv).then(function(){
+            var w=window.open('https://sheets.new','_blank','noopener');xdlg.close();
+            banner(w===null?'Copied '+list.length+' submissions. Open a new Google Sheet (sheets.new), click cell A1 and press Ctrl+V.':'Copied '+list.length+' submissions. In the new Google Sheet, click cell A1 and press Ctrl+V (\u2318V on a Mac).');
+          },function(){LWTCExport.download(LWTCExport.csv(m),name('csv'),'text/csv;charset=utf-8');xdlg.close();banner('Your browser wouldn\u2019t allow copying, so a CSV was downloaded. In Google Sheets choose File, Import, Upload, and pick it.')});
+        }
+      }).catch(function(e){err.textContent=e&&e.forbidden?'You don\u2019t have permission to export.':'The export could not be recorded, so nothing was exported. Try again.'}).then(function(){go.disabled=false;go.textContent='Export'});
+    });
+    xdlg.showModal();
+  }
+  $('#exportBtn').addEventListener('click',openExport);
+
+  $('#q').addEventListener('input',render);
+  $('#sort').addEventListener('change',render);
+  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'&&!loading)load()});
+
+  function applyMe(j){
+    $('#me').textContent=j.email;ME.email=j.email;ME.perms=j.permissions||[];ME.menus=j.menus||{};
+    $('#exportBtn').hidden=!ME.can('console.export');
+    var m=ME.menus;
+    if(m.schedule||j.scheduleAdmin===true){$('#schedLink').hidden=false;$('#schedSep').hidden=false}
+    if(m.admin&&!$('#adminLink')){
+      var a=el('a',null,'Administration');a.id='adminLink';a.href='../admin/';
+      var who=$('.who'),h=$('#schedLink');who.insertBefore(document.createTextNode(' \u00b7 '),h);who.insertBefore(a,h.previousSibling);
+    }
+    $('#dPrint').hidden=!ME.can('console.print');
+    if(!ME.can('console.edit')){$('#dSave').hidden=true;['fStatus','fNotes','fBal'].forEach(function(id){var e=$('#'+id);if(e)e.disabled=true})}
+    if(m.console===false){banner('You can sign in, but you don\u2019t have permission to see submissions. Ask a Financial Aid administrator to give you access.');return false}
+    return true;
+  }
+  api('/api/staff/me').then(function(j){
+    var ok=applyMe(j);
+    if(ok===false)return;
+    return api('/api/staff/forms').then(function(f){forms=f.forms||[];render()}).catch(function(){}).then(function(){load()});
+  }).catch(function(){$('#me').textContent='unknown';api('/api/staff/forms').then(function(f){forms=f.forms||[];render()}).catch(function(){}).then(function(){load()})});
+})();
+</script>
+</body>
+</html>

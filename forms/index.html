@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Forms | LWTC Financial Aid administration</title><meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../../assets/fav.png">
+<link rel="stylesheet" href="../../assets/brand-fonts.css"><link rel="stylesheet" href="../../assets/admin.css?v=20261030">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="bar" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<div class="wrap">
+  <header class="top"><a href="../../" aria-label="Financial Aid home"><span class="logo" role="img" aria-label="Lorenzo Walker Technical College"></span></a><div class="who">Signing in…</div></header>
+  <nav class="main" aria-label="Administration"></nav>
+  <main id="main">
+    <section id="listView">
+      <h1>Forms</h1>
+      <p class="sub">Every form students can fill in. Open one to change its questions, wording and requirements. Changes stay in a draft until someone with permission publishes them.</p>
+      <div class="toolbar"><button class="btn" id="newBtn" type="button">Create a new form</button></div>
+      <div class="tablewrap"><table><thead><tr><th>Form</th><th>Status</th><th>Version</th><th></th></tr></thead><tbody id="formRows"></tbody></table></div>
+    </section>
+
+    <section id="editView" hidden>
+      <p class="small"><a href="./">&larr; All forms</a></p>
+      <h1 id="edTitle">Form</h1>
+      <p class="sub" id="edSub"></p>
+      <div class="sticky">
+        <div class="toolbar" style="margin:0">
+          <button class="btn" id="saveBtn" type="button">Save draft</button>
+          <a class="btn alt" id="previewBtn" href="#" target="_blank" rel="noopener">Preview draft</a>
+          <button class="btn alt" id="discardBtn" type="button">Discard draft</button>
+          <span id="dirty" class="muted small" role="status" aria-live="polite"></span>
+        </div>
+      </div>
+      <div id="errs"></div>
+      <div class="tabs" role="tablist" aria-label="Form settings" id="tabs"></div>
+      <div id="panel"></div>
+    </section>
+  </main>
+</div>
+<script src="../../assets/admin.js?v=20261030"></script>
+<script>
+(function(){
+  var el=ADM.el,$=ADM.$;
+  var params=new URLSearchParams(location.search),FID=(params.get('id')||'').toLowerCase();
+  var S=null,CFG=null,dirty=false,readOnly=true,tab='general',KIND='generic';
+  var clone=function(x){return JSON.parse(JSON.stringify(x))};
+  var rnd=function(p){return p+Math.random().toString(36).slice(2,7)};
+  var BUBBLES=[['orange','Orange'],['green','Green'],['gold','Gold'],['blue','Blue']];
+  var FEATURE_TEXT={
+    documents:['Let students upload supporting documents','Needs document storage (R2) to be connected. Each document you add on the Documents tab is then offered.'],
+    qrCodes:['Show QR codes on funding options','Only options that have a QR address show one. At most 2 (the printed form has room for 2).'],
+    guardian:['Ask whether the student is under 18','Adds a parent / guardian signature when they are.'],
+    fafsa:['Ask the FAFSA question','Shown as the orange band at the top of the funding plan.'],
+    otherFunding:['Offer \u201cOther\u201d as a way of paying','Students describe it in their own words.'],
+    fundingRequired:['Require at least one way of paying (or a FAFSA answer)','Switch off if this form should not ask students to choose.']
+  };
+  var TABS_FIN=[['general','General & features'],['builtin','Built-in questions'],['options','Funding options'],['sources','Ways of paying'],['statements','Statements'],['questions','Extra questions'],['documents','Documents'],['publish','Publish & history']];
+  var TABS_GEN=[['general','General & features'],['builtin','Built-in questions'],['questions','Questions'],['documents','Documents'],['statements','Statements'],['publish','Publish & history']];
+  var PATH_TAB={title:'general',subtitle:'general',intro:'general',description:'general',availability:'general',features:'general',signatureText:'general',audience:'general',fields:'builtin',fundingOptions:'options',fundingSources:'sources',statements:'statements',questions:'questions',documents:'documents'};
+
+  /* ---------------- list ---------------- */
+  function loadList(){
+    return ADM.api('/api/admin/forms').then(function(j){
+      var tb=$('#formRows');tb.textContent='';
+      j.forms.forEach(function(f){
+        var tr=el('tr'),c1=el('td'),a=el('a',null,f.title);a.href='?id='+f.id;c1.appendChild(el('strong')).appendChild(a);c1.appendChild(el('div','muted small',f.kind==='financial'?'Built in \u00b7 '+f.id:'Created here \u00b7 '+f.id));tr.appendChild(c1);
+        var c2=el('td');
+        if(f.published||f.kind==='financial'){c2.appendChild(el('span','pill '+(f.enabled?'live':'off'),f.enabled?'Accepting submissions':'Switched off'))}else c2.appendChild(el('span','pill draft','Not published yet'));
+        if(f.hasDraft){c2.appendChild(document.createTextNode(' '));c2.appendChild(el('span','pill draft','Draft in progress'))}
+        if(f.published&&f.enabled&&!f.listed){c2.appendChild(document.createTextNode(' '));c2.appendChild(el('span','pill blue','Not on home page'))}
+        tr.appendChild(c2);
+        tr.appendChild(el('td',null,f.version?('v'+f.version+(f.updatedAt?' \u00b7 '+ADM.fmt(f.updatedAt):'')):'Built-in'));
+        var c4=el('td'),ed=el('a','btn alt small',ADM.can('forms.edit')?'Edit':'View');ed.href='?id='+f.id;c4.appendChild(ed);tr.appendChild(c4);
+        tb.appendChild(tr);
+      });
+      $('#newBtn').disabled=!ADM.can('forms.edit');
+    });
+  }
+  $('#newBtn').addEventListener('click',function(){
+    var body=el('div'),id=el('input');id.type='text';id.maxLength=40;id.placeholder='for example: va-certification';
+    var ti=el('input');ti.type='text';ti.maxLength=120;ti.placeholder='for example: VA Certification Request';
+    body.appendChild(ADM.field('Form title',ti,'What students see at the top of the form.'));
+    body.appendChild(ADM.field('Web address name',id,'Lowercase letters, numbers and dashes, 3 to 40 characters. It becomes part of the link and can\u2019t be changed later.'));
+    ti.addEventListener('input',function(){if(!id.dataset.touched)id.value=ti.value.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40)});id.addEventListener('input',function(){id.dataset.touched='1'});
+    var msg=el('div','banner bad');msg.hidden=true;body.appendChild(msg);
+    ADM.dialog('Create a new form',body,[{label:'Cancel',alt:true},{label:'Create',keep:true,onClick:function(d){
+      ADM.api('/api/admin/forms',{body:{id:id.value.trim(),title:ti.value.trim()}}).then(function(){location.href='?id='+id.value.trim()}).catch(function(e){msg.textContent=e.error==='exists'?'A form with that web address name already exists.':e.field==='id'?'Use 3 to 40 lowercase letters, numbers or dashes (and not a reserved word).':e.field==='title'?'Enter a title.':ADM.errText(e);msg.hidden=false});return false}}]);
+  });
+
+  /* ---------------- editor plumbing ---------------- */
+  function markDirty(){dirty=true;$('#dirty').textContent='Unsaved changes';$('#saveBtn').disabled=readOnly}
+  window.addEventListener('beforeunload',function(e){if(dirty){e.preventDefault();e.returnValue=''}});
+  function field(host,label,ctrl,hint,id){var w=ADM.field(label,ctrl,hint,id||rnd('f'));w.style.marginBottom='12px';host.appendChild(w);return w}
+  function text(host,label,get,set,o){
+    o=o||{};var c=el(o.area?'textarea':'input');if(!o.area)c.type=o.type||'text';if(o.max)c.maxLength=o.max;c.value=get()||'';
+    c.addEventListener('input',function(){set(c.value);markDirty()});return field(host,label,c,o.hint);
+  }
+  function check(host,label,hint,get,set,disabled){
+    var l=el('label','chk');var c=el('input');c.type='checkbox';c.checked=!!get();c.disabled=!!disabled;c.addEventListener('change',function(){set(c.checked);markDirty()});
+    l.appendChild(c);var t=el('span',null,label);if(hint)t.appendChild(el('small',null,hint));l.appendChild(t);host.appendChild(l);return c;
+  }
+  function select(host,label,opts,get,set,hint){
+    var c=el('select');opts.forEach(function(o){var op=el('option',null,o[1]);op.value=o[0];c.appendChild(op)});c.value=get();c.addEventListener('change',function(){set(c.value);markDirty()});return field(host,label,c,hint);
+  }
+  function lockIfReadOnly(host){if(!readOnly)return;ADM.$$('input,select,textarea,button',host).forEach(function(c){if(!c.dataset.keep)c.disabled=true})}
+  function showErrors(errors){
+    var box=$('#errs');box.textContent='';if(!errors||!errors.length)return;
+    var b=el('div','errs');b.setAttribute('role','alert');b.appendChild(el('strong',null,'Fix these before saving:'));var u=el('ul');
+    errors.forEach(function(e){var li=el('li'),t=PATH_TAB[String(e.path).split(/[.\[]/)[0]]||'general';var a=el('a',null,e.message);a.href='#';a.addEventListener('click',function(ev){ev.preventDefault();setTab(t)});li.appendChild(a);li.appendChild(el('span','muted small',' ('+e.path+')'));u.appendChild(li)});
+    b.appendChild(u);box.appendChild(b);b.scrollIntoView({block:'center'});
+  }
+
+  /* ---------------- generic list editor ---------------- */
+  function listEditor(host,arr,o){
+    host.textContent='';
+    function redraw(){listEditor(host,arr,o)}
+    arr.forEach(function(item,i){
+      var card=el('div','item'+(item.enabled===false?' off':''));
+      var head=el('div','head');head.appendChild(el('strong',null,o.title(item,i)));
+      var tools=el('div','tools');
+      function tb(label,aria,fn,dis){var b=el('button','btn alt small',label);b.type='button';b.setAttribute('aria-label',aria);b.disabled=dis;b.addEventListener('click',fn);tools.appendChild(b)}
+      tb('\u25B2','Move up',function(){arr.splice(i-1,0,arr.splice(i,1)[0]);markDirty();(o.after||redraw)();redraw()},i===0);
+      tb('\u25BC','Move down',function(){arr.splice(i+1,0,arr.splice(i,1)[0]);markDirty();(o.after||redraw)();redraw()},i===arr.length-1);
+      tb('Remove','Remove '+o.title(item,i),function(){if(!window.confirm('Remove this '+o.noun+'?'))return;arr.splice(i,1);markDirty();redraw()},false);
+      head.appendChild(tools);card.appendChild(head);
+      var grid=el('div');
+      o.fields(item,i,arr).forEach(function(f){f(grid,card,redraw)});
+      card.appendChild(grid);host.appendChild(card);
+    });
+    if(!arr.length)host.appendChild(el('p','muted',o.empty||('No '+o.noun+'s yet.')));
+    var add=el('button','btn alt','Add '+(/^[aeiou]/i.test(o.noun)?'an ':'a ')+o.noun);add.type='button';add.addEventListener('click',function(){arr.push(o.blank());markDirty();redraw()});host.appendChild(add);
+    lockIfReadOnly(host);
+  }
+  var fText=function(key,label,opts){return function(g){text(g,label,function(){return this[key]}.bind(opts.item),function(v){opts.item[key]=v},opts)}};
+
+  /* ---------------- tabs ---------------- */
+  function setTab(t){tab=t;drawTabs();drawPanel()}
+  function drawTabs(){
+    var host=$('#tabs');host.textContent='';var list=KIND==='financial'?TABS_FIN:TABS_GEN;
+    list.forEach(function(t,i){
+      var b=el('button','tab',t[1]);b.type='button';b.setAttribute('role','tab');b.setAttribute('aria-selected',String(tab===t[0]));
+      var n=count(t[0]);if(n!=null){b.appendChild(el('span','n',String(n)))}
+      b.addEventListener('click',function(){setTab(t[0])});
+      b.addEventListener('keydown',function(e){var d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(!d)return;e.preventDefault();var x=list[(i+d+list.length)%list.length];setTab(x[0]);var bs=ADM.$$('#tabs .tab');bs[(i+d+list.length)%list.length].focus()});
+      host.appendChild(b);
+    });
+  }
+  function count(t){
+    if(t==='options')return CFG.fundingOptions.filter(function(x){return x.enabled!==false}).length;
+    if(t==='sources')return CFG.fundingSources.filter(function(x){return x.enabled!==false}).length;
+    if(t==='statements')return CFG.statements.filter(function(x){return x.enabled!==false}).length;
+    if(t==='questions')return CFG.questions.length;
+    if(t==='documents')return CFG.documents.length;
+    return null;
+  }
+  function drawPanel(){
+    var p=$('#panel');p.textContent='';p.setAttribute('role','tabpanel');
+    ({general:pGeneral,builtin:pBuiltin,options:pOptions,sources:pSources,statements:pStatements,questions:pQuestions,documents:pDocuments,publish:pPublish})[tab](p);
+    lockIfReadOnly(p);
+  }
+
+  /* ---------------- General ---------------- */
+  function pGeneral(p){
+    p.appendChild(el('h2',null,'The form'));
+    text(p,'Title',function(){return CFG.title},function(v){CFG.title=v;$('#edTitle').textContent=v||FID},{max:120,hint:'Shown at the top of the form and in the staff console.'});
+    if(KIND==='financial')text(p,'Subtitle for the printed form',function(){return CFG.subtitle},function(v){CFG.subtitle=v},{max:120,hint:'The line under the title on the paper form.'});
+    text(p,'Introduction',function(){return CFG.intro},function(v){CFG.intro=v},{area:true,max:1000,hint:'A sentence or two under the title. Leave empty to show nothing.'});
+    check(p,'Accepting submissions','Switch off to close the form. Students see your closed message and nothing can be submitted.',function(){return CFG.enabled!==false},function(v){CFG.enabled=v});
+    p.appendChild(el('h2',null,'On the home page'));
+    check(p,'Show this form on the Financial Aid home page','A form that isn\u2019t listed still works for anyone with its link.',function(){return CFG.listed===true},function(v){CFG.listed=v});
+    text(p,'Short description',function(){return CFG.description},function(v){CFG.description=v},{area:true,max:300});
+    var g=el('div','grid3');p.appendChild(g);
+    text(g,'Who it is for',function(){return CFG.audience},function(v){CFG.audience=v},{max:80});
+    text(g,'Minutes to complete',function(){return CFG.minutes},function(v){CFG.minutes=Number(v)||5},{type:'number'});
+    select(g,'Icon colour',BUBBLES,function(){return CFG.bubble},function(v){CFG.bubble=v});
+    p.appendChild(el('h2',null,'Open and close dates'));
+    p.appendChild(el('p','hint','Optional. Dates are Eastern time. The closing date itself is still open.'));
+    var d=el('div','grid2');p.appendChild(d);
+    text(d,'Opens on',function(){return CFG.availability.opens},function(v){CFG.availability.opens=v},{type:'date'});
+    text(d,'Closes after',function(){return CFG.availability.closes},function(v){CFG.availability.closes=v},{type:'date'});
+    text(p,'Message when closed',function(){return CFG.availability.closedMessage},function(v){CFG.availability.closedMessage=v},{area:true,max:400,hint:'Leave empty to use the standard message with the office phone number.'});
+    p.appendChild(el('h2',null,'Features'));
+    Object.keys(CFG.features).forEach(function(k){
+      var t=FEATURE_TEXT[k]||[k,''];
+      var dis=k==='documents'&&!S.documentsAvailable;
+      check(p,t[0],dis?'Document storage (R2) isn\u2019t connected yet, so uploads stay off even if this is ticked.':t[1],function(){return CFG.features[k]},function(v){CFG.features[k]=v},false);
+    });
+    p.appendChild(el('h2',null,'Signature'));
+    text(p,'Statement above the signature',function(){return CFG.signatureText},function(v){CFG.signatureText=v},{area:true,max:400});
+  }
+
+  /* ---------------- Built-in questions ---------------- */
+  function pBuiltin(p){
+    p.appendChild(el('p','sub','The questions every student answers. You can change the wording and add help text under each. Some are required by the system and can\u2019t be made optional.'));
+    var tw=el('div','tablewrap'),t=el('table');var h=el('thead'),hr=el('tr');['Question','Wording','Help text shown under it','Required','Asked'].forEach(function(x){hr.appendChild(el('th',null,x))});h.appendChild(hr);t.appendChild(h);
+    var tb=el('tbody');
+    Object.keys(S.rules).forEach(function(k){
+      var rule=S.rules[k],f=CFG.fields[k],tr=el('tr');
+      tr.appendChild(el('td','small',k.replace(/([A-Z])/g,' $1').replace(/^./,function(c){return c.toUpperCase()})));
+      var c1=el('td'),i1=el('input');i1.type='text';i1.maxLength=80;i1.value=f.label;i1.setAttribute('aria-label','Wording for '+k);i1.addEventListener('input',function(){f.label=i1.value;markDirty()});c1.appendChild(i1);tr.appendChild(c1);
+      var c2=el('td'),i2=el('input');i2.type='text';i2.maxLength=300;i2.value=f.help;i2.setAttribute('aria-label','Help text for '+k);i2.addEventListener('input',function(){f.help=i2.value;markDirty()});c2.appendChild(i2);tr.appendChild(c2);
+      var c3=el('td');
+      if(rule.required==='locked')c3.appendChild(el('span','muted small','Always'));
+      else{var cb=el('input');cb.type='checkbox';cb.checked=f.required;cb.setAttribute('aria-label',k+' is required');cb.addEventListener('change',function(){f.required=cb.checked;markDirty()});c3.appendChild(cb)}
+      tr.appendChild(c3);
+      var c4=el('td');
+      if(rule.enabled){var cb2=el('input');cb2.type='checkbox';cb2.checked=f.enabled!==false;cb2.setAttribute('aria-label',k+' is asked');cb2.addEventListener('change',function(){f.enabled=cb2.checked;markDirty()});c4.appendChild(cb2)}else c4.appendChild(el('span','muted small','Always'));
+      tr.appendChild(c4);tb.appendChild(tr);
+    });
+    t.appendChild(tb);tw.appendChild(t);p.appendChild(tw);
+    if(KIND==='financial')p.appendChild(el('p','hint','Program, term, section and the dates are chosen from the course schedule, so their rules are fixed.'));
+  }
+
+  /* ---------------- Funding options (cards) ---------------- */
+  function pOptions(p){
+    p.appendChild(el('p','sub','The funding options students read about (the lettered cards). Text can use **bold**, [link text](https://address) and lines starting with \u201c- \u201d for bullets. A QR address shows a scannable code beside the card on the web page and the paper form.'));
+    var warn=el('div');p.appendChild(warn);
+    function check2(){
+      warn.textContent='';var on=CFG.fundingOptions.filter(function(o){return o.enabled!==false});
+      if(on.length>8)warn.appendChild(el('div','banner warn','More than 8 options are switched on. The paper form has room for 8.'));
+      if(CFG.features.qrCodes&&on.filter(function(o){return o.qrUrl}).length>2)warn.appendChild(el('div','banner warn','More than 2 options have a QR address. The paper form has room for 2.'));
+    }
+    var host=el('div');p.appendChild(host);
+    listEditor(host,CFG.fundingOptions,{noun:'funding option',after:check2,blank:function(){return {id:rnd('o'),enabled:true,title:'',body:'',qrUrl:''}},
+      title:function(o,i){return String.fromCharCode(65+i)+'. '+(o.title||'New option')+(o.enabled===false?' (hidden)':'')},
+      fields:function(o){return [
+        function(g){check(g,'Show this option',null,function(){return o.enabled!==false},function(v){o.enabled=v;check2()})},
+        function(g){text(g,'Title',function(){return o.title},function(v){o.title=v},{max:100})},
+        function(g){text(g,'Text',function(){return o.body},function(v){o.body=v},{area:true,max:1200,hint:'One paragraph per line.'})},
+        function(g){text(g,'QR code address (optional)',function(){return o.qrUrl},function(v){o.qrUrl=v;check2()},{max:500,hint:'A full web address starting with https://. Students scan it to open that page.'})}
+      ]}});
+    check2();
+  }
+
+  /* ---------------- Ways of paying ---------------- */
+  function pSources(p){
+    p.appendChild(el('p','sub','The checkboxes in the funding plan. They list down the left column, then the right. Students can tick any that apply. Renaming one changes the text recorded for new submissions.'));
+    var host=el('div');p.appendChild(host);
+    listEditor(host,CFG.fundingSources,{noun:'way of paying',blank:function(){return {label:'',enabled:true}},
+      title:function(s,i){return (s.label||'New way of paying')+(s.enabled===false?' (hidden)':'')},
+      fields:function(s){return [function(g){check(g,'Offer this way of paying',null,function(){return s.enabled!==false},function(v){s.enabled=v})},function(g){text(g,'Name',function(){return s.label},function(v){s.label=v},{max:80})}]}});
+  }
+
+  /* ---------------- Statements ---------------- */
+  function pStatements(p){
+    p.appendChild(el('p','sub','Each statement is initialled by the student. The wording they agreed to is saved with their submission, word for word, so editing a statement later never changes what earlier students agreed to. At most 6 can be switched on.'));
+    var warn=el('div');p.appendChild(warn);
+    function chk(){warn.textContent='';if(CFG.statements.filter(function(s){return s.enabled!==false}).length>6)warn.appendChild(el('div','banner warn','More than 6 statements are switched on. The printed form has room for 6.'))}
+    var host=el('div');p.appendChild(host);
+    listEditor(host,CFG.statements,{noun:'statement',after:chk,blank:function(){return {id:rnd('s'),enabled:true,text:''}},empty:'No statements. Students will only sign.',
+      title:function(s,i){return 'Statement '+(i+1)+(s.enabled===false?' (hidden)':'')},
+      fields:function(s){return [function(g){check(g,'Show this statement',null,function(){return s.enabled!==false},function(v){s.enabled=v;chk()})},function(g){text(g,'Text',function(){return s.text},function(v){s.text=v},{area:true,max:700,hint:'Use **double asterisks** around the words to show in bold.'})}]}});
+    chk();
+  }
+
+  /* ---------------- Questions ---------------- */
+  var QT=[['text','Short text'],['longtext','Long text'],['number','Number'],['date','Date'],['select','Drop-down list'],['radio','Choose one (buttons)'],['checkboxes','Choose any (tick boxes)'],['yesno','Yes / No']];
+  function showWhenControl(item,idx,earlier){
+    return function(g,card,redraw){
+      var sw=item.showWhen,w=el('div');w.style.marginBottom='12px';w.appendChild(el('label',null,'When is it shown?'));
+      var kinds=[['','Always']];if(KIND==='financial')kinds.push(['source','When a way of paying is ticked']);
+      var cand=earlier.filter(function(q){return ['select','radio','yesno'].indexOf(q.type)>-1});if(cand.length)kinds.push(['answer','When an earlier question has a certain answer']);
+      var s=el('select');kinds.forEach(function(k){var o=el('option',null,k[1]);o.value=k[0];s.appendChild(o)});s.value=sw?sw.type:'';w.appendChild(s);
+      s.addEventListener('change',function(){
+        if(!s.value)item.showWhen=null;
+        else if(s.value==='source'){var f=CFG.fundingSources.filter(function(x){return x.enabled!==false})[0];item.showWhen={type:'source',value:f?f.label:'Other'}}
+        else{item.showWhen={type:'answer',question:cand[0].id,equals:cand[0].type==='yesno'?'Yes':(cand[0].options[0]||'')}}
+        markDirty();redraw();
+      });
+      if(sw&&sw.type==='source'){
+        var ss=el('select');ss.style.marginTop='6px';var labels=CFG.fundingSources.filter(function(x){return x.enabled!==false}).map(function(x){return x.label});if(CFG.features.otherFunding!==false)labels.push('Other');
+        if(labels.indexOf(sw.value)<0)labels.push(sw.value);
+        labels.forEach(function(l){var o=el('option',null,l);o.value=l;ss.appendChild(o)});ss.value=sw.value;ss.addEventListener('change',function(){sw.value=ss.value;markDirty()});w.appendChild(ss);
+      }
+      if(sw&&sw.type==='answer'){
+        var qs=el('select');qs.style.marginTop='6px';cand.forEach(function(q){var o=el('option',null,q.label||q.id);o.value=q.id;qs.appendChild(o)});
+        if(!cand.some(function(q){return q.id===sw.question}))qs.insertBefore(el('option',null,'(question removed)'),qs.firstChild);qs.value=sw.question;
+        var es=el('select');es.style.marginTop='6px';
+        function fillEq(){es.textContent='';var q=cand.filter(function(x){return x.id===sw.question})[0];var opts=q?(q.type==='yesno'?['Yes','No']:q.options):[];opts.forEach(function(x){var o=el('option',null,x);o.value=x;es.appendChild(o)});if(opts.indexOf(sw.equals)<0&&opts.length)sw.equals=opts[0];es.value=sw.equals}
+        qs.addEventListener('change',function(){sw.question=qs.value;fillEq();markDirty()});es.addEventListener('change',function(){sw.equals=es.value;markDirty()});
+        fillEq();w.appendChild(qs);w.appendChild(el('span','hint','has the answer'));w.appendChild(es);
+      }
+      g.appendChild(w);
+    };
+  }
+  function pQuestions(p){
+    p.appendChild(el('p','sub',KIND==='financial'?'Extra questions added after the funding plan, under \u201cAdditional information\u201d. Answers are saved with the submission and shown to staff.':'The questions this form asks, in order. Answers are saved with the submission and shown to staff.'));
+    var host=el('div');p.appendChild(host);
+    listEditor(host,CFG.questions,{noun:'question',blank:function(){return {id:rnd('q'),label:'',type:'text',required:false,help:'',options:[],section:'Additional information',showWhen:null}},
+      title:function(q,i){return (i+1)+'. '+(q.label||'New question')},
+      fields:function(q,i,arr){return [
+        function(g){text(g,'Question',function(){return q.label},function(v){q.label=v},{max:200})},
+        function(g,card,redraw){select(g,'Answer type',QT,function(){return q.type},function(v){q.type=v;if(['select','radio','checkboxes'].indexOf(v)>-1&&!(q.options&&q.options.length))q.options=['',''].map(function(_,n){return 'Choice '+(n+1)});redraw()})},
+        function(g,card,redraw){if(['select','radio','checkboxes'].indexOf(q.type)<0)return;var c=el('textarea');c.value=(q.options||[]).join('\n');c.addEventListener('input',function(){q.options=c.value.split('\n').map(function(x){return x.trim()}).filter(Boolean);markDirty()});c.addEventListener('blur',function(){redraw()});field(g,'Choices',c,'One choice per line.')},
+        function(g){check(g,'Required','Students must answer it (if it is shown).',function(){return q.required},function(v){q.required=v})},
+        function(g){text(g,'Help text (optional)',function(){return q.help},function(v){q.help=v},{max:300})},
+        function(g){text(g,'Section heading',function(){return q.section},function(v){q.section=v},{max:60,hint:'Questions with the same heading are grouped.'})},
+        showWhenControl(q,i,arr.slice(0,i))
+      ]}});
+  }
+
+  /* ---------------- Documents ---------------- */
+  function pDocuments(p){
+    if(!S.documentsAvailable)p.appendChild(el('div','banner warn','Document storage (R2) isn\u2019t connected, so students can\u2019t upload yet. You can set everything up now; it starts working once storage is connected (see the guide).'));
+    if(!CFG.features.documents)p.appendChild(el('div','banner info','Uploads are switched off for this form (General & features). The documents below won\u2019t be offered until you switch them on.'));
+    p.appendChild(el('p','sub','The documents students can upload. A document can appear only when it is relevant, for example the DD-214 only when they tick VA Education Benefits. If you don\u2019t make one required, students can also bring it to the office.'));
+    var host=el('div');p.appendChild(host);
+    listEditor(host,CFG.documents,{noun:'document',blank:function(){return {id:rnd('d'),label:'',help:'',required:false,max:1,showWhen:null}},
+      title:function(d,i){return d.label||'New document'},
+      fields:function(d,i){return [
+        function(g){text(g,'Document name',function(){return d.label},function(v){d.label=v},{max:160})},
+        function(g){text(g,'Help text (optional)',function(){return d.help},function(v){d.help=v},{max:300})},
+        function(g){check(g,'Required','Students must upload it (when it is shown).',function(){return d.required},function(v){d.required=v})},
+        function(g){text(g,'Most files allowed',function(){return d.max},function(v){d.max=Number(v)||1},{type:'number',hint:'1 to 5.'})},
+        showWhenControl(d,i,CFG.questions)
+      ]}});
+  }
+
+  /* ---------------- Publish & history ---------------- */
+  function summarize(a,b){
+    var out=[],j=JSON.stringify;if(!a)return ['First version'];
+    ['title','subtitle','intro','description','signatureText','enabled','listed'].forEach(function(k){if(j(a[k])!==j(b[k]))out.push(k+' changed')});
+    if(j(a.availability)!==j(b.availability))out.push('open/close dates changed');if(j(a.features)!==j(b.features))out.push('feature switches changed');if(j(a.fields)!==j(b.fields))out.push('built-in questions changed');
+    [['fundingOptions','funding options'],['fundingSources','ways of paying'],['statements','statements'],['questions','extra questions'],['documents','document requirements']].forEach(function(x){if(j(a[x[0]])!==j(b[x[0]]))out.push(x[1]+' changed ('+(a[x[0]]||[]).length+' \u2192 '+(b[x[0]]||[]).length+')')});
+    return out;
+  }
+  function pPublish(p){
+    var cur=S.current;
+    p.appendChild(el('h2',null,'Live version'));
+    var c=el('div','card');
+    if(cur&&cur.version>0){c.appendChild(el('p',null,'Version '+cur.version+', published '+ADM.fmt(cur.publishedAt)+' by '+cur.publishedBy+'.'+(cur.note?' \u201c'+cur.note+'\u201d':'')))}
+    else c.appendChild(el('p',null,KIND==='financial'?'Students see the built-in version of this form (nothing has been published from here yet).':'Not published yet. Students can\u2019t see this form.'));
+    p.appendChild(c);
+    p.appendChild(el('h2',null,'Publish your changes'));
+    var changes=summarize(cur?cur.config:null,CFG),box=el('div','card');
+    if(S.draft&&S.draft.savedBy)box.appendChild(el('p','muted small','Draft last saved by '+S.draft.savedBy+' on '+ADM.fmt(S.draft.savedAt)+'.'));
+    box.appendChild(el('h3',null,'What will change for students'));
+    var u=el('ul');(changes.length?changes:['Nothing: this is the same as the live version.']).forEach(function(x){u.appendChild(el('li',null,x))});box.appendChild(u);
+    var note=el('input');note.type='text';note.maxLength=300;note.placeholder='For example: added the VA question';box.appendChild(ADM.field('Note for the history (optional)',note));
+    var pb=el('button','btn','Publish now');pb.type='button';pb.disabled=!ADM.can('forms.publish')||readOnly;pb.dataset.keep='1';
+    if(!ADM.can('forms.publish'))box.appendChild(el('p','hint','You can save drafts but publishing needs the \u201cPublish forms\u201d permission.'));
+    pb.addEventListener('click',function(){
+      if(!window.confirm('Publish this version? Students will see it straight away.'))return;
+      saveDraft().then(function(ok){if(!ok)return;return ADM.api('/api/admin/forms/'+FID+'/publish',{body:{note:note.value}}).then(function(j){ADM.toast('Published as version '+j.version+'.');return load(FID)}).catch(function(e){ADM.toast(ADM.errText(e),true)})});
+    });
+    box.appendChild(pb);p.appendChild(box);
+    p.appendChild(el('h2',null,'History'));
+    var tw=el('div','tablewrap'),t=el('table');var h=el('thead'),hr=el('tr');['Version','Published','By','What changed',''].forEach(function(x){hr.appendChild(el('th',null,x))});h.appendChild(hr);t.appendChild(h);
+    var tb=el('tbody');
+    (S.history||[]).forEach(function(x){
+      var tr=el('tr');tr.appendChild(el('td',null,'v'+x.version));tr.appendChild(el('td','small',ADM.fmt(x.publishedAt)));tr.appendChild(el('td','small',x.publishedBy));
+      var d=el('td','small',(x.summary||[]).join('; ')+(x.note?' \u2014 '+x.note:''));tr.appendChild(d);
+      var a=el('td');if(cur&&x.version<cur.version&&ADM.can('forms.publish')&&!readOnly&&x.action!=='x'){var rb=el('button','btn alt small','Restore');rb.type='button';rb.dataset.keep='1';rb.setAttribute('aria-label','Restore version '+x.version);
+        rb.addEventListener('click',function(){if(dirty&&!window.confirm('You have unsaved changes. Restoring publishes an older version right away and keeps your draft. Continue?'))return;if(!window.confirm('Restore version '+x.version+'? Students will see it straight away. (This creates a new version; nothing is erased.)'))return;
+          ADM.api('/api/admin/forms/'+FID+'/rollback',{body:{version:x.version}}).then(function(j){ADM.toast('Restored as version '+j.version+'.');dirty=false;return load(FID)}).catch(function(e){ADM.toast(e&&e.error==='not_found'?'That version is no longer stored.':ADM.errText(e),true)})});a.appendChild(rb)}
+      tr.appendChild(a);tb.appendChild(tr);
+    });
+    if(!(S.history||[]).length){var tr=el('tr'),td=el('td','muted','No published versions yet.');td.colSpan=5;tr.appendChild(td);tb.appendChild(tr)}
+    t.appendChild(tb);tw.appendChild(t);p.appendChild(tw);
+  }
+
+  /* ---------------- load / save ---------------- */
+  function saveDraft(){
+    showErrors(null);
+    if(!ADM.can('forms.edit'))return Promise.resolve(true);
+    if(!dirty&&S.draft)return Promise.resolve(true);
+    $('#saveBtn').disabled=true;$('#dirty').textContent='Saving\u2026';
+    return ADM.api('/api/admin/forms/'+FID+'/draft',{body:{config:CFG}}).then(function(j){
+      CFG=j.config;dirty=false;S.draft={config:CFG,savedAt:new Date().toISOString(),savedBy:ADM.me.email,baseVersion:S.current?S.current.version:0};
+      $('#dirty').textContent='Draft saved '+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});updateBar();return true;
+    }).catch(function(e){
+      $('#dirty').textContent='Not saved';
+      if(e&&e.error==='invalid_config')showErrors(e.errors);else ADM.toast(ADM.errText(e),true);return false;
+    }).then(function(ok){$('#saveBtn').disabled=readOnly;return ok});
+  }
+  function updateBar(){
+    $('#discardBtn').hidden=!S.draft||readOnly;
+    $('#previewBtn').href=(FID==='financial-responsibility'?'../../forms/financial-responsibility/?preview=1':'../../forms/view/?f='+FID+'&preview=1');
+    var cur=S.current;$('#edSub').textContent=(cur&&cur.version>0?'Live: version '+cur.version+'. ':KIND==='financial'?'Live: the built-in version. ':'Not published yet. ')+(S.draft?'A draft is in progress.':'No draft: you are looking at the live version.')+(readOnly?' You can look but not change (you need the \u201cEdit form drafts\u201d permission).':'');
+    drawTabs();
+  }
+  $('#saveBtn').addEventListener('click',function(){saveDraft().then(function(ok){if(ok)ADM.toast('Draft saved. Students don\u2019t see it until it is published.')})});
+  $('#previewBtn').addEventListener('click',function(e){
+    if(!dirty)return;e.preventDefault();var href=this.href;
+    saveDraft().then(function(ok){if(ok)window.open(href,'_blank','noopener')});
+  });
+  $('#discardBtn').addEventListener('click',function(){
+    if(!window.confirm('Discard the draft? Your unsaved and saved draft changes will be lost, and you will see the live version again.'))return;
+    ADM.api('/api/admin/forms/'+FID+'/discard',{body:{}}).then(function(){dirty=false;ADM.toast('Draft discarded.');return load(FID)}).catch(function(e){ADM.toast(ADM.errText(e),true)});
+  });
+  function load(id){
+    return ADM.api('/api/admin/forms/'+id).then(function(j){
+      S=j;KIND=j.kind;readOnly=!ADM.can('forms.edit');
+      var base=j.draft?j.draft.config:(j.current?j.current.config:null);
+      CFG=clone(base);dirty=false;$('#listView').hidden=true;$('#editView').hidden=false;
+      $('#edTitle').textContent=CFG.title||id;document.title=(CFG.title||id)+' | Forms | LWTC Financial Aid administration';
+      $('#dirty').textContent=j.draft?'Editing the saved draft':'';$('#saveBtn').disabled=true;
+      if(tab==='builtin'&&false)tab='general';
+      updateBar();drawPanel();
+    });
+  }
+  ADM.init({page:'forms',need:null}).then(function(){
+    if(!(ADM.can('forms.view')||ADM.can('forms.edit')||ADM.can('forms.publish'))){var m=$('main');m.textContent='';m.appendChild(el('h1',null,'No access to this area'));m.appendChild(el('p','sub','Your role doesn\u2019t include the Form Manager.'));return}
+    if(FID)return load(FID).catch(function(e){var m=$('main');m.textContent='';m.appendChild(el('h1',null,'Form not found'));var a=el('a','btn alt','Back to all forms');a.href='./';m.appendChild(a)});
+    return loadList();
+  }).catch(function(e){if(e&&!e.auth&&!e.forbidden)ADM.toast(ADM.errText(e),true)});
+})();
+</script>
+</body>
+</html>

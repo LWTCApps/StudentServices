@@ -1,0 +1,226 @@
+/* LWTC form pages: shared layout and brand styles (Financial Responsibility form and generic forms). */
+:root{
+  --ink:#231F20;
+  --paper:#FFFFFF;
+  --surface:#F7F5F4;
+  --line:#DDD8D6;
+  --muted:#5D5557;
+  --focus:#3A7B96;
+  --orange-a:#F58220; --orange-b:#F05A2B;
+  --green-a:#BDD14F;  --green-b:#6EA141;
+  --gold-a:#FFC45A;   --gold-b:#F9A03C;
+  --blue-a:#54ADC3;   --blue-b:#3A7B96;
+  --link:#2B6580;
+  --error:#B3261E;
+  --on-hue:#231F20;
+  --display:"Alfa Slab One","Clarendon Black",Rockwell,"Roboto Slab",Georgia,serif;
+  --text:"Source Sans 3","Source Sans Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --s1:4px;--s2:8px;--s3:16px;--s4:24px;--s5:48px;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{background:#fff;scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100%;background:var(--paper);color:var(--ink);font:400 17px/1.55 var(--text);-webkit-text-size-adjust:100%}
+a{color:var(--link);text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+.wrap{max-width:960px;margin:0 auto;padding:0 var(--s4)}
+
+/* Brand bubble: circle with one square corner */
+.bubble{display:inline-block;border-radius:50%;border-bottom-left-radius:0;flex:none}
+.bubble.br{border-radius:50%;border-top-left-radius:0}
+.bubble.tr{border-radius:50%;border-bottom-right-radius:0}
+.bubble.tl{border-radius:50%;border-bottom-right-radius:50%;border-top-right-radius:0}
+.h-orange{background:linear-gradient(90deg,var(--orange-a),var(--orange-b))}
+.h-green{background:linear-gradient(90deg,var(--green-a),var(--green-b))}
+.h-gold{background:linear-gradient(90deg,var(--gold-a),var(--gold-b))}
+.h-blue{background:linear-gradient(90deg,var(--blue-a),var(--blue-b))}
+
+/* Brand assets */
+.logo{display:block;width:clamp(190px,30vw,270px);aspect-ratio:720/309;background:center/contain no-repeat}
+.logo-light{background-image:url(lwtc-logo.png)}
+.cluster-img{background:center/contain no-repeat url(lwtc-icon-cluster.png);aspect-ratio:360/351}
+.notice{border-radius:12px;border:2px solid var(--line);background:var(--surface);padding:var(--s3) var(--s4);margin:0 0 var(--s4);max-width:70ch}
+.notice.ok{border-color:#6EA141}
+.notice.warn{border-color:#F9A03C}
+.notice strong{display:block;margin-bottom:2px}
+.ref{font:400 26px/1.2 var(--display);letter-spacing:.04em;margin:var(--s2) 0}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.status{min-height:1.4em;margin-top:var(--s2);font-weight:600;color:var(--muted)}
+.btn[disabled]{opacity:.6;cursor:progress}
+.prog-icons{display:flex;gap:var(--s2);align-items:flex-end}
+.prog-icons img{height:30px;width:auto;display:block}
+
+/* Header */
+.top{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);padding:var(--s3) 0;flex-wrap:wrap}
+.mark{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)}
+.cluster{display:grid;grid-template-columns:repeat(2,18px);gap:3px}
+.cluster i{width:18px;height:18px}
+.mark-name{font:400 20px/1.05 var(--display);letter-spacing:.01em}
+.mark-name small{display:block;font:600 12px/1.3 var(--text);letter-spacing:.02em;color:var(--muted);margin-top:3px}
+.office{font-size:15px;color:var(--muted);text-align:right;line-height:1.4}
+.office strong{color:var(--ink)}
+.office a{color:inherit}
+
+.crumbs{display:flex;gap:8px;align-items:center;font-size:15px;font-weight:600;margin:0 0 var(--s3);color:var(--muted)}
+.crumbs a{color:var(--link)}
+/* Hero */
+.hero{padding:var(--s5) 0 var(--s4);position:relative}
+.hero h1{font:400 clamp(34px,6.4vw,64px)/1.04 var(--display);margin:0 0 var(--s3);max-width:16ch;letter-spacing:-.005em}
+.hero p.lede{font-size:19px;max-width:56ch;margin:0;color:var(--muted)}
+.hero-art{position:absolute;right:0;top:var(--s3);display:none}
+@media(min-width:820px){
+  .hero-art{display:block;width:250px}
+}
+
+/* Deadline band */
+.deadline{border-radius:12px;background:linear-gradient(90deg,var(--orange-a),var(--orange-b));color:var(--on-hue);padding:var(--s4);margin:var(--s4) 0 var(--s4)}
+.deadline h2{margin:0 0 var(--s2);font:400 24px/1.15 var(--display)}
+.deadline p{margin:0 0 var(--s3);max-width:62ch;font-size:18px}
+.deadline .row{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3)}
+@media(max-width:600px){.deadline .row{grid-template-columns:1fr}}
+.deadline label{font-weight:700;font-size:15px}
+.deadline input,.deadline select{background-color:#fff;color:#231F20}
+
+/* Step nav */
+.steps{display:flex;gap:var(--s2);flex-wrap:wrap;margin:0 0 var(--s5);padding:0;list-style:none}
+.steps a{display:flex;align-items:center;gap:var(--s2);padding:var(--s2) var(--s3) var(--s2) var(--s2);border:2px solid var(--line);border-radius:48px;text-decoration:none;color:var(--ink);font-weight:600;font-size:15px;background:var(--paper)}
+.steps a .dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:13px;line-height:1}
+.steps a[data-done="true"]{border-color:#6EA141}
+.steps a[data-done="true"] .dot{background:linear-gradient(90deg,var(--green-a),var(--green-b));border-color:transparent;color:#231F20}
+.steps a[data-done="true"] .dot::after{content:"\2713";font-weight:700}
+
+/* Sections */
+section.panel{margin:0 0 var(--s5)}
+.panel-head{display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s3)}
+.panel-head .bubble{width:52px;height:52px;display:grid;place-items:center;font:400 24px/1 var(--display);color:var(--on-hue)}
+.panel-head h2{font:400 clamp(24px,3.6vw,32px)/1.1 var(--display);margin:0}
+.panel-intro{max-width:62ch;margin:0 0 var(--s4);color:var(--muted)}
+
+/* Fields */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3) var(--s4)}
+@media(max-width:640px){.grid{grid-template-columns:1fr}}
+.field label,.lbl{display:block;font-weight:700;font-size:15px;margin-bottom:var(--s1)}
+.req{color:var(--error);margin-left:2px}
+input[type=text],input[type=tel],input[type=email],input[type=date]{width:100%;font:inherit;color:var(--ink);background:var(--paper);border:2px solid var(--line);border-radius:4px;padding:11px 12px;min-height:46px}
+select{width:100%;font:inherit;color:var(--ink);background-color:var(--paper);border:2px solid var(--line);border-radius:4px;padding:11px 12px;min-height:46px;cursor:pointer}
+select:invalid{color:var(--muted)}
+input[readonly]{background:var(--surface);cursor:default}
+.deadline input[readonly],.deadline select:disabled{background:#fff;color:#231F20;opacity:1;cursor:default}
+.deadline .basis{margin:var(--s2) 0 0;font-weight:600;font-size:15px}
+.notice-box{border:2px solid #F9A03C;background:#FFF6E8;border-radius:12px;padding:var(--s3);margin:0 0 var(--s3);font-weight:600}
+.extra{margin-top:var(--s3);padding-top:var(--s3);border-top:2px dashed var(--line)}
+.extra-row{margin-bottom:var(--s3);padding:var(--s3);background:var(--surface);border-radius:12px}
+.extra-row h3{margin:0 0 var(--s2);font:700 17px/1.2 var(--text)}
+.extra-row .remove{margin-top:var(--s2)}
+.btn.small{padding:10px 18px;min-height:40px;font-size:15px}
+select option{color:var(--ink)}
+input[type=text]:hover,input[type=tel]:hover,input[type=email]:hover,input[type=date]:hover,select:hover{border-color:var(--muted)}
+input.invalid,select.invalid{border-color:var(--error)}
+.err{display:none;color:var(--error);font-size:14px;font-weight:600;margin-top:var(--s1)}
+.field.has-error .err,.has-error>.err{display:block}
+.hint{font-size:14px;color:var(--muted);margin-top:var(--s1)}
+
+/* Funding option cards */
+.options{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s3)}
+@media(max-width:720px){.options{grid-template-columns:1fr}}
+.opt{border:2px solid var(--line);border-radius:12px;padding:var(--s3);display:grid;grid-template-columns:48px 1fr;gap:var(--s3);background:var(--paper)}
+.opt .bubble{width:48px;height:48px;display:grid;place-items:center;font:400 20px/1 var(--display);color:var(--on-hue)}
+.opt h3{margin:0 0 var(--s1);font-size:18px;line-height:1.25;font-weight:700}
+.opt p{margin:0 0 var(--s2);font-size:16px}
+.opt ul{margin:var(--s1) 0 var(--s2);padding-left:20px;font-size:15px}
+.opt .go{font-weight:700;font-size:15px}
+.chip{display:inline-block;background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:1px 8px;font-weight:700;font-size:14px}
+
+/* Funding plan */
+.plan{background:var(--surface);border-radius:12px;padding:var(--s4)}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+legend{padding:0;font-weight:700;font-size:15px;margin-bottom:var(--s2)}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2) var(--s4)}
+@media(max-width:640px){.checks{grid-template-columns:1fr}}
+.chk{display:flex;align-items:flex-start;gap:12px;padding:10px 12px;border-radius:4px;cursor:pointer;min-height:44px}
+.chk:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.chk input{appearance:none;-webkit-appearance:none;width:24px;height:24px;margin:0;flex:none;border:2px solid var(--ink);border-radius:4px;background:var(--paper);display:grid;place-items:center;cursor:pointer;margin-top:1px}
+.chk input[type=radio]{border-radius:50%}
+.chk input:checked{background:linear-gradient(90deg,var(--green-a),var(--green-b));border-color:#4E7A2F}
+.chk input:checked::after{content:"\2713";color:#231F20;font-weight:700;font-size:16px;line-height:1}
+.chk span{font-weight:600}
+/* The FAFSA question: larger, bold type on a brand-orange gradient field (the other choices are unchanged) */
+.fafsa{grid-column:1/-1;background:linear-gradient(90deg,var(--orange-a),var(--orange-b));border-radius:12px;padding:var(--s3) var(--s4);margin:0 0 var(--s3)}
+.fafsa .fl{margin:0 0 var(--s1);font:700 26px/1.2 var(--text);color:var(--ink)}
+.fafsa .sub{display:flex;gap:0 var(--s2);flex-wrap:wrap;align-items:center;margin:0}
+.fafsa .chk{padding:8px 6px;min-height:48px;align-items:center;gap:10px}
+.fafsa .chk:hover{background:rgba(255,255,255,.3)}
+.fafsa .chk span{font-weight:700;font-size:18px;line-height:1.25}
+.fafsa .chk input{width:28px;height:28px;border-width:3px;background:#fff}
+.fafsa .chk input:checked{background:#fff;border-color:var(--ink)}
+.fafsa .chk input:checked::after{content:"";width:12px;height:12px;border-radius:50%;background:var(--ink)}
+.fafsa :focus-visible{outline-color:var(--ink)}
+@media(max-width:700px){.fafsa .fl{margin-bottom:var(--s2)}.fafsa .chk span{font-size:17px}}
+.other-row{margin-top:var(--s3)}
+
+/* Acknowledgements */
+.acks{list-style:none;margin:0;padding:0;display:grid;gap:var(--s3)}
+.ack{display:grid;grid-template-columns:1fr 112px;gap:var(--s3);align-items:center;border:2px solid var(--line);border-radius:12px;padding:var(--s3) var(--s4);transition:border-color .2s,background .2s}
+.ack.done{border-color:#6EA141;background:color-mix(in srgb,#92B547 10%,var(--paper))}
+.ack.has-error{border-color:var(--error)}
+.ack p{margin:0;max-width:60ch}
+.ack .initials label{font-weight:700;font-size:13px;display:block;margin-bottom:2px;text-align:center}
+.ack .initials input{text-align:center;font:700 20px/1 var(--display);text-transform:uppercase;letter-spacing:.06em;padding:10px 4px}
+.ack .err{grid-column:1/-1;margin:0}
+@media(max-width:560px){.ack{grid-template-columns:1fr;padding:var(--s3)}.ack .initials{max-width:120px}}
+.tally{margin-top:var(--s3);font-weight:600;color:var(--muted)}
+
+/* Signature */
+.sign{border:2px solid var(--ink);border-radius:12px;padding:var(--s4)}
+.sign .statement{font-weight:700;font-size:18px;margin:0 0 var(--s4);max-width:58ch}
+.sig-input{font:400 28px/1.2 "Segoe Script","Bradley Hand","Brush Script MT",cursive,serif!important;padding:10px 12px!important}
+.guardian{margin-top:var(--s4);padding-top:var(--s4);border-top:1px dashed var(--line)}
+.guardian-fields{margin-top:var(--s3)}
+
+/* Actions */
+.actions{display:flex;gap:var(--s3);flex-wrap:wrap;align-items:center;margin-top:var(--s4)}
+.btn{font:700 17px/1 var(--text);border:0;border-radius:48px;padding:16px 28px;min-height:52px;cursor:pointer;color:var(--on-hue);background:linear-gradient(90deg,var(--orange-a),var(--orange-b));text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.btn:hover{filter:brightness(1.06);box-shadow:0 0 0 3px color-mix(in srgb,var(--orange-b) 30%,transparent)}
+.btn.alt{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+.btn.alt:hover{background:var(--surface);box-shadow:none}
+.form-error{display:none;color:var(--error);font-weight:700;margin-top:var(--s3)}
+.form-error.show{display:block}
+
+/* Confirmation */
+#done{display:none}
+#done.show{display:block}
+.done-head{display:flex;gap:var(--s4);align-items:center;margin-bottom:var(--s4);flex-wrap:wrap}
+.done-head .bubble{width:84px;height:84px;display:grid;place-items:center;font:400 40px/1 var(--display);color:var(--on-hue)}
+.done-head h2{font:400 clamp(28px,4.5vw,42px)/1.1 var(--display);margin:0 0 var(--s1)}
+.summary{border:2px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:var(--s4)}
+.summary h3{margin:0;padding:var(--s2) var(--s3);background:var(--surface);font-size:16px;border-bottom:1px solid var(--line)}
+.summary dl{margin:0;display:grid;grid-template-columns:minmax(120px,200px) 1fr}
+.summary dt,.summary dd{padding:10px var(--s3);margin:0;border-bottom:1px solid var(--line)}
+.summary dt{font-weight:700;font-size:15px;color:var(--muted)}
+.summary dd{overflow-wrap:anywhere}
+.summary dl>:nth-last-child(-n+2){border-bottom:0}
+.next{background:var(--surface);border-radius:12px;padding:var(--s4)}
+.next h3{margin:0 0 var(--s2);font:400 22px/1.15 var(--display)}
+.next ul{margin:0;padding-left:20px}
+.next li{margin-bottom:6px}
+
+footer{border-top:2px solid var(--line);margin-top:var(--s5);padding:var(--s4) 0 var(--s5);color:var(--muted);font-size:15px}
+footer .row{display:flex;justify-content:space-between;gap:var(--s3);flex-wrap:wrap}
+.bar{height:8px;display:flex}
+.bar i{flex:1}
+
+@media print{
+  :root{--paper:#fff;--ink:#231F20;--surface:#fff;--line:#999;--muted:#444}
+  .hero-art,.steps,.actions,.no-print,.office,.theme,#sendStatus{display:none!important}
+  body{font-size:12px}
+  .deadline{background:#fff!important;border:2px solid #231F20}
+  .hero{padding:8px 0}
+  .hero h1{font-size:26px}
+  #done.show{display:block}
+  #form{display:none!important}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}

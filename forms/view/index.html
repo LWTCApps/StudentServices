@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Form | LWTC Financial Aid</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../../assets/fav.png">
+<link rel="stylesheet" href="../../assets/brand-fonts.css">
+<link rel="stylesheet" href="../../assets/form-base.css?v=20261030">
+<link rel="stylesheet" href="../../assets/form-runtime.css?v=20261030">
+<link rel="stylesheet" href="../../assets/print-sheet.css?v=20261030">
+</head>
+<body>
+<a class="skip" href="#top">Skip to the form</a>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="../../" aria-label="LWTC Financial Aid home"></a>
+    <div class="office"><strong>Financial Aid Office</strong><br>3702 Estey Avenue, Naples, FL 34104<br><a href="tel:+12393770900">239-377-0900</a> &middot; Mon&ndash;Fri, 7:00 a.m.&ndash;3:00 p.m.</div>
+  </header>
+
+  <main id="top">
+    <div class="notice-box" id="previewBar" role="status" hidden><strong>Preview.</strong> This is the draft, not the live form. Nothing you enter here is sent.</div>
+    <div class="hero">
+      <div class="hero-art cluster-img" aria-hidden="true"></div>
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="../../">Financial Aid</a><span aria-hidden="true">/</span><span aria-current="page" id="crumb">Form</span></nav>
+      <h1 id="formTitle">&nbsp;</h1>
+      <p class="lede" id="formIntro" hidden></p>
+    </div>
+    <div class="notice-box" id="closedBox" role="status" hidden></div>
+    <div class="notice-box" id="missingBox" role="status" hidden>This form isn&rsquo;t available. Check the link, or go back to <a href="../../">Financial Aid</a> to choose a form.</div>
+
+    <form id="form" novalidate hidden>
+      <section class="panel" id="s1" aria-labelledby="h1">
+        <div class="panel-head"><span class="bubble h-orange" aria-hidden="true">1</span><h2 id="h1">Student information</h2></div>
+        <div class="grid">
+          <div class="field"><label for="name">Full legal name<span class="req" aria-hidden="true">*</span></label><input type="text" id="name" autocomplete="name" required><div class="err">Enter your full legal name.</div></div>
+          <div class="field" id="fSid"><label for="sid">Student ID #</label><input type="text" id="sid" inputmode="numeric" autocomplete="off"><div class="err">Enter your student ID number.</div></div>
+          <div class="field" id="fPhone"><label for="phone">Phone number</label><input type="tel" id="phone" autocomplete="tel"><div class="err">Enter a phone number with area code.</div></div>
+          <div class="field"><label for="email">Email address<span class="req" aria-hidden="true">*</span></label><input type="email" id="email" autocomplete="email" required><div class="err">Enter a valid email address, like name@example.com.</div></div>
+        </div>
+      </section>
+      <section class="panel" id="sQ" aria-labelledby="hQ" hidden>
+        <div class="panel-head"><span class="bubble tr h-green" aria-hidden="true">2</span><h2 id="hQ">Questions</h2></div>
+        <div id="qHost"></div>
+      </section>
+      <section class="panel" id="sD" aria-labelledby="hD" hidden>
+        <div class="panel-head"><span class="bubble br h-gold" aria-hidden="true">3</span><h2 id="hD">Supporting documents</h2></div>
+        <p class="panel-intro">Upload a clear photo or scan, or bring the originals to the Financial Aid Office. PDF, JPG or PNG files only.</p>
+        <div id="dHost"></div>
+      </section>
+      <section class="panel" id="s4" aria-labelledby="h4">
+        <div class="panel-head"><span class="bubble tl h-blue" aria-hidden="true">4</span><h2 id="h4">Acknowledgement and signature</h2></div>
+        <p class="panel-intro" id="ackIntro" hidden>Read each statement, then type your initials to confirm.</p>
+        <ol class="acks" id="acks"></ol>
+        <p class="tally" id="tally" aria-live="polite" hidden></p>
+        <div class="sign" style="margin-top:24px">
+          <p class="statement" id="sigStatement"></p>
+          <div class="grid">
+            <div class="field"><label for="sig">Student signature<span class="req" aria-hidden="true">*</span></label><input type="text" id="sig" class="sig-input" autocomplete="off"><div class="hint">Type your full name to sign.</div><div class="err">Type your name to sign.</div></div>
+            <div class="field"><label for="sigDate">Date<span class="req" aria-hidden="true">*</span></label><input type="date" id="sigDate"><div class="err">Enter today&rsquo;s date.</div></div>
+            <div class="field"><label for="printed">Printed name<span class="req" aria-hidden="true">*</span></label><input type="text" id="printed" autocomplete="off"><div class="err">Enter your printed name.</div></div>
+          </div>
+          <div class="guardian" id="guardianWrap" hidden>
+            <label class="chk" style="padding-left:0"><input type="checkbox" id="minor"><span>I&rsquo;m under 18 and need a parent or guardian signature</span></label>
+            <div class="grid guardian-fields" id="guardianFields" hidden>
+              <div class="field"><label for="gsig">Parent / guardian signature<span class="req" aria-hidden="true">*</span></label><input type="text" id="gsig" class="sig-input" autocomplete="off"><div class="err">A parent or guardian must sign.</div></div>
+              <div class="field"><label for="gdate">Date<span class="req" aria-hidden="true">*</span></label><input type="date" id="gdate"><div class="err">Enter the date.</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="hp" aria-hidden="true"><label>Leave this empty<input type="text" id="website" tabindex="-1" autocomplete="off"></label></div>
+        <div class="form-error" id="formError" role="alert" tabindex="-1"></div>
+        <div class="actions"><button type="submit" class="btn" id="submitBtn">Submit to Financial Aid</button></div>
+        <div class="status" id="sendStatus" role="status" aria-live="polite"></div>
+      </section>
+    </form>
+
+    <section id="done" aria-live="polite" tabindex="-1">
+      <div class="done-head"><span class="bubble h-green" aria-hidden="true">&#10003;</span><div><h2 id="doneTitle">Submitted to the Financial Aid Office</h2><p style="margin:0;color:var(--muted)" id="doneSub"></p></div></div>
+      <div class="notice ok" id="doneNotice" role="status"></div>
+      <div class="summary"><h3>Your answers</h3><dl id="sum"></dl></div>
+      <div class="actions">
+        <button class="btn" id="printBtn" type="button">Print or save as PDF</button>
+        <a class="btn alt" href="../../">Back to Financial Aid</a>
+      </div>
+    </section>
+  </main>
+  <footer><div class="row"><span><a href="../../">Financial Aid</a> &middot; Lorenzo Walker Technical College</span><span id="footText"></span></div></footer>
+</div>
+
+<script src="../../assets/qrcode.js?v=20261030"></script>
+<script src="../../assets/form-runtime.js?v=20261030"></script>
+<script src="../../assets/print-sheet.js?v=20261030"></script>
+<script>
+(function(){
+  var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+  var params=new URLSearchParams(location.search),ID=(params.get('f')||'').toLowerCase(),PREVIEW=params.get('preview')==='1';
+  var CFG=null,OFFICE=null,UPLOADS={available:false,maxMB:10},QB=null,DB=null,sending=false,lastShown=null;
+  var form=$('#form');
+  function show(id,on){$(id).hidden=!on}
+  function FC(k){return (CFG.fields&&CFG.fields[k])||{label:'',help:'',required:false,enabled:true}}
+  function fmtDate(v){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v||'');return m?new Date(+m[1],+m[2]-1,+m[3]).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):(v||'')}
+  function filled(id){return $('#'+id).value.trim().length>0}
+  function emailOk(v){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim())}
+  function phoneOk(v){return v.replace(/\D/g,'').length>=10}
+  function setErr(el,on){var f=el.closest('.field')||el.closest('.ack');if(f)f.classList.toggle('has-error',on);el.classList.toggle('invalid',on)}
+  function labelFor(id,text,req){var l=document.querySelector('label[for="'+id+'"]');if(!l)return;l.textContent=text;if(req){var s=document.createElement('span');s.className='req';s.setAttribute('aria-hidden','true');s.textContent='*';l.appendChild(s)}}
+  function helpFor(id,t){var c=document.getElementById(id),f=c&&c.closest('.field');if(!f)return;var o=f.querySelector('.cfg-help');if(o)o.remove();if(t){var h=document.createElement('div');h.className='hint cfg-help';h.textContent=t;f.insertBefore(h,f.querySelector('.err')||null)}}
+  function ackIds(){return $$('#acks .ack input').map(function(i){return i.id})}
+  function numberPanels(){var n=0;['s1','sQ','sD','s4'].forEach(function(id){var s=$('#'+id);if(s.hidden)return;n++;s.querySelector('.panel-head .bubble').textContent=String(n)})}
+  function update(){
+    if(QB)QB.refresh();if(DB&&DB.active)DB.refresh();
+    show('#sQ',!!(CFG.questions&&CFG.questions.length));show('#sD',!!(DB&&DB.active&&!$('#dHost').hidden));numberPanels();
+    var ids=ackIds(),n=ids.filter(filled).length;$('#tally').textContent=n+' of '+ids.length+' statements initialed';
+    ids.forEach(function(id){var li=$('#'+id).closest('.ack');li.classList.toggle('done',filled(id));if(filled(id))li.classList.remove('has-error')});
+  }
+  function apply(cfg,extra){
+    CFG=cfg;extra=extra||{};
+    if(extra.uploads)UPLOADS=extra.uploads;if(extra.office)OFFICE=extra.office;
+    document.title=cfg.title+' | LWTC Financial Aid';
+    $('#formTitle').textContent=cfg.title;$('#crumb').textContent=cfg.title;$('#formIntro').textContent=cfg.intro||'';show('#formIntro',!!cfg.intro);
+    if(extra.footer&&extra.footer.text)$('#footText').textContent=extra.footer.text;
+    if(extra.office){var o=extra.office,box=$('header.top .office');box.textContent='';var s=document.createElement('strong');s.textContent=o.name||'Financial Aid Office';box.appendChild(s);box.appendChild(document.createElement('br'));box.appendChild(document.createTextNode([o.address1,o.address2].filter(Boolean).join(', ')));box.appendChild(document.createElement('br'));if(o.phone){var a=document.createElement('a');a.href='tel:'+o.phone.replace(/[^\d+]/g,'');a.textContent=o.phone;box.appendChild(a)}if(o.hours)box.appendChild(document.createTextNode(' \u00b7 '+o.hours))}
+    labelFor('name',FC('studentName').label,true);helpFor('name',FC('studentName').help);
+    labelFor('sid',FC('studentId').label,FC('studentId').required);helpFor('sid',FC('studentId').help);show('#fSid',FC('studentId').enabled!==false);
+    labelFor('phone',FC('phone').label,FC('phone').required);helpFor('phone',FC('phone').help);show('#fPhone',FC('phone').enabled!==false);
+    labelFor('email',FC('email').label,true);helpFor('email',FC('email').help);
+    var host=$('#acks');host.textContent='';
+    var st=(cfg.statements||[]).filter(function(x){return x.enabled!==false});
+    st.forEach(function(x,n){
+      var li=document.createElement('li');li.className='ack';var p=document.createElement('p');p.dataset.raw=x.text;p.appendChild(LWTCForm.richInline(x.text));li.appendChild(p);
+      var d=document.createElement('div');d.className='initials';var l=document.createElement('label');l.htmlFor='i'+(n+1);l.textContent='Initials';
+      var i=document.createElement('input');i.type='text';i.id='i'+(n+1);i.maxLength=4;i.autocomplete='off';i.setAttribute('aria-label','Initials for statement '+(n+1));d.appendChild(l);d.appendChild(i);li.appendChild(d);
+      var e=document.createElement('div');e.className='err';e.textContent='Type your initials to confirm.';li.appendChild(e);host.appendChild(li);
+    });
+    show('#ackIntro',st.length>0);show('#tally',st.length>0);
+    $('#sigStatement').textContent=cfg.signatureText||'';
+    show('#guardianWrap',cfg.features.guardian!==false&&cfg.features.guardian===true);
+    $('#sigDate').value=LWTCForm.today();$('#gdate').value=LWTCForm.today();
+    QB=LWTCForm.questions($('#qHost'),cfg.questions||[],{getSources:function(){return new Set()},onChange:update});
+    DB=LWTCForm.documents($('#dHost'),cfg.documents||[],{formId:cfg.id,uploads:(cfg.features.documents?UPLOADS:{available:false}),getSources:function(){return new Set()},getAnswers:function(){return QB.collect()},onChange:update});
+    var av=extra.availability,closed=!!(av&&av.open===false)&&!PREVIEW;
+    show('#closedBox',closed);if(closed)$('#closedBox').textContent=av.message;
+    show('#previewBar',PREVIEW);
+    form.hidden=closed;update();
+  }
+  $('#minor').addEventListener('change',function(){$('#guardianFields').hidden=!this.checked});
+  form.addEventListener('input',function(e){var t=e.target;if(t.id&&t.classList)setErr(t,false);update()});
+  form.addEventListener('change',update);
+  function guardianOn(){return !$('#guardianWrap').hidden&&$('#minor').checked}
+  function validate(){
+    var first=null;function bad(el){setErr(el,true);if(!first)first=el}
+    if(!filled('name'))bad($('#name'));
+    if(FC('studentId').enabled!==false&&FC('studentId').required&&!filled('sid'))bad($('#sid'));
+    var ph=$('#phone').value;if(FC('phone').enabled!==false&&((FC('phone').required&&!ph.trim())||(ph.trim()&&!phoneOk(ph))))bad($('#phone'));
+    if(!emailOk($('#email').value))bad($('#email'));
+    var q=QB.validate();if(!q.ok&&!first)first=q.first;
+    if(DB&&DB.active){if(DB.busy()&&!first)first=$('#dHost');var d=DB.validate();if(!d.ok&&!first)first=d.first}
+    ackIds().forEach(function(id){if(!filled(id)){setErr($('#'+id),true);$('#'+id).closest('.ack').classList.add('has-error');if(!first)first=$('#'+id)}});
+    ['sig','sigDate','printed'].forEach(function(id){if(!filled(id))bad($('#'+id))});
+    if(guardianOn())['gsig','gdate'].forEach(function(id){if(!filled(id))bad($('#'+id))});
+    return first;
+  }
+  function makeRef(){var d=new Date(),p=function(n){return ('0'+n).slice(-2)},c='ABCDEFGHJKMNPQRSTUVWXYZ23456789',o='',a=new Uint8Array(4);crypto.getRandomValues(a);for(var i=0;i<4;i++)o+=c[a[i]%c.length];return 'LWTC-GF-'+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'-'+o}
+  function readable(ans){var out=[];(CFG.questions||[]).forEach(function(q){var v=ans[q.id];if(v==null||v===''||(Array.isArray(v)&&!v.length))return;out.push({label:q.label,value:v})});return out}
+  function collect(ref){
+    var o={reference:ref,studentName:$('#name').value.trim(),studentId:$('#sid').value.trim(),phone:$('#phone').value.trim(),email:$('#email').value.trim(),
+      initials:ackIds().map(function(id){return $('#'+id).value.trim().toUpperCase()}),signature:$('#sig').value.trim(),signatureDate:$('#sigDate').value,printedName:$('#printed').value.trim(),
+      under18:guardianOn(),guardianSignature:guardianOn()?$('#gsig').value.trim():'',guardianDate:guardianOn()?$('#gdate').value:''};
+    o.answers=QB.collect();var dv=(DB&&DB.active)?DB.collect():{};o.documents=dv.documents||[];if(dv.uploadSession){o.uploadSession=dv.uploadSession;o.uploadToken=dv.uploadToken}
+    o._qa=readable(o.answers);o._docs=(DB&&DB.active)?DB.summary():[];o._agreed=$$('#acks .ack p').map(function(p){return p.dataset.raw});
+    return o;
+  }
+  function dl(t,pairs){t.textContent='';pairs.forEach(function(p){var a=document.createElement('dt');a.textContent=p[0];var b=document.createElement('dd');b.textContent=p[1]||'\u2014';t.appendChild(a);t.appendChild(b)})}
+  function showDone(d){
+    lastShown={d:d,at:new Date()};
+    var rows=[['Reference',d.reference],['Full legal name',d.studentName]];if(d.studentId)rows.push([FC('studentId').label,d.studentId]);if(d.phone)rows.push([FC('phone').label,d.phone]);rows.push([FC('email').label,d.email]);
+    d._qa.forEach(function(x){rows.push([x.label,Array.isArray(x.value)?x.value.join(', '):x.value])});
+    d._docs.forEach(function(x){rows.push([x.label,x.name])});
+    d.initials.forEach(function(v,i){rows.push(['Statement '+(i+1),'Initialed '+v])});
+    rows.push(['Signature',d.signature+' \u00b7 '+fmtDate(d.signatureDate)]);
+    dl($('#sum'),rows);
+    $('#doneSub').textContent='Received '+new Date().toLocaleString('en-US',{dateStyle:'long',timeStyle:'short'});
+    var n=$('#doneNotice');n.textContent='';var st=document.createElement('strong');st.textContent='Your reference number';var r=document.createElement('div');r.className='ref';r.textContent=d.reference;var p=document.createElement('span');p.textContent='A confirmation email is on its way to '+d.email+'. If you don\u2019t see it in a few minutes, check your spam folder.';n.appendChild(st);n.appendChild(r);n.appendChild(p);
+    form.hidden=true;$('.hero').style.display='none';$('#done').classList.add('show');$('#done').focus();window.scrollTo(0,0);
+  }
+  function fail(msg){var fe=$('#formError');fe.textContent=msg;fe.classList.add('show');try{fe.focus()}catch(_){}}
+  form.addEventListener('submit',function(e){
+    e.preventDefault();if(sending)return;
+    var first=validate(),fe=$('#formError');
+    if(first){fe.textContent='Some answers are missing or need a fix. Check the highlighted fields and try again.';fe.classList.add('show');first.scrollIntoView({block:'center'});try{first.focus({preventScroll:true})}catch(_){}return}
+    fe.classList.remove('show');if($('#website').value)return;
+    if(PREVIEW){fail('This is a preview, so nothing was sent.');return}
+    window.__ref=window.__ref||makeRef();var data=collect(window.__ref);
+    var btn=$('#submitBtn');sending=true;btn.disabled=true;btn.textContent='Submitting\u2026';$('#sendStatus').textContent='Submitting your form. Please keep this page open.';
+    fetch('/api/submit/'+CFG.id,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(data,function(k,v){return k.charAt(0)==='_'?undefined:v})})
+    .then(function(r){return r.json().catch(function(){return {}}).then(function(j){if(r.ok&&j.ok){if(j.reference)data.reference=j.reference;showDone(data);return}var m;
+      if(r.status===403&&j.error==='closed')m=j.message||'This form isn\u2019t accepting submissions right now.';
+      else if(r.status===429)m='Too many attempts from this connection. Wait a few minutes, then try again.';
+      else if(r.status===400){var f=j.field||'';if(/^answer:/.test(f)){var w=QB.markBad(f.slice(7));if(w)w.scrollIntoView({block:'center'});m='One of your answers wasn\u2019t accepted. Check the highlighted question and try again.'}else if(/^doc/.test(f)){m='A required document is missing or wasn\u2019t accepted. Upload it again, or bring it to the Financial Aid Office.'}else m='Some of your answers weren\u2019t accepted ('+(f||'unknown')+'). Reload this page and try again.'}
+      else m='We couldn\u2019t submit your form. Check your connection and try again.';fail(m+' If it keeps failing, call 239-377-0900.')})})
+    .catch(function(){fail('We couldn\u2019t submit your form. Check your connection and try again. If it keeps failing, call 239-377-0900.')})
+    .then(function(){$('#sendStatus').textContent='';sending=false;btn.disabled=false;btn.textContent='Submit to Financial Aid'});
+  });
+  $('#printBtn').addEventListener('click',function(){
+    if(!lastShown)return;var d=lastShown.d,t=lastShown.at.toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short'});
+    LWTCSheet.printGeneric({studentName:d.studentName,studentId:d.studentId,phone:d.phone,email:d.email,customAnswers:d._qa,documents:d._docs,agreed:d._agreed,initials:d.initials,signature:d.signature,signatureDate:d.signatureDate,printedName:d.printedName,under18:d.under18,guardianSignature:d.guardianSignature,guardianDate:d.guardianDate},{config:CFG,office:OFFICE,title:CFG.title+' - '+d.studentName+' - '+d.reference,note:'Ref. '+d.reference+' \u00b7 submitted '+t});
+  });
+  function missing(){show('#missingBox',true);$('#formTitle').textContent='Form not found';$('.hero .lede').hidden=true}
+  if(!/^[a-z0-9][a-z0-9-]{2,39}$/.test(ID)||location.protocol==='file:'){missing();return}
+  var url=PREVIEW?'/api/admin/forms/'+ID+'/draft':'/api/forms/'+ID+'/options';
+  fetch(url,{credentials:'same-origin'}).then(function(r){return r.ok?r.json():null}).then(function(j){
+    if(!j||!j.ok){if(PREVIEW){missing();$('#missingBox').textContent='To preview this draft, sign in to the administration site first, then open the preview again.';return}missing();return}
+    if(PREVIEW){fetch('/api/forms/'+ID+'/options',{credentials:'same-origin'}).then(function(r){return r.ok?r.json():{}}).catch(function(){return {}}).then(function(o){apply(j.config,{uploads:o.uploads||{available:true,maxMB:10},office:o.office,footer:o.footer,availability:{open:true}})});return}
+    apply(j.config,j);
+  }).catch(missing);
+})();
+</script>
+</body>
+</html>

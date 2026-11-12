@@ -1,0 +1,48 @@
+/* Export: the dialog (screen) and the branded PDF report (print). */
+#exportSheet{display:none}
+dialog#exportDlg{border:0;border-radius:16px;padding:0;max-width:min(680px,94vw);width:100%;box-shadow:0 24px 70px rgba(0,0,0,.4);font-family:var(--text)}
+dialog#exportDlg::backdrop{background:rgba(35,31,32,.6)}
+#exportDlg .xh{padding:18px 24px;border-bottom:1px solid var(--line);font:400 24px var(--display)}
+#exportDlg .xb{padding:18px 24px;max-height:68vh;overflow:auto}
+#exportDlg .xf{padding:14px 24px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;align-items:center}
+#exportDlg .xsum{background:var(--surface);border-radius:10px;padding:12px 14px;margin:0 0 16px;font-size:15px}
+#exportDlg .xsum b{font-weight:700}
+#exportDlg fieldset{border:0;margin:0 0 16px;padding:0;min-width:0}
+#exportDlg legend{font-weight:700;font-size:15px;padding:0 0 6px}
+#exportDlg .fmts{display:grid;gap:8px;grid-template-columns:1fr 1fr}
+@media(max-width:560px){#exportDlg .fmts{grid-template-columns:1fr}}
+#exportDlg .fmt{display:flex;gap:10px;align-items:flex-start;border:2px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;font-weight:700}
+#exportDlg .fmt:has(input:checked){border-color:#F37026;background:#FFF3EA}
+#exportDlg .fmt small{display:block;font-weight:400;color:var(--muted);font-size:13px}
+#exportDlg .fmt input{width:20px;height:20px;margin-top:2px;accent-color:#3A7B96;flex:none}
+#exportDlg .cols{columns:2 220px;column-gap:20px}
+#exportDlg .cg{break-inside:avoid;margin:0 0 10px}
+#exportDlg .cg h4{margin:0 0 2px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+#exportDlg .cg label{display:flex;gap:8px;align-items:center;font-weight:600;font-size:15px;padding:3px 0;cursor:pointer}
+#exportDlg .cg input{width:18px;height:18px;accent-color:#3A7B96}
+#exportDlg .xerr{color:var(--error,#B3261E);font-weight:700;min-height:1.3em;margin:0 auto 0 0}
+#exportDlg .note{font-size:14px;color:var(--muted);margin:6px 0 0}
+
+@media print{
+  @page report{size:letter landscape;margin:.45in .5in .6in;@bottom-left{content:"LWTC Financial Aid Office \00B7 Confidential";font:8pt "Source Sans 3",sans-serif;color:#5C5650}@bottom-right{content:"Page " counter(page) " of " counter(pages);font:8pt "Source Sans 3",sans-serif;color:#5C5650}}
+  body.print-export{margin:0!important;background:#fff!important}
+  body.print-export>*:not(#exportSheet){display:none!important}
+  body.print-export #exportSheet{display:block;visibility:visible;page:report;color:#231F20;font-family:"Source Sans 3",system-ui,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #exportSheet .x-head{display:flex;justify-content:space-between;align-items:center}
+  #exportSheet .x-logo{height:.62in;width:auto}
+  #exportSheet .x-meta{text-align:right;font-size:9pt;line-height:1.35}#exportSheet .x-meta b{display:block;font-size:11pt}#exportSheet .x-meta span{display:block;color:#5C5650}
+  #exportSheet .x-rule{display:flex;height:4pt;margin:6pt 0 10pt}#exportSheet .x-rule i{flex:1}
+  #exportSheet .x-rule i:nth-child(1){background:linear-gradient(90deg,#F58220,#F05A2B)}#exportSheet .x-rule i:nth-child(2){background:linear-gradient(90deg,#BDD14F,#6EA141)}#exportSheet .x-rule i:nth-child(3){background:linear-gradient(90deg,#FFC45A,#F9A03C)}#exportSheet .x-rule i:nth-child(4){background:linear-gradient(90deg,#54ADC3,#3A7B96)}
+  #exportSheet .x-title{font:400 20pt/1.1 "Alfa Slab One",Georgia,serif;margin:0 0 4pt}
+  #exportSheet .x-sub{display:flex;gap:14pt;flex-wrap:wrap;font-size:10pt;font-weight:700;margin-bottom:3pt}#exportSheet .x-sub span+span{color:#5C5650;font-weight:600}
+  #exportSheet .x-filters{font-size:9pt;color:#5C5650;margin-bottom:8pt}#exportSheet .x-filters b{color:#231F20}
+  #exportSheet .x-table{width:100%;border-collapse:collapse;margin-top:6pt}
+  #exportSheet .x-table th{background:#231F20;color:#fff;text-align:left;font-weight:700;padding:4pt 6pt;border-bottom:2.5pt solid #F37026}
+  #exportSheet .x-table thead{display:table-header-group}
+  #exportSheet .x-table td{padding:3.5pt 6pt;border-bottom:.5pt solid #D9D4CC;vertical-align:top;overflow-wrap:anywhere}
+  #exportSheet .x-table td.num{text-align:right}
+  #exportSheet .x-table tbody tr:nth-child(even) td{background:#F7F5F1}
+  #exportSheet .x-table tr{break-inside:avoid}
+  #exportSheet .x-table tr.x-group th{background:#F4F1EC;color:#231F20;border-bottom:1.5pt solid #3A7B96;font-size:1.05em;padding-top:7pt;break-after:avoid}
+  #exportSheet .x-foot{margin:12pt 0 0;font-size:8pt;color:#5C5650;border-top:.5pt solid #D9D4CC;padding-top:5pt}
+}

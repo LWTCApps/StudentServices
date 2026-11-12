@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="color-scheme" content="light">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Financial Options &amp; Payment Responsibility | Lorenzo Walker Technical College</title>
+<link rel="icon" type="image/png" href="../../assets/fav.png">
+<link rel="stylesheet" href="../../assets/brand-fonts.css?v=20261028">
+<link rel="stylesheet" href="../../assets/print-sheet.css?v=20261028">
+<link rel="stylesheet" href="../../assets/form-base.css?v=20261030">
+<link rel="stylesheet" href="../../assets/form-runtime.css?v=20261030">
+</head>
+<body>
+
+<div class="bar" aria-hidden="true"><i class="h-orange"></i><i class="h-green"></i><i class="h-gold"></i><i class="h-blue"></i></div>
+
+<div class="wrap">
+  <header class="top">
+    <a class="mark" href="../../" aria-label="Lorenzo Walker Technical College Financial Aid home"><span class="logo logo-light" role="img" aria-label="Lorenzo Walker Technical College"></span></a>
+    <div class="office">
+      <strong>Financial Aid Office</strong><br>
+      3702 Estey Avenue, Naples, FL 34104<br>
+      <a href="tel:+12393770900">239-377-0900</a> &middot; Mon&ndash;Fri, 7:00 a.m.&ndash;3:00 p.m.
+    </div>
+  </header>
+
+  <main id="top">
+    <div class="hero">
+      <div class="hero-art cluster-img" aria-hidden="true"></div>
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="../../">Financial Aid</a><span aria-hidden="true">/</span><span aria-current="page">Financial responsibility</span></nav>
+      <h1 id="formTitle">Financial options &amp; payment responsibility</h1>
+      <p class="lede" id="formIntro">Choose how you plan to pay for your program, then confirm you understand what’s due and when. It takes about five minutes.</p>
+    </div>
+
+    <div class="deadline" role="note">
+      <h2>Payment deadline: end of drop/add</h2>
+      <p>All outstanding <strong>tuition, laboratory fees, and user fees</strong> must be paid in full, or covered by an approved funding source on file with the Financial Aid Office, <strong>by the end of the drop/add period</strong> for each term of enrollment.</p>
+      <div class="row">
+        <div class="field">
+          <label for="term">Term<span class="req" aria-hidden="true">*</span></label>
+          <select id="term" name="term" required form="form"><option value="">Choose a term</option></select>
+          <div class="err" id="err-term">Choose the term you’re enrolling in.</div>
+        </div>
+        <div class="field">
+          <label for="dropadd">Drop/add period ends<span class="req" aria-hidden="true">*</span></label>
+          <input type="date" id="dropadd" name="dropadd" required form="form">
+          <div class="err" id="err-dropadd">Enter the drop/add end date.</div>
+        </div>
+      </div>
+      <p class="basis" id="basisNote" hidden></p>
+    </div>
+
+    <div class="notice-box" id="previewBar" role="status" hidden><strong>Preview.</strong> This is the draft, not the live form. Nothing you enter here is sent.</div>
+    <div class="notice-box" id="closedBox" role="status" hidden></div>
+
+    <form id="form" novalidate>
+      <ol class="steps" aria-label="Form progress">
+        <li><a href="#s1" data-step="1"><span class="dot"></span>Your information</a></li>
+        <li><a href="#s2" data-step="2"><span class="dot"></span>Funding options</a></li>
+        <li><a href="#s3" data-step="3"><span class="dot"></span>Your funding plan</a></li>
+        <li><a href="#s4" data-step="4"><span class="dot"></span>Acknowledgement</a></li>
+      </ol>
+
+      <!-- 1 -->
+      <section class="panel" id="s1" aria-labelledby="h1">
+        <div class="panel-head"><span class="bubble h-orange" aria-hidden="true">1</span><h2 id="h1">Student information</h2></div>
+        <div class="notice-box" id="noSections" role="status" hidden>No sections are open for enrollment right now. Please call the Financial Aid Office at 239-377-0900 and we will help you.</div>
+        <div class="grid">
+          <div class="field"><label for="name">Full legal name<span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="name" name="name" autocomplete="name" required><div class="err">Enter your full legal name.</div></div>
+          <div class="field"><label for="sid">Student ID #<span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="sid" name="sid" inputmode="numeric" autocomplete="off" required><div class="err">Enter your student ID number.</div></div>
+          <div class="field"><label for="phone">Phone number<span class="req" aria-hidden="true">*</span></label>
+            <input type="tel" id="phone" name="phone" autocomplete="tel" required><div class="err">Enter a phone number with area code.</div></div>
+          <div class="field"><label for="email">Email address<span class="req" aria-hidden="true">*</span></label>
+            <input type="email" id="email" name="email" autocomplete="email" required><div class="err">Enter a valid email address, like name@example.com.</div></div>
+          <div class="field"><label for="program">Program of study<span class="req" aria-hidden="true">*</span></label>
+            <select id="program" name="program" required><option value="">Choose your program</option></select><div class="err">Choose your program of study.</div></div>
+          <div class="field" id="termPickField" hidden><label for="termPick">Term<span class="req" aria-hidden="true">*</span></label>
+            <select id="termPick"><option value="">Choose your term</option></select><div class="err">Choose your term.</div></div>
+          <div class="field" id="sectionField" hidden><label for="section">Section<span class="req" aria-hidden="true">*</span></label>
+            <select id="section"><option value="">Choose your section</option></select><div class="err">Choose your section.</div></div>
+          <div class="field"><label for="start">Anticipated start date<span class="req" aria-hidden="true">*</span></label>
+            <input type="date" id="start" name="start" required><div class="err">Enter your anticipated start date.</div><div class="hint" id="startHint" hidden>Set by the section you choose.</div></div>
+        </div>
+        <div class="extra" id="extraWrap" hidden>
+          <div id="extraRows"></div>
+          <button type="button" class="btn alt small" id="addSection">Add another section</button>
+          <p class="hint" id="extraHint"></p>
+        </div>
+      </section>
+
+      <!-- 2 -->
+      <section class="panel" id="s2" aria-labelledby="h2">
+        <div class="panel-head"><span class="bubble tr h-green" aria-hidden="true">2</span><h2 id="h2">Financial aid &amp; assistance options</h2></div>
+        <p class="panel-intro">Review the options below. Apply for every one you may qualify for <em>before</em> the term starts, so your funding is in place by the drop/add deadline.</p>
+        <div class="options" id="optionsGrid"></div>
+      </section>
+
+      <!-- 3 -->
+      <section class="panel" id="s3" aria-labelledby="h3">
+        <div class="panel-head"><span class="bubble br h-gold" aria-hidden="true">3</span><h2 id="h3">Anticipated funding plan</h2></div>
+        <p class="panel-intro">Check all that apply. You can change your plan later by contacting the Financial Aid Office.</p>
+        <div class="plan" id="plan">
+          <div class="checks" id="checks">
+            <div class="fafsa" id="fafsaBlock" role="radiogroup" aria-labelledby="fafsaLabel">
+              <div class="fl" id="fafsaLabel">FAFSA</div>
+              <div class="sub">
+                <label class="chk"><input type="radio" name="fafsa" value="I have submitted my FAFSA"><span>I have submitted my FAFSA</span></label>
+                <label class="chk"><input type="radio" name="fafsa" value="I will submit my FAFSA"><span>I will submit my FAFSA</span></label>
+                <label class="chk"><input type="radio" name="fafsa" value="I will not submit my FAFSA"><span>I will not submit my FAFSA</span></label>
+              </div>
+            </div>
+                      </div>
+          <div class="other-row field" id="otherRow" hidden>
+            <label for="otherTxt">Describe your other funding source<span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="otherTxt" name="otherTxt" autocomplete="off">
+            <div class="err">Describe the other funding source.</div>
+          </div>
+          <div class="err" id="err-plan" style="margin-top:16px">Select at least one way you plan to pay.</div>
+        </div>
+      </section>
+
+      <!-- extra questions (Form Manager) -->
+      <section class="panel" id="sQ" aria-labelledby="hQ" hidden>
+        <div class="panel-head"><span class="bubble h-orange" aria-hidden="true">4</span><h2 id="hQ">Additional information</h2></div>
+        <div id="qHost"></div>
+      </section>
+      <!-- supporting documents -->
+      <section class="panel" id="sD" aria-labelledby="hD" hidden>
+        <div class="panel-head"><span class="bubble tr h-green" aria-hidden="true">5</span><h2 id="hD">Supporting documents</h2></div>
+        <p class="panel-intro">Upload a clear photo or scan now, or bring the originals to the Financial Aid Office. PDF, JPG or PNG files only.</p>
+        <div id="dHost"></div>
+      </section>
+      <!-- 4 -->
+      <section class="panel" id="s4" aria-labelledby="h4">
+        <div class="panel-head"><span class="bubble tl h-blue" aria-hidden="true">4</span><h2 id="h4">Financial responsibility acknowledgement</h2></div>
+        <p class="panel-intro" id="ackIntro">Read each statement, then type your initials to confirm you understand.</p>
+        <ol class="acks" id="acks"></ol>
+        <p class="tally" id="tally" aria-live="polite">0 of 5 statements initialed</p>
+
+        <div class="sign" style="margin-top:32px">
+          <p class="statement" id="sigStatement">By signing below, I confirm that I have read and understand this form and agree to its terms.</p>
+          <div class="grid">
+            <div class="field"><label for="sig">Student signature<span class="req" aria-hidden="true">*</span></label>
+              <input type="text" id="sig" class="sig-input" autocomplete="off" aria-describedby="sigHint"><div class="hint" id="sigHint">Type your full name to sign.</div><div class="err">Type your name to sign.</div></div>
+            <div class="field"><label for="sigDate">Date<span class="req" aria-hidden="true">*</span></label>
+              <input type="date" id="sigDate"><div class="err">Enter today’s date.</div></div>
+            <div class="field"><label for="printed">Printed name<span class="req" aria-hidden="true">*</span></label>
+              <input type="text" id="printed" autocomplete="off"><div class="err">Enter your printed name.</div></div>
+          </div>
+
+          <div class="guardian" id="guardianWrap">
+            <label class="chk" style="padding-left:0"><input type="checkbox" id="minor"><span>I’m under 18 and need a parent or guardian signature</span></label>
+            <div class="grid guardian-fields" id="guardianFields" hidden>
+              <div class="field"><label for="gsig">Parent / guardian signature<span class="req" aria-hidden="true">*</span></label>
+                <input type="text" id="gsig" class="sig-input" autocomplete="off"><div class="hint">Parent or guardian types their full name to sign.</div><div class="err">A parent or guardian must sign.</div></div>
+              <div class="field"><label for="gdate">Date<span class="req" aria-hidden="true">*</span></label>
+                <input type="date" id="gdate"><div class="err">Enter the date.</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hp" aria-hidden="true"><label>Leave this empty<input type="text" id="website" name="website" tabindex="-1" autocomplete="off"></label></div>
+        <div class="form-error" id="formError" role="alert" tabindex="-1"></div>
+        <div class="actions">
+          <button type="submit" class="btn" id="submitBtn">Review and finish</button>
+        </div>
+        <div class="status" id="sendStatus" role="status" aria-live="polite"></div>
+      </section>
+    </form>
+
+    <section id="done" aria-live="polite" tabindex="-1">
+      <div class="done-head">
+        <span class="bubble h-green" aria-hidden="true">&#10003;</span>
+        <div>
+          <h2 id="doneTitle">Your acknowledgement is ready</h2>
+          <p style="margin:0;color:var(--muted)" id="doneSub">Completed <span id="doneStamp"></span></p>
+        </div>
+      </div>
+      <div class="notice" id="doneNotice" role="status"></div>
+      <div class="summary"><h3>Student</h3><dl id="sumStudent"></dl></div>
+      <div class="summary"><h3>Funding plan</h3><dl id="sumFunding"></dl></div>
+      <div class="summary"><h3>Acknowledgement</h3><dl id="sumAck"></dl></div>
+      <div class="summary" id="sumQAWrap" hidden><h3>Additional information</h3><dl id="sumQA"></dl></div>
+      <div class="summary" id="sumDocsWrap" hidden><h3>Supporting documents</h3><dl id="sumDocs"></dl></div>
+      <div class="next">
+        <h3>Next step</h3>
+        <ul>
+          <li id="nextPrint"></li>
+          <li>Bring the documents your funding sources require (for example, a Bright Futures award confirmation, or your DD-214 and VA Certificate of Eligibility).</li>
+          <li>Make sure approval or payment is on file <strong>by <span id="doneDeadline"></span></strong>.</li>
+        </ul>
+      </div>
+      <div class="actions">
+        <button class="btn" id="printBtn" type="button">Print or save as PDF</button>
+        <button class="btn alt" id="editBtn" type="button">Edit my answers</button>
+        <a class="btn alt" href="../../">Back to Financial Aid</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="row">
+      <span><a href="../../">Financial Aid</a> &middot; Lorenzo Walker Technical College</span>
+      <span class="prog-icons" aria-hidden="true"><img alt="" src="../../assets/lwtc-bubble-orange.png"><img alt="" src="../../assets/lwtc-bubble-green.png"><img alt="" src="../../assets/lwtc-bubble-gold.png"><img alt="" src="../../assets/lwtc-bubble-blue.png"></span>
+      <span>Rev. 10/2026</span>
+    </div>
+  </footer>
+</div>
+
+<script src="../../assets/qrcode.js?v=20261030"></script>
+<script src="../../assets/form-runtime.js?v=20261030"></script>
+<script src="../../assets/form-defaults.js?v=20261030"></script>
+<script src="../../assets/print-sheet.js?v=20261030"></script>
+<script>
+/* The page never talks to Power Automate directly. It posts to the site's own
+   Cloudflare Worker, which holds the flow URL and secret (see the Build Guide).
+   Opened straight from a file, or with SUBMIT_URL empty, the page falls back to
+   review-and-print mode and says nothing was sent. */
+var CONFIG={
+  SUBMIT_URL:"/api/submit/financial-responsibility",
+  OFFICE_PHONE:"239-377-0900",
+  FORM_REVISION:"10/2026",
+  TIMEOUT_MS:25000
+};
+var LIVE=!!CONFIG.SUBMIT_URL && location.protocol!=='file:';
+
+/* Programs offered. Keep identical to PROGRAMS in worker.financial-aid.js. */
+var PROGRAMS=[
+  "Accounting Operations",
+  "Automotive Collision Technology Technician",
+  "Aviation Airframe Mechanics",
+  "Aviation Powerplant Mechanics",
+  "Avionics Systems Technician",
+  "Building Construction Technologies",
+  "Cosmetology",
+  "Database Application Development & Programming",
+  "Dental Assisting",
+  "Digital Media/Multimedia Design",
+  "Drafting",
+  "Electronic Systems Integration and Automation",
+  "Enterprise Desktop and Mobile Support Technology",
+  "Facials Specialty",
+  "Heating, Ventilation, Air-Conditioning/Refrigeration (HVAC/R)",
+  "Marine Service Technologies",
+  "Master Automotive Service Technology 1",
+  "Medical Assisting",
+  "Nursing Assistant (Articulated)",
+  "Patient Care Technician",
+  "Pharmacy Technician",
+  "Phlebotomy",
+  "Practical Nursing",
+  "Professional Culinary Arts & Hospitality",
+  "Professional Nursing (LPN to RN)",
+  "Surgical Technology",
+  "Veterinary Assisting",
+  "Welding Technology"
+];
+/* Terms (fallback only): the live list comes from the Worker, where an administrator sets how many to show
+   (Administration, Site content, Term list). This copy is used only if the Worker can't be reached, with the
+   defaults: the current term, the next 3 and the last 4, newest first. Mirrors termOptions() in the Worker. */
+var TERM_AHEAD=3, TERM_BACK=4, SUMMER_START=5, FALL_START=9;
+function termOptions(){
+  var p=new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit'}).formatToParts(new Date());
+  var y=+p.filter(function(x){return x.type==='year'})[0].value,m=+p.filter(function(x){return x.type==='month'})[0].value;
+  var cur=y*3+(m>=FALL_START?2:m>=SUMMER_START?1:0),out=[],names=['Spring','Summer','Fall'];
+  for(var i=cur+TERM_AHEAD;i>=cur-TERM_BACK;i--)out.push(names[((i%3)+3)%3]+' '+Math.floor(i/3));
+  return out;
+}
+function fillSelect(id,list){
+  var sel=document.getElementById(id);
+  list.forEach(function(v){var o=document.createElement('option');o.value=v;o.textContent=v;sel.appendChild(o)});
+}
+fillSelect('program',PROGRAMS);
+fillSelect('term',termOptions());
+
+(function(){
+  var $=function(s,r){return (r||document).querySelector(s)};
+  var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+  var form=$('#form');
+
+  // Default signature dates to today (local time)
+  function today(){var d=new Date();var m=('0'+(d.getMonth()+1)).slice(-2),day=('0'+d.getDate()).slice(-2);return d.getFullYear()+'-'+m+'-'+day}
+  $('#sigDate').value=today();
+  $('#gdate').value=today();
+
+  function fmtDate(v){
+    if(!v)return '';
+    var p=v.split('-');if(p.length!==3)return v;
+    var d=new Date(+p[0],+p[1]-1,+p[2]);
+    return d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  }
+  function setErr(el,on){
+    var box=el.closest('.field')||el.closest('.ack');
+    if(!box)return;
+    box.classList.toggle('has-error',on);
+    el.classList.toggle('invalid',on);
+    if(on)el.setAttribute('aria-invalid','true');else el.removeAttribute('aria-invalid');
+  }
+  function filled(id){return $('#'+id).value.trim().length>0}
+  function emailOk(v){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim())}
+  function phoneOk(v){return v.replace(/\D/g,'').length>=10}
+
+  // Dynamic UI
+  document.addEventListener('change',function(e){
+    if(e.target&&e.target.id==='otherChk'){$('#otherRow').hidden=!e.target.checked;if(e.target.checked)$('#otherTxt').focus()}
+  });
+  $('#minor').addEventListener('change',function(){
+    $('#guardianFields').hidden=!this.checked;
+    update();
+  });
+
+
+  /* ---- Configuration (edited in the Form Manager; the Worker is the source of truth) ---- */
+  var CFG=window.LWTC_DEFAULT_FINANCIAL||{fields:{},features:{},fundingOptions:[],fundingSources:[],statements:[],questions:[],documents:[]};
+  var OFFICE=null,UPLOADS={available:false,maxMB:10},QB=null,DB=null;
+  function FC(k){return (CFG.fields&&CFG.fields[k])||{label:'',help:'',required:true,enabled:true}}
+  function sourcesSet(){return new Set($$('input[name=fund]:checked').map(function(c){return c.value}))}
+  function readableAnswers(ans){
+    var out=[];
+    (CFG.questions||[]).forEach(function(q){var v=ans[q.id];if(v==null||v===''||(Array.isArray(v)&&!v.length))return;out.push({label:q.label,value:v})});
+    return out;
+  }
+  function labelFor(id,text,required){
+    var l=document.querySelector('label[for="'+id+'"]');if(!l)return;
+    l.textContent=text;
+    if(required){var s=document.createElement('span');s.className='req';s.setAttribute('aria-hidden','true');s.textContent='*';l.appendChild(s)}
+  }
+  function helpFor(id,text){
+    var c=document.getElementById(id);if(!c)return;var f=c.closest('.field');if(!f)return;
+    var old=f.querySelector('.cfg-help');if(old)old.remove();
+    if(text){var h=document.createElement('div');h.className='hint cfg-help';h.textContent=text;var err=f.querySelector('.err');f.insertBefore(h,err||null)}
+  }
+  var SHAPES=['',' tr',' br',' tl'],HUE=['h-orange','h-green','h-gold','h-blue'];
+  function renderOptions(){
+    var host=$('#optionsGrid');host.textContent='';
+    var cards=(CFG.fundingOptions||[]).filter(function(o){return o.enabled!==false});
+    $('#s2').hidden=!cards.length;
+    cards.forEach(function(o,i){
+      var a=document.createElement('article');a.className='opt';
+      var b=document.createElement('span');b.className='bubble'+SHAPES[i%4]+' '+HUE[i%4];b.setAttribute('aria-hidden','true');b.textContent=String.fromCharCode(65+i);
+      var d=document.createElement('div'),h=document.createElement('h3');h.textContent=o.title;d.appendChild(h);
+      var body=document.createElement('div');body.appendChild(LWTCForm.rich(o.body));
+      var svg=(CFG.features.qrCodes!==false&&o.qrUrl)?LWTCForm.qrSvg(o.qrUrl):null;
+      if(svg){
+        var wq=document.createElement('div');wq.className='wq';wq.appendChild(body);
+        var fig=document.createElement('figure');fig.className='qr-fig';fig.style.margin='0';
+        svg.setAttribute('role','img');svg.setAttribute('aria-label','QR code: '+o.title);fig.appendChild(svg);
+        var cap=document.createElement('figcaption');cap.textContent='Scan to apply on your phone';fig.appendChild(cap);
+        wq.appendChild(fig);d.appendChild(wq);
+      }else d.appendChild(body);
+      a.appendChild(b);a.appendChild(d);host.appendChild(a);
+    });
+    $$('.steps li').forEach(function(li){var a=li.querySelector('a');if(a&&a.dataset.step==='2')li.hidden=!cards.length});
+  }
+  function renderFunding(){
+    var host=$('#checks'),keep=new Set($$('input[name=fund]:checked').map(function(c){return c.value}));
+    $$('label.chk',host).forEach(function(l){if(!l.closest('.fafsa'))l.remove()});
+    var list=(CFG.fundingSources||[]).filter(function(s){return s.enabled!==false}).map(function(s){return s.label});
+    var half=Math.ceil(list.length/2),ordered=[];
+    for(var i=0;i<half;i++){ordered.push(list[i]);if(list[half+i]!==undefined)ordered.push(list[half+i])}
+    if(CFG.features.otherFunding!==false)ordered.push('Other');
+    ordered.forEach(function(v){
+      var l=document.createElement('label');l.className='chk';
+      var c=document.createElement('input');c.type='checkbox';c.name='fund';c.value=v;if(v==='Other')c.id='otherChk';if(keep.has(v))c.checked=true;
+      var sp=document.createElement('span');sp.textContent=v;l.appendChild(c);l.appendChild(sp);host.appendChild(l);
+    });
+    $('#otherRow').hidden=!($('#otherChk')&&$('#otherChk').checked);
+    var fb=$('#fafsaBlock');fb.hidden=CFG.features.fafsa===false;
+    $('#fafsaLabel').textContent=FC('fafsa').label||'FAFSA';
+    if(CFG.features.fafsa===false)$$('input[name=fafsa]').forEach(function(r){r.checked=false});
+  }
+  function renderAcks(){
+    var host=$('#acks'),prev={};
+    $$('.ack input',host).forEach(function(i){prev[i.dataset.sid]=i.value});
+    host.textContent='';
+    var st=(CFG.statements||[]).filter(function(x){return x.enabled!==false});
+    st.forEach(function(x,n){
+      var li=document.createElement('li');li.className='ack';
+      var p=document.createElement('p');p.dataset.raw=x.text;p.appendChild(LWTCForm.richInline(x.text));li.appendChild(p);
+      var d=document.createElement('div');d.className='initials';
+      var lab=document.createElement('label');lab.htmlFor='i'+(n+1);lab.textContent='Initials';
+      var inp=document.createElement('input');inp.type='text';inp.id='i'+(n+1);inp.maxLength=4;inp.autocomplete='off';inp.setAttribute('aria-label','Initials for statement '+(n+1));inp.dataset.sid=x.id;if(prev[x.id])inp.value=prev[x.id];
+      d.appendChild(lab);d.appendChild(inp);li.appendChild(d);
+      var e=document.createElement('div');e.className='err';e.textContent='Type your initials to confirm.';li.appendChild(e);
+      host.appendChild(li);
+    });
+    $('#tally').hidden=!st.length;$('#ackIntro').hidden=!st.length;host.hidden=!st.length;
+  }
+  function renumber(){
+    var n=0;['s1','s2','s3','sQ','sD','s4'].forEach(function(id){var s=document.getElementById(id);if(!s||s.hidden)return;n++;var b=s.querySelector('.panel-head .bubble');if(b)b.textContent=String(n)});
+  }
+  function refreshDyn(){
+    if(QB)QB.refresh();
+    if(DB&&DB.active)DB.refresh();
+    $('#sQ').hidden=!(CFG.questions&&CFG.questions.length);
+    $('#sD').hidden=!(DB&&DB.active&&!$('#dHost').hidden);
+    renumber();
+  }
+  function applyConfig(cfg,extra){
+    CFG=cfg;extra=extra||{};
+    if(extra.uploads)UPLOADS=extra.uploads;
+    if(extra.office){OFFICE=extra.office;applyOffice(extra.office)}
+    $('#formTitle').textContent=cfg.title;
+    $('#formIntro').textContent=cfg.intro||'';$('#formIntro').hidden=!cfg.intro;
+    $('.crumbs [aria-current]').textContent=cfg.title;document.title=cfg.title+' | LWTC Financial Aid';
+    // built-in questions: wording, help text, required, on/off
+    labelFor('name',FC('studentName').label,true);helpFor('name',FC('studentName').help);
+    labelFor('sid',FC('studentId').label,FC('studentId').required);helpFor('sid',FC('studentId').help);
+    labelFor('phone',FC('phone').label,FC('phone').required);helpFor('phone',FC('phone').help);
+    $('#phone').closest('.field').hidden=FC('phone').enabled===false;
+    labelFor('email',FC('email').label,true);helpFor('email',FC('email').help);
+    labelFor('program',FC('program').label,true);helpFor('program',FC('program').help);
+    labelFor('termPick',FC('term').label,true);labelFor('term',FC('term').label,true);
+    labelFor('section',FC('section').label,true);
+    labelFor('start',FC('startDate').label,true);labelFor('dropadd',FC('dropAddEnds').label,true);
+    if(FC('fafsa').help){var fh=$('#fafsaBlock .cfg-help');if(!fh){fh=document.createElement('div');fh.className='cfg-help';fh.style.cssText='font-weight:600;margin:0 0 8px';$('#fafsaLabel').after(fh)}fh.textContent=FC('fafsa').help}
+    renderOptions();renderFunding();renderAcks();
+    $('#sigStatement').textContent=cfg.signatureText||'';
+    $('#guardianWrap').hidden=cfg.features.guardian===false;
+    if(cfg.features.guardian===false){$('#minor').checked=false;$('#guardianFields').hidden=true}
+    // extra questions
+    QB=LWTCForm.questions($('#qHost'),cfg.questions||[],{getSources:sourcesSet,onChange:function(){update()}});
+    // documents
+    DB=LWTCForm.documents($('#dHost'),cfg.documents||[],{formId:'financial-responsibility',uploads:(cfg.features.documents!==false?UPLOADS:{available:false}),getSources:sourcesSet,getAnswers:function(){return QB.collect()},onChange:function(){update()}});
+    refreshDyn();
+    // closed?
+    var av=extra.availability,closed=!!(av&&av.open===false);
+    $('#closedBox').hidden=!closed;if(closed)$('#closedBox').textContent=av.message;
+    form.hidden=closed;$('.deadline').hidden=closed;
+    update();
+  }
+  function applyOffice(o){
+    var box=document.querySelector('header.top .office');if(!box||!o)return;
+    box.textContent='';
+    var s=document.createElement('strong');s.textContent=o.name||'Financial Aid Office';box.appendChild(s);box.appendChild(document.createElement('br'));
+    box.appendChild(document.createTextNode([o.address1,o.address2].filter(Boolean).join(', ')));box.appendChild(document.createElement('br'));
+    if(o.phone){var a=document.createElement('a');a.href='tel:'+o.phone.replace(/[^\d+]/g,'');a.textContent=o.phone;box.appendChild(a)}
+    if(o.hours)box.appendChild(document.createTextNode(' \u00b7 '+o.hours));
+  }
+
+  // Rules per field
+  /* ---- Schedule mode ----
+     When the college has published a schedule, students choose a program, term and section. The start date and
+     the drop/add end date come from that section (calculated by the Worker) and cannot be typed. Without a live
+     schedule the form behaves as before. */
+  var SCHED={on:false,sections:[],multi:'single',max:1,basis:'',version:0};
+  var extraRows=[];
+  var rules={
+    term:function(){return filled('term')},
+    dropadd:function(){return filled('dropadd')},
+    name:function(){return filled('name')},
+    sid:function(){return !FC('studentId').required||filled('sid')},
+    phone:function(){var v=$('#phone').value;return FC('phone').enabled===false||(!FC('phone').required&&!v.trim())||phoneOk(v)},
+    email:function(){return emailOk($('#email').value)},
+    program:function(){return filled('program')},
+    start:function(){return filled('start')},
+    termPick:function(){return !SCHED.on||filled('termPick')},
+    section:function(){return !SCHED.on||filled('section')},
+    sig:function(){return filled('sig')},
+    sigDate:function(){return filled('sigDate')},
+    printed:function(){return filled('printed')}
+  };
+  function guardianOn(){return !$('#guardianWrap').hidden&&$('#minor').checked}
+  function planOk(){
+    if(CFG.features.fundingRequired===false)return true;
+    var any=$$('input[name=fund]:checked').length>0||!!$('input[name=fafsa]:checked');
+    return any;
+  }
+  function otherOk(){var oc=$('#otherChk');return !oc||!oc.checked||filled('otherTxt')}
+  function ackIds(){return $$('#acks .ack input').map(function(i){return i.id})}
+  function initialsDone(){return ackIds().filter(filled).length}
+
+  function stepState(){
+    var s1=['name','sid','phone','email','program','termPick','section','start'].every(function(k){return rules[k]()});
+    var s3=planOk()&&otherOk();
+    var s4=initialsDone()===ackIds().length&&rules.sig()&&rules.sigDate()&&rules.printed()&&(!guardianOn()||(filled('gsig')&&filled('gdate')));
+    return {1:s1&&rules.term()&&rules.dropadd(),2:true,3:s3,4:s4};
+  }
+  function update(){
+    var st=stepState();
+    // Step 2 is informational; mark done once any plan is chosen
+    st[2]=st[3];
+    $$('.steps a').forEach(function(a){a.dataset.done=String(!!st[a.dataset.step])});
+    var n=initialsDone();
+    $('#tally').textContent=n+' of '+ackIds().length+' statements initialed';
+    ackIds().forEach(function(id){
+      var li=$('#'+id).closest('.ack');
+      li.classList.toggle('done',filled(id));
+      if(filled(id)){li.classList.remove('has-error');$('#'+id).classList.remove('invalid')}
+    });
+    refreshDyn();
+  }
+  form.addEventListener('input',function(e){
+    var t=e.target;
+    if(t.id&&rules[t.id]&&rules[t.id]())setErr(t,false);
+    if(t.name==='fund'||t.name==='fafsa')$('#err-plan').style.display='none';
+    update();
+  });
+  form.addEventListener('change',update);
+  // Term and drop/add live outside the form element visually but belong to it
+  ['term','dropadd'].forEach(function(id){$('#'+id).addEventListener('input',function(){
+    if(rules[id]())setErr(this,false);update();
+  })});
+  // Show an errors-in-view helper
+  $$('.err').forEach(function(e){e.setAttribute('role','alert')});
+
+  function validate(){
+    var first=null,problems=[];
+    function bad(el,msg){setErr(el,true);if(!first)first=el;problems.push(msg)}
+    // Term / drop-add use separate err blocks
+    ['term','dropadd'].forEach(function(id){
+      var el=$('#'+id);
+      var box=el.closest('.field');
+      var ok=rules[id]();
+      box.classList.toggle('has-error',!ok);el.classList.toggle('invalid',!ok);
+      if(!ok){if(!first)first=el;problems.push(id)}
+    });
+    Object.keys(rules).forEach(function(k){
+      if(k==='term'||k==='dropadd')return;
+      var el=$('#'+k);
+      if(!rules[k]())bad(el,k);else setErr(el,false);
+    });
+    // Plan
+    var pOk=planOk();
+    $('#err-plan').style.display=pOk?'none':'block';
+    if(!pOk){if(!first)first=$('input[name=fafsa]');problems.push('plan')}
+    if(!otherOk()){$('#otherRow').classList.add('has-error');$('#otherTxt').classList.add('invalid');if(!first)first=$('#otherTxt');problems.push('other')}
+    else{$('#otherRow').classList.remove('has-error');$('#otherTxt').classList.remove('invalid')}
+    // Initials
+    ackIds().forEach(function(id){
+      var el=$('#'+id),li=el.closest('.ack');
+      var ok=filled(id);
+      li.classList.toggle('has-error',!ok);el.classList.toggle('invalid',!ok);
+      if(!ok){if(!first)first=el;problems.push(id)}
+    });
+    // Additional questions and documents (Form Manager)
+    if(QB){var qr=QB.validate();if(!qr.ok){if(!first)first=qr.first;problems.push('questions')}}
+    if(DB&&DB.active){if(DB.busy()){if(!first)first=$('#dHost');problems.push('uploading')}var dr=DB.validate();if(!dr.ok){if(!first)first=dr.first;problems.push('documents')}}
+    // Guardian
+    if(guardianOn()){
+      ['gsig','gdate'].forEach(function(id){
+        var el=$('#'+id);var ok=filled(id);
+        setErr(el,!ok);if(!ok){if(!first)first=el;problems.push(id)}
+      });
+    }
+    // Additional sections (only when the college allows several): each must be complete and different
+    if(SCHED.on&&extraRows.length){
+      var keys={};
+      [[$('#program'),$('#termPick'),$('#section')]].concat(extraRows.map(function(r){return [r.querySelector('.x-program'),r.querySelector('.x-term'),r.querySelector('.x-section')]})).forEach(function(t,i){
+        if(i>0&&!(t[0].value&&t[1].value&&t[2].value)){bad(t[2],'extra');return}
+        if(!t[2].value)return;
+        var k=[t[0].value,t[1].value,t[2].value].join('|');
+        if(keys[k])bad(t[2],'dup');
+        keys[k]=1;
+      });
+    }
+    return {first:first,problems:problems};
+  }
+
+  function dl(target,pairs){
+    target.innerHTML='';
+    pairs.forEach(function(p){
+      var dt=document.createElement('dt');dt.textContent=p[0];
+      var dd=document.createElement('dd');dd.textContent=p[1]||'\u2014';
+      target.appendChild(dt);target.appendChild(dd);
+    });
+  }
+
+  // Which control and what to call it, for each field the Worker can reject.
+  var FIELD_INFO={
+    studentName:['#name','full legal name'],studentId:['#sid','student ID'],phone:['#phone','phone number'],email:['#email','email address'],
+    program:['#program','program of study'],term:['#term','term'],startDate:['#start','anticipated start date'],dropAddEnds:['#dropadd','drop/add end date'],
+    signatureDate:['#sigDate','signature date'],otherFunding:['#otherTxt','description of other funding'],
+    fafsaStatus:['#plan','funding plan'],fundingSources:['#plan','funding plan'],fundingPlan:['#plan','funding plan'],
+    initials:['#i1','initials'],signature:['#sig','signature'],printedName:['#printed','printed name'],
+    guardianSignature:['#gsig','parent/guardian signature'],guardianDate:['#gdate','parent/guardian date'],
+    section:['#section','section'],sections:['#section','sections']
+  };
+  function invalidMessage(field){
+    var info=FIELD_INFO[field];
+    if(info){
+      try{var el=$(info[0]);if(el&&el.tagName){setErr(el,true);el.scrollIntoView({block:'center'})}}catch(_){}
+      if(field==='section'||field==='sections')return 'Your section isn\u2019t available (the schedule may have just changed). Reload this page (Ctrl+Shift+R) to get the current schedule, choose your section again, and resubmit. ';
+      if(field==='program'||field==='term')return 'Your '+info[1]+' wasn\u2019t accepted. Reload this page (Ctrl+Shift+R) to get the current list, choose it again, and resubmit. ';
+      return 'Your '+info[1]+' wasn\u2019t accepted. Check it and try again. ';
+    }
+    if(/^answer:/.test(field)){var qw=QB&&QB.markBad(field.slice(7));if(qw)qw.scrollIntoView({block:'center'});return 'One of your answers wasn\u2019t accepted. Check the highlighted question and try again. '}
+    if(/^doc:/.test(field)||field==='documents'){var dw=DB&&DB.markBad&&DB.markBad(field.slice(4));if(dw)dw.scrollIntoView({block:'center'});return 'A required document is missing or wasn\u2019t accepted. Upload it again, or bring it to the Financial Aid Office. '}
+    if(field==='reference'||field==='body')return 'This page is out of date. Reload it (Ctrl+Shift+R) and try again. ';
+    return 'Some of your answers weren\u2019t accepted. Check each section and try again. ';
+  }
+
+  var sending=false;
+  function makeRef(){
+    var d=new Date(),p=function(n){return ('0'+n).slice(-2)};
+    var chars='ABCDEFGHJKMNPQRSTUVWXYZ23456789',out='';
+    var arr=new Uint8Array(4);
+    (window.crypto||window.msCrypto).getRandomValues(arr);
+    for(var i=0;i<4;i++)out+=chars[arr[i]%chars.length];
+    return 'LWTC-FA-'+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'-'+out;
+  }
+  function collect(ref){
+    var fa=$('input[name=fafsa]:checked');
+    var funds=$$('input[name=fund]:checked').map(function(c){return c.value});
+    var o={
+      reference:ref,
+      submittedAt:new Date().toISOString(),
+      formRevision:CONFIG.FORM_REVISION,
+      term:$('#term').value.trim(),
+      dropAddEnds:$('#dropadd').value,
+      sections:SCHED.on?selectedPicks().map(function(x){return {program:x.program,term:x.term,section:x.section}}):[],
+      section:SCHED.on&&$('#section').value?$('#section').value:'',
+      studentName:$('#name').value.trim(),
+      studentId:$('#sid').value.trim(),
+      phone:$('#phone').value.trim(),
+      email:$('#email').value.trim(),
+      program:$('#program').value.trim(),
+      startDate:$('#start').value,
+      fafsaStatus:fa?fa.value:'',
+      fundingSources:funds,
+      fundingSummary:(fa?['FAFSA: '+fa.value]:[]).concat(funds.map(function(f){return f==='Other'?'Other: '+$('#otherTxt').value.trim():f})).join('; '),
+      otherFunding:($('#otherChk')&&$('#otherChk').checked)?$('#otherTxt').value.trim():'',
+      initials:ackIds().map(function(id){return $('#'+id).value.trim().toUpperCase()}),
+      signature:$('#sig').value.trim(),
+      signatureDate:$('#sigDate').value,
+      printedName:$('#printed').value.trim(),
+      under18:guardianOn(),
+      guardianSignature:guardianOn()?$('#gsig').value.trim():'',
+      guardianDate:guardianOn()?$('#gdate').value:''
+    };
+    o.answers=QB?QB.collect():{};
+    var dv=(DB&&DB.active)?DB.collect():{};
+    o.documents=dv.documents||[];
+    if(dv.uploadSession){o.uploadSession=dv.uploadSession;o.uploadToken=dv.uploadToken}
+    // for the review screen and the printout only (never sent): the readable answers and the statements agreed to
+    o._qa=QB?readableAnswers(o.answers):[];
+    o._docs=(DB&&DB.active&&DB.summary)?DB.summary():[];
+    o._agreed=$$('#acks .ack p').map(function(p){return p.dataset.raw||p.textContent});
+    return o;
+  }
+  var lastShown=null;
+  function showDone(sent,d){
+    lastShown={sent:sent,d:d,at:new Date()};
+    dl($('#sumStudent'),[
+      ['Reference',d.reference],
+      ['Full legal name',d.studentName],
+      ['Student ID #',d.studentId],
+      ['Phone',d.phone],
+      ['Email',d.email],
+      ['Program of study',d.program],
+      ['Anticipated start',fmtDate(d.startDate)],
+      ['Term',d.term],
+      ['Drop/add ends',fmtDate(d.dropAddEnds)]
+    ].concat(d.section?[['Section',d.section]]:[]).concat((d.additionalSections&&d.additionalSections.length)?[['Additional sections',d.additionalSections.join('; ')]]:[]));
+    var rows=[];
+    if(d.fafsaStatus)rows.push(['FAFSA',d.fafsaStatus]);
+    d.fundingSources.forEach(function(f){rows.push(['Funding',f==='Other'?'Other: '+d.otherFunding:f])});
+    dl($('#sumFunding'),rows);
+    var ack=d.initials.map(function(v,i){return ['Statement '+(i+1),'Initialed '+v]});
+    ack.push(['Student signature',d.signature+' \u00b7 '+fmtDate(d.signatureDate)]);
+    ack.push(['Printed name',d.printedName]);
+    if(d.under18)ack.push(['Parent / guardian',d.guardianSignature+' \u00b7 '+fmtDate(d.guardianDate)]);
+    dl($('#sumAck'),ack);
+    $('#sumQAWrap').hidden=!(d._qa&&d._qa.length);if(d._qa&&d._qa.length)dl($('#sumQA'),d._qa.map(function(x){return [x.label,Array.isArray(x.value)?x.value.join(', '):x.value]}));
+    $('#sumDocsWrap').hidden=!(d._docs&&d._docs.length);if(d._docs&&d._docs.length)dl($('#sumDocs'),d._docs.map(function(x){return [x.label,x.name]}));
+
+    var n=$('#doneNotice');n.innerHTML='';
+    var strong=document.createElement('strong');var p=document.createElement('span');
+    if(sent){
+      $('#doneTitle').textContent='Submitted to the Financial Aid Office';
+      $('#doneSub').textContent='Received '+new Date().toLocaleString('en-US',{dateStyle:'long',timeStyle:'short'});
+      n.className='notice ok';
+      strong.textContent='Your reference number';
+      var ref=document.createElement('div');ref.className='ref';ref.textContent=d.reference;
+      p.textContent='A confirmation email is on its way to '+d.email+'. If you don\u2019t see it in a few minutes, check your spam folder or call '+CONFIG.OFFICE_PHONE+'.';
+      n.appendChild(strong);n.appendChild(ref);n.appendChild(p);
+      $('#nextPrint').textContent='Optional: print this page or save it as a PDF for your own records.';
+    }else{
+      $('#doneTitle').textContent='Your acknowledgement is ready to print';
+      $('#doneSub').textContent='Prepared '+new Date().toLocaleString('en-US',{dateStyle:'long',timeStyle:'short'});
+      n.className='notice warn';
+      strong.textContent='Nothing has been sent yet';
+      p.textContent='Online submission isn\u2019t available right now. Print it or save it as a PDF and bring it to the Financial Aid Office at 3702 Estey Avenue, Naples, FL 34104.';
+      n.appendChild(strong);n.appendChild(p);
+      $('#nextPrint').textContent='Print this page or save it as a PDF, then give it to the Financial Aid Office at 3702 Estey Avenue, Naples, FL 34104.';
+    }
+    $('#doneDeadline').textContent=fmtDate(d.dropAddEnds);
+    form.style.display='none';
+    $('.hero').style.display='none';
+    $('.deadline').style.display='none';
+    $('#done').classList.add('show');
+    $('#done').focus();
+    window.scrollTo(0,0);
+  }
+
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    if(sending)return;
+    var r=validate();
+    var fe=$('#formError');
+    if(r.first){
+      fe.textContent='Some answers are missing or need a fix. Check the highlighted fields and try again.';
+      fe.classList.add('show');
+      r.first.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'center'});
+      try{r.first.focus({preventScroll:true})}catch(_){}
+      return;
+    }
+    fe.classList.remove('show');
+    if($('#website').value)return; // honeypot: bots fill this, people never see it
+    if(PREVIEW){fe.textContent='This is a preview, so nothing was sent.';fe.classList.add('show');return}
+
+    // Keep one reference per attempt chain so a retry can't create a duplicate record
+    window.__lwtcRef=window.__lwtcRef||makeRef();
+    var data=collect(window.__lwtcRef);
+
+    if(!LIVE){showDone(false,data);return}
+
+    var btn=$('#submitBtn'),st=$('#sendStatus');
+    sending=true;btn.disabled=true;btn.textContent='Submitting\u2026';
+    st.textContent='Submitting your form. Please keep this page open.';
+    var ctrl=('AbortController' in window)?new AbortController():null;
+    var timer=setTimeout(function(){if(ctrl)ctrl.abort()},CONFIG.TIMEOUT_MS);
+    fetch(CONFIG.SUBMIT_URL,{
+      method:'POST',
+      credentials:'same-origin',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(data,function(k,v){return k.charAt(0)==='_'?undefined:v}),
+      signal:ctrl?ctrl.signal:undefined
+    }).then(function(res){
+      clearTimeout(timer);
+      return res.json().catch(function(){return {}}).then(function(j){
+        if(res.ok&&j&&j.ok){
+          if(j.reference)data.reference=j.reference;
+          ['program','term','section','startDate','dropAddEnds','dropAddBasis'].forEach(function(k){if(j[k])data[k]=j[k]});
+          if(j.additionalSections)data.additionalSections=j.additionalSections;
+          st.textContent='';
+          showDone(true,data);
+          return;
+        }
+        var err=new Error('HTTP '+res.status);err.status=res.status;err.field=j&&j.field;err.closed=j&&j.error==='closed';throw err;
+      });
+    }).catch(function(err){
+      clearTimeout(timer);
+      st.textContent='';
+      var msg;
+      if(err&&err.status===429)msg='Too many attempts from this connection. Wait a few minutes, then try again. ';
+      else if(err&&err.status===403&&err.closed)msg='This form isn\u2019t accepting submissions right now. ';
+      else if(err&&err.status===400)msg=invalidMessage(err.field);
+      else msg='We couldn\u2019t submit your form. Check your connection and try again. ';
+      fe.innerHTML='';
+      fe.appendChild(document.createTextNode(msg+'If it keeps failing, print your form and bring it to the Financial Aid Office, or call '+CONFIG.OFFICE_PHONE+'. '));
+      var pb=document.createElement('button');pb.type='button';pb.className='btn alt';pb.style.marginTop='12px';pb.textContent='Print instead';
+      pb.addEventListener('click',function(){showDone(false,data)});
+      fe.appendChild(document.createElement('br'));fe.appendChild(pb);
+      fe.classList.add('show');
+      try{fe.focus()}catch(_){}
+    }).then(function(){
+      sending=false;btn.disabled=false;btn.textContent='Submit to Financial Aid';
+    });
+  });
+
+  $('#editBtn').addEventListener('click',function(){
+    $('#done').classList.remove('show');
+    form.style.display='';
+    $('.hero').style.display='';
+    $('.deadline').style.display='';
+    window.scrollTo(0,0);
+  });
+  function sheetValues(d){
+    return {term:d.term,dropAddEnds:d.dropAddEnds,studentName:d.studentName,studentId:d.studentId,phone:d.phone,email:d.email,
+      program:d.program,startDate:d.startDate,fafsaStatus:d.fafsaStatus,fundingSources:d.fundingSources,otherFunding:d.otherFunding,
+      initials:d.initials,signature:d.signature,signatureDate:d.signatureDate,printedName:d.printedName,
+      under18:d.under18,guardianSignature:d.guardianSignature,guardianDate:d.guardianDate,
+      section:d.section,additionalSections:d.additionalSections,dropAddBasis:d.dropAddBasis,
+      agreed:d._agreed,customAnswers:d._qa,documents:d._docs};
+  }
+  // Print = the Financial Aid paper form, filled in with the answers on this screen.
+  $('#printBtn').addEventListener('click',function(){
+    if(!lastShown||!window.LWTCSheet){window.print();return}
+    var d=lastShown.d,t=lastShown.at.toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short'});
+    window.LWTCSheet.print(sheetValues(d),{
+      config:CFG,office:OFFICE,
+      title:'Financial Responsibility - '+(d.studentName||'')+' - '+(d.reference||''),
+      note:lastShown.sent?('Ref. '+d.reference+' \u00b7 submitted '+t):('Prepared '+t+' \u00b7 not yet submitted online')
+    });
+  });
+
+  // The Worker is the one source of truth for the program and term lists. Use its current lists when
+  // available so this page can never disagree with it; the built-in lists above are the fallback.
+  function refill(id,list){
+    var sel=document.getElementById(id),keep=sel.value;
+    while(sel.options.length>1)sel.remove(1);
+    list.forEach(function(v){var o=document.createElement('option');o.value=v;o.textContent=v;sel.appendChild(o)});
+    if(keep&&list.indexOf(keep)>-1)sel.value=keep;
+  }
+  function fmtOpt(sec){return sec.section+' \u00b7 starts '+fmtDate(sec.startDate)}
+  function setOptions(sel,list,placeholder){
+    var keep=sel.value;
+    sel.innerHTML='';
+    var o0=document.createElement('option');o0.value='';o0.textContent=placeholder;sel.appendChild(o0);
+    list.forEach(function(it){var o=document.createElement('option');o.value=it.value;o.textContent=it.label;sel.appendChild(o)});
+    if(list.length===1)sel.value=list[0].value;else if(keep&&list.some(function(it){return it.value===keep}))sel.value=keep;
+  }
+  function schedPrograms(){var seen={};SCHED.sections.forEach(function(x){seen[x.program]=1});return PROGRAMS.filter(function(p){return seen[p]})}
+  function schedTerms(program){var seen={},out=[];SCHED.sections.forEach(function(x){if(x.program===program&&!seen[x.term]){seen[x.term]=1;out.push(x.term)}});return out}
+  function schedSections(program,term){return SCHED.sections.filter(function(x){return x.program===program&&x.term===term})}
+  function findSection(program,term,section){return SCHED.sections.filter(function(x){return x.program===program&&x.term===term&&x.section===section})[0]||null}
+
+  // Everything the student has picked so far (their main section first, then any additional ones)
+  function selectedPicks(){
+    var picks=[],seen={};
+    function add(program,term,section){
+      var row=findSection(program,term,section);
+      if(!row)return;
+      var key=[program,term,section].join('|');
+      if(seen[key])return;
+      seen[key]=1;picks.push(row);
+    }
+    add($('#program').value,$('#termPick').value,$('#section').value);
+    extraRows.forEach(function(r){add(r.querySelector('.x-program').value,r.querySelector('.x-term').value,r.querySelector('.x-section').value)});
+    return picks;
+  }
+  // Start date, term and drop/add end follow the chosen section(s); with several, the EARLIEST drop/add date applies.
+  function refreshDates(){
+    if(!SCHED.on)return;
+    var picks=selectedPicks().slice().sort(function(a,b){return a.dropAddEnds.localeCompare(b.dropAddEnds)||a.startDate.localeCompare(b.startDate)});
+    var termSel=$('#term');termSel.innerHTML='';
+    var o=document.createElement('option');o.value=picks.length?picks[0].term:'';o.textContent=picks.length?picks[0].term:'Choose your program, term and section below';termSel.appendChild(o);termSel.value=o.value;
+    $('#start').value=picks.length?picks[0].startDate:'';
+    $('#dropadd').value=picks.length?picks[0].dropAddEnds:'';
+    var note=$('#basisNote');
+    if(picks.length){
+      note.hidden=false;
+      note.textContent=picks.length>1?'You chose more than one section, so the earliest drop/add date applies: '+fmtDate(picks[0].dropAddEnds)+'.':'Calculated from your section\u2019s start date: '+SCHED.basis+'.';
+    }else note.hidden=true;
+    ['term','dropadd'].forEach(function(id){var b=$('#'+id).closest('.field');if(picks.length){b.classList.remove('has-error');$('#'+id).classList.remove('invalid')}});
+    update();
+  }
+  function cascade(progSel,termSel,secSel){
+    var prog=progSel.value;
+    setOptions(termSel,prog?schedTerms(prog).map(function(t){return {value:t,label:t}}):[],'Choose your term');
+    var term=termSel.value;
+    setOptions(secSel,(prog&&term)?schedSections(prog,term).map(function(x){return {value:x.section,label:fmtOpt(x)}}):[],'Choose your section');
+  }
+  function wireCascade(progSel,termSel,secSel){
+    progSel.addEventListener('change',function(){cascade(progSel,termSel,secSel);refreshDates()});
+    termSel.addEventListener('change',function(){
+      var prog=progSel.value,term=termSel.value;
+      setOptions(secSel,(prog&&term)?schedSections(prog,term).map(function(x){return {value:x.section,label:fmtOpt(x)}}):[],'Choose your section');
+      refreshDates();
+    });
+    secSel.addEventListener('change',refreshDates);
+  }
+  function mkField(label,cls,placeholder){
+    var f=document.createElement('div');f.className='field';
+    var l=document.createElement('label');l.textContent=label;
+    var sel=document.createElement('select');sel.className=cls;
+    var o=document.createElement('option');o.value='';o.textContent=placeholder;sel.appendChild(o);
+    f.appendChild(l);f.appendChild(sel);return f;
+  }
+  function refreshExtraUI(){
+    var can=extraRows.length+1<SCHED.max;
+    $('#addSection').hidden=!can;
+    $('#extraHint').textContent=SCHED.multi==='earliest'?'You can add up to '+(SCHED.max-1)+' more. If you are enrolled in more than one section, your drop/add period ends on the earliest date.':'';
+    extraRows.forEach(function(r,i){r.querySelector('h3').textContent='Additional section '+(i+1)});
+  }
+  function addExtra(){
+    if(extraRows.length+1>=SCHED.max)return;
+    var row=document.createElement('div');row.className='extra-row';
+    var h=document.createElement('h3');row.appendChild(h);
+    var grid=document.createElement('div');grid.className='grid';
+    var fp=mkField('Program of study','x-program','Choose your program'),ft=mkField('Term','x-term','Choose your term'),fs=mkField('Section','x-section','Choose your section');
+    [fp,ft,fs].forEach(function(f){grid.appendChild(f)});row.appendChild(grid);
+    var progSel=fp.querySelector('select'),termSel=ft.querySelector('select'),secSel=fs.querySelector('select');
+    setOptions(progSel,schedPrograms().map(function(p){return {value:p,label:p}}),'Choose your program');
+    wireCascade(progSel,termSel,secSel);
+    var rm=document.createElement('button');rm.type='button';rm.className='btn alt small remove';rm.textContent='Remove this section';
+    rm.addEventListener('click',function(){row.remove();extraRows.splice(extraRows.indexOf(row),1);refreshExtraUI();refreshDates()});
+    row.appendChild(rm);
+    $('#extraRows').appendChild(row);extraRows.push(row);refreshExtraUI();
+    try{progSel.focus()}catch(_){}
+  }
+  function enterScheduleMode(){
+    SCHED.on=true;
+    var progs=schedPrograms();
+    setOptions($('#program'),progs.map(function(p){return {value:p,label:p}}),'Choose your program');
+    $('#termPickField').hidden=false;$('#sectionField').hidden=false;$('#startHint').hidden=false;
+    $('#start').readOnly=true;$('#dropadd').readOnly=true;$('#term').disabled=true;
+    $('#start').value='';$('#dropadd').value='';
+    $('#err-term').textContent='Choose your program, term and section below.';
+    $('#err-dropadd').textContent='Choose your program, term and section below.';
+    $('#noSections').hidden=progs.length>0;
+    if(!wiredPrimary){wireCascade($('#program'),$('#termPick'),$('#section'));wiredPrimary=true}
+    cascade($('#program'),$('#termPick'),$('#section'));
+    $('#addSection').addEventListener('click',addExtra);
+    $('#extraWrap').hidden=!(SCHED.multi==='earliest'&&SCHED.max>1&&progs.length>0);
+    refreshExtraUI();refreshDates();
+  }
+  var wiredPrimary=false;
+  function applyOptions(j){
+    if(j&&j.ok&&j.config)applyConfig(j.config,j);
+    if(!(j&&j.ok&&Array.isArray(j.programs)&&Array.isArray(j.terms)&&j.programs.length&&j.terms.length))return;
+    refill('program',j.programs);refill('term',j.terms);
+    var sc=j.schedule;
+    if(sc&&sc.active&&Array.isArray(sc.sections)){
+      SCHED.sections=sc.sections;SCHED.multi=sc.multiSection||'single';SCHED.max=sc.maxSections||1;SCHED.basis=sc.basis||'';SCHED.version=sc.version||0;
+      enterScheduleMode();
+    }
+    update();
+  }
+  var PREVIEW=/[?&]preview=1/.test(location.search);
+  if(LIVE&&window.fetch){
+    var loadOptions=function(draft){
+      fetch('/api/forms/financial-responsibility/options',{credentials:'same-origin'})
+        .then(function(r){return r.ok?r.json():null})
+        .then(function(j){if(draft&&j&&j.ok){j.config=draft;j.availability={open:true}}applyOptions(j)})
+        .catch(function(){});
+    };
+    if(PREVIEW){
+      $('#previewBar').hidden=false;
+      fetch('/api/admin/forms/financial-responsibility/draft',{credentials:'same-origin'})
+        .then(function(r){return r.ok?r.json():null})
+        .then(function(d){if(!d||!d.ok){$('#previewBar').textContent='To preview this draft, sign in to the administration site first, then open the preview again.';return}loadOptions(d.config)})
+        .catch(function(){});
+    }else loadOptions(null);
+  }
+
+  if(LIVE)$('#submitBtn').textContent='Submit to Financial Aid';
+  applyConfig(CFG,{});
+  update();
+})();
+</script>
+</body>
+</html>

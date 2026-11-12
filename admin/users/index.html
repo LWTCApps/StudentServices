@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Users & access | LWTC Financial Aid</title><meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../../assets/fav.png">
+<link rel="stylesheet" href="../../assets/brand-fonts.css"><link rel="stylesheet" href="../../assets/admin.css?v=20261030">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="bar" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<div class="wrap">
+  <header class="top"><a href="../../" aria-label="Financial Aid home"><span class="logo" role="img" aria-label="Lorenzo Walker Technical College"></span></a><div class="who">Signing in…</div></header>
+  <nav class="main" aria-label="Administration"></nav>
+  <main id="main">
+    <h1>Users &amp; access</h1>
+    <p class="sub">Cloudflare Access decides who can sign in. This page decides what each signed-in person can do: which menus they see, whether they can edit, publish, open documents, and which forms they can work with.</p>
+    <div id="banner"></div>
+    <div class="tabs" role="tablist" aria-label="Users and access">
+      <button class="tab" role="tab" id="t-people" aria-selected="true" data-tab="people">People</button>
+      <button class="tab" role="tab" id="t-roles" aria-selected="false" data-tab="roles">Roles &amp; permissions</button>
+      <button class="tab" role="tab" id="t-cf" aria-selected="false" data-tab="cf">Cloudflare Access</button>
+      <button class="tab" role="tab" id="t-check" aria-selected="false" data-tab="check">What can this person do?</button>
+    </div>
+    <section id="p-people" role="tabpanel" aria-labelledby="t-people"></section>
+    <section id="p-roles" role="tabpanel" aria-labelledby="t-roles" hidden></section>
+    <section id="p-cf" role="tabpanel" aria-labelledby="t-cf" hidden></section>
+    <section id="p-check" role="tabpanel" aria-labelledby="t-check" hidden></section>
+  </main>
+</div>
+<script src="../../assets/admin.js?v=20261104"></script>
+<script>
+(function(){
+  var el=ADM.el,$=ADM.$,D=null;
+  var GROUP_ORDER=['Staff console','Documents','Schedule','Forms','Site','Notifications','Access','Audit'];
+  function roleName(id){return D.roles[id]?D.roles[id].name:id}
+  function permLabel(k){for(var i=0;i<D.permissions.length;i++)if(D.permissions[i].key===k)return D.permissions[i].label;return k}
+  function scopeText(r){return r.forms.indexOf('*')>-1?'All forms':r.forms.join(', ')}
+  function load(){
+    return ADM.api('/api/admin/access').then(function(j){D=j;renderAll()}).catch(function(e){$('#banner').textContent='';$('#banner').appendChild(el('div','banner bad',ADM.errText(e)))});
+  }
+  function renderAll(){renderBanner();renderPeople();renderRoles();renderCF();renderCheck()}
+  function renderBanner(){
+    var b=$('#banner');b.textContent='';
+    if(!D.managed)b.appendChild(el('div','banner warn','Access is not managed here yet. Right now every signed-in staff member is an Advisor, and Schedule Administrators come from the Worker settings. Switch to managed access to give people different roles.'));
+  }
+  function permGroups(selected,disabled){
+    var wrap=el('div'),checks=[];
+    GROUP_ORDER.forEach(function(g){
+      var items=D.permissions.filter(function(p){return p.group===g});if(!items.length)return;
+      var box=el('div','perm-group');box.appendChild(el('h4',null,g));
+      items.forEach(function(p){
+        var l=el('label','chk');var c=el('input');c.type='checkbox';c.value=p.key;c.checked=selected.indexOf(p.key)>-1;c.disabled=!!disabled;checks.push(c);
+        l.appendChild(c);var t=el('span',null,p.label);t.appendChild(el('small',null,p.desc));l.appendChild(t);box.appendChild(l);
+      });
+      wrap.appendChild(box);
+    });
+    wrap.value=function(){return checks.filter(function(c){return c.checked}).map(function(c){return c.value})};
+    return wrap;
+  }
+
+  /* ---------- People ---------- */
+  function renderPeople(){
+    var host=$('#p-people');host.textContent='';
+    if(!D.managed){
+      var c=el('div','card');c.appendChild(el('h3',null,'Switch to managed access'));
+      c.appendChild(el('p',null,'Nothing changes for anyone when you switch: everyone who can sign in keeps the Advisor role, and current Schedule Administrators are listed here with their role. After that you can give people other roles, switch people off, or set that unlisted people get no access.'));
+      var b=el('button','btn','Switch to managed access');b.type='button';b.disabled=!D.canManage;
+      b.addEventListener('click',function(){ADM.api('/api/admin/access/init',{body:{}}).then(function(){ADM.toast('Managed access is on.');return load()}).catch(function(e){ADM.toast(ADM.errText(e),true)})});
+      c.appendChild(b);if(!D.canManage)c.appendChild(el('p','hint','You can see this page but not change it (you need the "Manage users and roles" permission).'));
+      host.appendChild(c);
+    }else{
+      var def=el('div','card');def.appendChild(el('h3',null,'Everyone who is not listed below'));
+      var row=el('div','toolbar');var sel=el('select');sel.style.maxWidth='320px';sel.setAttribute('aria-label','Role for people who are not listed');
+      var o0=el('option',null,'No access (they can sign in but see nothing)');o0.value='';sel.appendChild(o0);
+      Object.keys(D.roles).filter(function(k){return k!=='super-admin'}).forEach(function(k){var o=el('option',null,D.roles[k].name);o.value=k;sel.appendChild(o)});
+      sel.value=D.settings.defaultRole||'';sel.disabled=!D.canManage;row.appendChild(sel);
+      var sv=el('button','btn alt small','Save');sv.type='button';sv.disabled=!D.canManage;
+      sv.addEventListener('click',function(){ADM.api('/api/admin/access/settings',{body:{defaultRole:sel.value}}).then(function(){ADM.toast('Saved.');return load()}).catch(function(e){ADM.toast(ADM.errText(e),true)})});
+      row.appendChild(sv);def.appendChild(row);
+      def.appendChild(el('p','hint','Cloudflare Access still decides who can reach the site at all. Choose "No access" once everyone who needs access is listed.'));
+      host.appendChild(def);
+      var bar=el('div','toolbar');bar.style.marginTop='20px';
+      var add=el('button','btn','Add a person');add.type='button';add.disabled=!D.canManage;add.addEventListener('click',function(){editUser(null)});bar.appendChild(add);host.appendChild(bar);
+      var emails=Object.keys(D.users).sort();
+      var tw=el('div','tablewrap'),t=el('table');var thead=el('thead'),hr=el('tr');['Person','Roles','Status','Note',''].forEach(function(h){hr.appendChild(el('th',null,h))});thead.appendChild(hr);t.appendChild(thead);
+      var tb=el('tbody');
+      emails.forEach(function(e){
+        var u=D.users[e],tr=el('tr');
+        var c1=el('td');c1.appendChild(el('strong',null,e));c1.appendChild(el('div','muted small','Added '+(u.addedBy?'by '+u.addedBy+' ':'')+(u.addedAt?ADM.fmt(u.addedAt):'')));tr.appendChild(c1);
+        var c2=el('td'),ch=el('div','chips');u.roles.forEach(function(r){ch.appendChild(el('span','chip',roleName(r)))});if(!u.roles.length)ch.appendChild(el('span','muted','No roles'));c2.appendChild(ch);tr.appendChild(c2);
+        var c3=el('td');c3.appendChild(el('span','pill '+(u.active?'live':'off'),u.active?'Active':'Switched off'));tr.appendChild(c3);
+        tr.appendChild(el('td','small',u.note||''));
+        var c5=el('td');if(D.canManage){var eb=el('button','btn alt small','Edit');eb.type='button';eb.setAttribute('aria-label','Edit '+e);eb.addEventListener('click',function(){editUser(e)});c5.appendChild(eb)}tr.appendChild(c5);
+        tb.appendChild(tr);
+      });
+      if(!emails.length){var tr=el('tr'),td=el('td','muted','No one is listed yet. Everyone who signs in gets the role above.');td.colSpan=5;tr.appendChild(td);tb.appendChild(tr)}
+      t.appendChild(tb);tw.appendChild(t);host.appendChild(tw);
+    }
+    // fixed access from Worker settings (read-only, shown in both modes)
+    var fx=el('div','card');fx.style.marginTop='24px';fx.appendChild(el('h3',null,'Set in the Worker settings (not changed here)'));
+    var dl=el('dl','kv');
+    dl.appendChild(el('dt',null,'Super Administrators'));dl.appendChild(el('dd',null,D.supers.length?D.supers.join(', '):'None set. Add SUPER_ADMIN_EMAILS in the Worker settings so someone can always manage access.'));
+    dl.appendChild(el('dt',null,'Schedule Administrators'));dl.appendChild(el('dd',null,D.scheduleEnv.length?D.scheduleEnv.join(', '):'None set.'));
+    fx.appendChild(dl);fx.appendChild(el('p','hint','Super Administrators always have every permission and cannot be locked out. People in the schedule list keep schedule access.'));
+    host.appendChild(fx);
+  }
+  function editUser(email){
+    var u=email?D.users[email]:{roles:[],active:true,note:''};
+    var body=el('div');
+    var em=el('input');em.type='email';em.value=email||'';em.disabled=!!email;em.autocomplete='off';body.appendChild(ADM.field('Email address',em,'The address they sign in with.'));
+    var rl=el('div');rl.appendChild(el('label',null,'Roles'));var cs=[];
+    Object.keys(D.roles).filter(function(k){return k!=='super-admin'}).forEach(function(k){
+      var l=el('label','chk');var c=el('input');c.type='checkbox';c.value=k;c.checked=u.roles.indexOf(k)>-1;cs.push(c);l.appendChild(c);
+      var t=el('span',null,D.roles[k].name);t.appendChild(el('small',null,(D.roles[k].description||'')+' Forms: '+scopeText(D.roles[k])));l.appendChild(t);rl.appendChild(l);
+    });
+    body.appendChild(rl);
+    var note=el('input');note.type='text';note.maxLength=200;note.value=u.note||'';body.appendChild(ADM.field('Note (optional)',note,'For example, their job or why they have access.'));
+    var al=el('label','chk');var ac=el('input');ac.type='checkbox';ac.checked=u.active!==false;al.appendChild(ac);var at=el('span',null,'Active');at.appendChild(el('small',null,'Switch off to remove all of this person\u2019s access without deleting them.'));al.appendChild(at);body.appendChild(al);
+    var msg=el('div','banner bad');msg.hidden=true;body.appendChild(msg);
+    var btns=[{label:'Cancel',alt:true},{label:'Save',keep:true,onClick:function(d){
+      ADM.api('/api/admin/access/user',{body:{email:em.value,roles:cs.filter(function(c){return c.checked}).map(function(c){return c.value}),active:ac.checked,note:note.value}}).then(function(){d.close();ADM.toast('Saved.');return load()}).catch(function(e){msg.textContent=e&&e.field==='email'?'Enter a valid email address.':ADM.errText(e);msg.hidden=false});return false}}];
+    if(email)btns.unshift({label:'Remove from the list',alt:true,danger:true,keep:true,onClick:function(d){
+      if(!window.confirm('Remove '+email+' from the list? They will then get the role for people who are not listed.'))return false;
+      ADM.api('/api/admin/access/user/remove',{body:{email:email}}).then(function(){d.close();ADM.toast('Removed.');return load()}).catch(function(e){msg.textContent=ADM.errText(e);msg.hidden=false});return false}});
+    ADM.dialog(email?'Edit '+email:'Add a person',body,btns);
+  }
+
+  /* ---------- Roles ---------- */
+  function renderRoles(){
+    var host=$('#p-roles');host.textContent='';
+    var ids=Object.keys(D.roles);
+    host.appendChild(el('h2',null,'Who can do what'));
+    var tw=el('div','tablewrap'),t=el('table');t.setAttribute('aria-label','Permissions by role');
+    var th=el('thead'),hr=el('tr');hr.appendChild(el('th',null,'Permission'));ids.forEach(function(id){hr.appendChild(el('th',null,D.roles[id].name))});th.appendChild(hr);t.appendChild(th);
+    var tb=el('tbody');
+    GROUP_ORDER.forEach(function(g){
+      var items=D.permissions.filter(function(p){return p.group===g});if(!items.length)return;
+      var gr=el('tr'),gc=el('th',null,g);gc.colSpan=ids.length+1;gc.style.background='var(--surface)';gr.appendChild(gc);tb.appendChild(gr);
+      items.forEach(function(p){
+        var r=el('tr'),c0=el('td');c0.appendChild(el('strong',null,p.label));c0.appendChild(el('div','muted small',p.desc));r.appendChild(c0);
+        ids.forEach(function(id){var c=el('td');c.style.textAlign='center';var on=D.roles[id].permissions.indexOf(p.key)>-1;c.textContent=on?'\u2713':'\u2013';c.setAttribute('aria-label',(on?'Yes':'No')+': '+D.roles[id].name+', '+p.label);if(on)c.style.fontWeight='700';else c.style.color='var(--muted)';r.appendChild(c)});tb.appendChild(r);
+      });
+    });
+    var sr=el('tr'),sc=el('td');sc.appendChild(el('strong',null,'Forms they can work with'));sr.appendChild(sc);ids.forEach(function(id){var c=el('td','small',scopeText(D.roles[id]));c.style.textAlign='center';sr.appendChild(c)});tb.appendChild(sr);
+    t.appendChild(tb);tw.appendChild(t);host.appendChild(tw);
+    host.appendChild(el('h2',null,'Roles'));
+    var bar=el('div','toolbar');var add=el('button','btn','Add a role');add.type='button';add.disabled=!D.managed||!D.canManage;add.addEventListener('click',function(){editRole(null)});bar.appendChild(add);
+    if(!D.managed)bar.appendChild(el('span','hint','Switch to managed access (People tab) to change roles.'));host.appendChild(bar);
+    ids.forEach(function(id){
+      var r=D.roles[id],c=el('div','item');var h=el('div','head');var l=el('div');l.appendChild(el('strong',null,r.name));
+      if(r.builtin)l.appendChild(el('span','pill blue',r.locked?'Built in \u00b7 locked':'Built in'));
+      h.appendChild(l);
+      var tools=el('div','tools');
+      if(!r.locked&&D.managed&&D.canManage){var eb=el('button','btn alt small','Edit');eb.type='button';eb.setAttribute('aria-label','Edit role '+r.name);eb.addEventListener('click',function(){editRole(id)});tools.appendChild(eb)}
+      h.appendChild(tools);c.appendChild(h);
+      c.appendChild(el('p','muted',r.description||''));
+      var chips=el('div','chips');r.permissions.forEach(function(p){chips.appendChild(el('span','chip',permLabel(p)))});if(!r.permissions.length)chips.appendChild(el('span','muted','No permissions'));c.appendChild(chips);
+      c.appendChild(el('p','hint','Forms: '+scopeText(r)+'. People with this role: '+Object.keys(D.users).filter(function(e){return D.users[e].roles.indexOf(id)>-1}).length));
+      host.appendChild(c);
+    });
+  }
+  function editRole(id){
+    var r=id?D.roles[id]:{name:'',description:'',permissions:[],forms:['*']};
+    var body=el('div');
+    var idIn=el('input');idIn.type='text';idIn.value=id||'';idIn.disabled=!!id;idIn.maxLength=31;body.appendChild(ADM.field('Short id',idIn,'Lowercase letters, numbers and dashes, for example va-desk. Can\u2019t be changed later.'));
+    var nm=el('input');nm.type='text';nm.value=r.name;nm.maxLength=60;body.appendChild(ADM.field('Name',nm));
+    var ds=el('input');ds.type='text';ds.value=r.description||'';ds.maxLength=200;body.appendChild(ADM.field('Description',ds));
+    body.appendChild(el('h3',null,'Permissions'));var pg=permGroups(r.permissions,false);body.appendChild(pg);
+    body.appendChild(el('h3',null,'Forms this role can work with'));
+    var all=el('label','chk'),ar=el('input');ar.type='radio';ar.name='scope';ar.checked=r.forms.indexOf('*')>-1;all.appendChild(ar);all.appendChild(el('span',null,'All forms (including forms created later)'));body.appendChild(all);
+    var some=el('label','chk'),sr=el('input');sr.type='radio';sr.name='scope';sr.checked=r.forms.indexOf('*')<0;some.appendChild(sr);some.appendChild(el('span',null,'Only these forms:'));body.appendChild(some);
+    var fc=[];D.forms.forEach(function(f){var l=el('label','chk');l.style.marginLeft='30px';var c=el('input');c.type='checkbox';c.value=f;c.checked=r.forms.indexOf(f)>-1;fc.push(c);l.appendChild(c);l.appendChild(el('span',null,f));body.appendChild(l)});
+    var msg=el('div','banner bad');msg.hidden=true;body.appendChild(msg);
+    var btns=[{label:'Cancel',alt:true},{label:'Save role',keep:true,onClick:function(d){
+      var forms=ar.checked?['*']:fc.filter(function(c){return c.checked}).map(function(c){return c.value});
+      if(!forms.length){msg.textContent='Choose at least one form, or "All forms".';msg.hidden=false;return false}
+      ADM.api('/api/admin/access/role',{body:{id:idIn.value,name:nm.value,description:ds.value,permissions:pg.value(),forms:forms}}).then(function(){d.close();ADM.toast('Role saved.');return load()}).catch(function(e){msg.textContent=e&&e.field?'Check the '+e.field+' field.':ADM.errText(e);msg.hidden=false});return false}}];
+    if(id&&!r.builtin)btns.unshift({label:'Delete role',alt:true,danger:true,keep:true,onClick:function(d){
+      if(!window.confirm('Delete the role "'+r.name+'"?'))return false;
+      ADM.api('/api/admin/access/role/remove',{body:{id:id}}).then(function(){d.close();ADM.toast('Role deleted.');return load()}).catch(function(e){msg.textContent=e&&e.error==='in_use'?'That role is still given to people (or is the default). Change them first.':ADM.errText(e);msg.hidden=false});return false}});
+    ADM.dialog(id?'Edit role: '+r.name:'Add a role',body,btns);
+  }
+
+  /* ---------- Cloudflare Access ---------- */
+  function renderCF(){
+    var host=$('#p-cf');host.textContent='';
+    host.appendChild(el('p','sub','These are the people Cloudflare Access currently lets in. They are shown here for reference and are changed in Cloudflare Zero Trust, not on this page.'));
+    D.groups.forEach(function(g){
+      var c=el('div','card');c.style.marginBottom='14px';c.appendChild(el('h3',null,g.label));
+      if(!g.configured){c.appendChild(el('p','muted','Not connected. To show this list, add the Worker setting '+g.variable+' (the Access group\u2019s id) together with CF_ACCOUNT_ID and CF_API_TOKEN.'))}
+      else if(g.error){c.appendChild(el('div','banner warn','Cloudflare didn\u2019t answer ('+g.error+'). Check the API token\u2019s permissions.'))}
+      else{
+        if(g.name)c.appendChild(el('p','muted','Access group: '+g.name));
+        [['Allowed',g.include],['Always excluded',g.exclude],['Also required',g.require]].forEach(function(x){if(!x[1]||!x[1].length)return;c.appendChild(el('h4',null,x[0]));var ch=el('div','chips');x[1].forEach(function(v){ch.appendChild(el('span','chip',v))});c.appendChild(ch)});
+      }
+      host.appendChild(c);
+    });
+  }
+
+  /* ---------- What can this person do? ---------- */
+  function renderCheck(){
+    var host=$('#p-check');host.textContent='';
+    host.appendChild(el('p','sub','Type an email address to see exactly what the system would let that person do, and why.'));
+    var row=el('div','toolbar');var em=el('input');em.type='email';em.style.maxWidth='340px';em.setAttribute('aria-label','Email address');em.placeholder='name@example.edu';row.appendChild(em);
+    var go=el('button','btn','Check');go.type='button';row.appendChild(go);host.appendChild(row);
+    var out=el('div');out.setAttribute('aria-live','polite');host.appendChild(out);
+    function run(){
+      out.textContent='';
+      ADM.api('/api/admin/access/check',{body:{email:em.value}}).then(function(j){
+        var a=j.access,c=el('div','card');c.appendChild(el('h3',null,em.value.trim().toLowerCase()));
+        var dl=el('dl','kv');dl.appendChild(el('dt',null,'How'));dl.appendChild(el('dd',null,a.source+(a.active?'':' (switched off)')));
+        dl.appendChild(el('dt',null,'Roles'));dl.appendChild(el('dd',null,a.roles.length?a.roles.map(roleName).join(', '):'None'));
+        dl.appendChild(el('dt',null,'Forms'));dl.appendChild(el('dd',null,a.allForms?'All forms':(a.forms.length?a.forms.join(', '):'None')));
+        c.appendChild(dl);
+        c.appendChild(el('h4',null,'Menus'));var mc=el('div','chips');Object.keys(a.menus).forEach(function(k){if(a.menus[k])mc.appendChild(el('span','chip',k))});if(!mc.children.length)mc.appendChild(el('span','muted','None'));c.appendChild(mc);
+        c.appendChild(el('h4',null,'Permissions'));var pc=el('div','chips');a.permissions.forEach(function(p){pc.appendChild(el('span','chip',permLabel(p)))});if(!pc.children.length)pc.appendChild(el('span','muted','None'));c.appendChild(pc);
+        (a.notes||[]).forEach(function(n){c.appendChild(el('p','hint',n))});
+        out.appendChild(c);
+      }).catch(function(e){out.appendChild(el('div','banner bad',e&&e.field==='email'?'Enter a valid email address.':ADM.errText(e)))});
+    }
+    go.addEventListener('click',run);em.addEventListener('keydown',function(e){if(e.key==='Enter')run()});
+  }
+
+  /* ---------- tabs ---------- */
+  var tabs=ADM.$$('.tab');
+  function select(name){tabs.forEach(function(t){var on=t.dataset.tab===name;t.setAttribute('aria-selected',String(on));$('#p-'+t.dataset.tab).hidden=!on})}
+  tabs.forEach(function(t,i){t.addEventListener('click',function(){select(t.dataset.tab)});t.addEventListener('keydown',function(e){var n=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(!n)return;e.preventDefault();var x=tabs[(i+n+tabs.length)%tabs.length];x.focus();select(x.dataset.tab)})});
+  ADM.init({page:'users',need:null}).then(function(me){
+    if(!ADM.can('users.view')&&!ADM.can('users.manage')){var m=$('main');m.textContent='';m.appendChild(el('h1',null,'No access to this area'));m.appendChild(el('p','sub','Your role doesn\u2019t include Users & access.'));return}
+    return load();
+  }).catch(function(){});
+})();
+</script>
+</body>
+</html>

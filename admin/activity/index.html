@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Activity log | LWTC Financial Aid</title><meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../../assets/fav.png">
+<link rel="stylesheet" href="../../assets/brand-fonts.css"><link rel="stylesheet" href="../../assets/admin.css?v=20261030">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="bar" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<div class="wrap">
+  <header class="top"><a href="../../" aria-label="Financial Aid home"><span class="logo" role="img" aria-label="Lorenzo Walker Technical College"></span></a><div class="who">Signing in…</div></header>
+  <nav class="main" aria-label="Administration"></nav>
+  <main id="main">
+    <h1>Activity log</h1>
+    <p class="sub">The most recent 500 changes: who changed a form, a permission, the schedule or the site content, and who opened an uploaded document.</p>
+    <div class="toolbar"><label for="area" class="muted small">Area</label><select id="area" style="max-width:200px"></select><label for="q" class="muted small">Search</label><input type="text" id="q" style="max-width:280px" placeholder="Person or detail"><span id="count" class="muted small" aria-live="polite"></span></div>
+    <div class="tablewrap"><table><thead><tr><th>When</th><th>Who</th><th>Area</th><th>What</th><th>Details</th></tr></thead><tbody id="rows"></tbody></table></div>
+  </main>
+</div>
+<script src="../../assets/admin.js?v=20261104"></script>
+<script>
+(function(){
+  var el=ADM.el,$=ADM.$,all=[];
+  var NAMES={access:'Access',forms:'Forms',site:'Site content',documents:'Documents',schedule:'Schedule',notifications:'Notifications',console:'Staff console',security:'Security',email:'Email'};
+  function pretty(a){return String(a||'').replace(/-/g,' ').replace(/^./,function(c){return c.toUpperCase()})}
+  function draw(){
+    var area=$('#area').value,q=$('#q').value.trim().toLowerCase(),tb=$('#rows');tb.textContent='';
+    var list=all.filter(function(x){return (!area||x.area===area)&&(!q||[x.by,x.action,x.detail,x.area].join(' ').toLowerCase().indexOf(q)>-1)});
+    list.forEach(function(x){
+      var tr=el('tr');tr.appendChild(el('td','small',ADM.fmt(x.at)));tr.appendChild(el('td',null,x.by||x.who||''));
+      var a=el('td');a.appendChild(el('span','pill',NAMES[x.area]||x.area||''));tr.appendChild(a);
+      tr.appendChild(el('td',null,pretty(x.action)));tr.appendChild(el('td','small',x.detail||x.summary||''));tb.appendChild(tr);
+    });
+    if(!list.length){var tr=el('tr'),td=el('td','muted','Nothing matches.');td.colSpan=5;tr.appendChild(td);tb.appendChild(tr)}
+    $('#count').textContent=list.length+' of '+all.length;
+  }
+  ADM.init({page:'audit',need:'audit.view'}).then(function(){
+    return ADM.api('/api/admin/audit').then(function(j){
+      all=j.entries||[];var areas={};all.forEach(function(x){if(x.area)areas[x.area]=1});
+      var s=$('#area');var o0=el('option',null,'All areas');o0.value='';s.appendChild(o0);Object.keys(areas).sort().forEach(function(k){var o=el('option',null,NAMES[k]||k);o.value=k;s.appendChild(o)});
+      s.addEventListener('change',draw);$('#q').addEventListener('input',draw);draw();
+    });
+  }).catch(function(e){if(e&&!e.auth&&!e.forbidden)ADM.toast(ADM.errText(e),true)});
+})();
+</script>
+</body>
+</html>

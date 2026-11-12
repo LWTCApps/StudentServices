@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Administration | LWTC Financial Aid</title><meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../assets/fav.png">
+<link rel="stylesheet" href="../assets/brand-fonts.css"><link rel="stylesheet" href="../assets/admin.css?v=20261030">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="bar" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<div class="wrap">
+  <header class="top"><a href="../" aria-label="Financial Aid home"><span class="logo" role="img" aria-label="Lorenzo Walker Technical College"></span></a><div class="who">Signing in…</div></header>
+  <nav class="main" aria-label="Administration"></nav>
+  <main id="main">
+    <h1>Financial Aid administration</h1>
+    <p class="sub">Change what students see, who can do what, and how the forms behave. Changes to forms stay in a draft until someone with permission publishes them.</p>
+    <div class="statusline" id="status" aria-label="System status"></div>
+    <div class="cards" id="cards"></div>
+  </main>
+</div>
+<script src="../assets/admin.js?v=20261104"></script>
+<script>
+(function(){
+  var el=ADM.el;
+  ADM.init({page:'admin',root:'./'}).then(function(me){
+    var st=ADM.$('#status');
+    function dot(ok,label){var s=el('span');s.appendChild(el('i','dot '+(ok?'ok':'bad')));s.appendChild(document.createTextNode(label));st.appendChild(s)}
+    dot(me.kv,me.kv?'Settings storage connected':'Settings storage (KV) is not connected');
+    dot(me.documents,me.documents?'Document storage (R2) connected: uploads are on':'Document storage (R2) is not connected: uploads are off');
+    if(me.email==='resend')dot(true,'Email: sent by Resend (the Power Automate flow is the fallback)');
+    else if(me.email==='resend-not-bound')dot(false,'Email: Resend is switched on but the EMAIL binding is missing, so the flow is sending');
+    else dot(true,'Email: sent by the Power Automate flow');
+    var all=[
+      ['forms','Forms','forms/','h-blue','Edit the questions, wording, requirements and features of each form. Create new forms. Publish, preview and restore earlier versions.'],
+      ['users','Users & access','users/','h-orange','See who has access to the staff console and these pages, and change what each person can do. Segregate by role and by form.'],
+      ['content','Site content','site/','h-green','Home page text, announcement banner, office contact details, footer, and document upload limits.'],
+      ['notifications','Notifications','notifications/','h-green','Choose who is emailed about new submissions. Create email groups and give each form its own groups if you want.'],
+      ['audit','Activity log','activity/','h-gold','Who changed what and when, and who opened which uploaded document.'],
+      ['schedule','Schedule','../staff/schedule/','h-blue','Upload the course schedule, set the drop/add rule and closure dates.'],
+      ['console','Staff console','../staff/','h-orange','Review submissions, set status, print forms and open uploaded documents.']
+    ];
+    var box=ADM.$('#cards');
+    all.forEach(function(c){
+      if(!me.menus[c[0]])return;
+      var a=el('a','card');a.href=c[2];var h=el('h3');h.appendChild(el('span','hue '+c[3]));h.appendChild(document.createTextNode(c[1]));a.appendChild(h);a.appendChild(el('p',null,c[4]));box.appendChild(a);
+    });
+    if(!box.children.length)box.appendChild(el('p','muted','Your role doesn\u2019t include any administration areas yet.'));
+  }).catch(function(){});
+})();
+</script>
+</body>
+</html>

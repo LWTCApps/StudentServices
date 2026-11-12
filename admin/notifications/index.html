@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Notifications | LWTC Financial Aid administration</title><meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../../assets/fav.png">
+<link rel="stylesheet" href="../../assets/brand-fonts.css"><link rel="stylesheet" href="../../assets/admin.css?v=20261102">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="bar" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<div class="wrap">
+  <header class="top"><a href="../../" aria-label="Financial Aid home"><span class="logo" role="img" aria-label="Lorenzo Walker Technical College"></span></a><div class="who">Signing in…</div></header>
+  <nav class="main" aria-label="Administration"></nav>
+  <main id="main">
+    <h1>Notifications</h1>
+    <p class="sub">Choose who is emailed when a student submits a form. Make groups of addresses (for example Financial Aid Advisors, Program Administrators, a VA desk), then choose which groups hear about each form.</p>
+    <div id="errs"></div>
+    <div class="card" id="switchCard"></div>
+    <h2>Email groups</h2>
+    <div id="groups"></div>
+    <div class="toolbar"><button class="btn alt" id="addGroup" type="button">Add a group</button></div>
+    <h2>Who is emailed for each form</h2>
+    <p class="sub">A form with no setting of its own uses the default groups. Give a form its own groups when different people should hear about it. Choosing no groups means nobody is emailed for that form.</p>
+    <div id="routes"></div>
+    <h2>Send a test notification</h2>
+    <div class="card" id="testCard"></div>
+    <div class="sticky" style="margin-top:24px">
+      <button class="btn" id="save" type="button">Save</button> <span id="dirty" class="muted small" role="status" aria-live="polite"></span>
+    </div>
+    <p class="hint">Staff emails never include the student’s name or ID. They say a submission arrived and point staff to the console, where access is controlled by role.</p>
+  </main>
+</div>
+<script src="../../assets/admin.js?v=20261104"></script>
+<script>
+(function(){
+  var el=ADM.el,$=ADM.$,S=null,CFG=null,dirty=false,readOnly=true;
+  var clone=function(x){return JSON.parse(JSON.stringify(x))},rnd=function(){return 'g'+Math.random().toString(36).slice(2,7)};
+  function markDirty(){dirty=true;$('#dirty').textContent='Unsaved changes';$('#save').disabled=readOnly;preview();var th=$('#testHint');if(th)th.textContent='You have unsaved changes. New or edited groups can only be tested after you save.'}
+  window.addEventListener('beforeunload',function(e){if(dirty){e.preventDefault();e.returnValue=''}});
+  function splitEmails(v){return String(v||'').split(/[,;\s]+/).map(function(x){return x.trim()}).filter(Boolean)}
+  function recipients(formId){
+    var ids=CFG.routes.forms.hasOwnProperty(formId)?CFG.routes.forms[formId]:CFG.routes.default,seen={},out=[];
+    ids.forEach(function(id){CFG.groups.forEach(function(g){if(g.id!==id)return;g.emails.forEach(function(e){if(!seen[e.toLowerCase()]){seen[e.toLowerCase()]=1;out.push(e)}})})});
+    return out;
+  }
+  /* ---- master switch ---- */
+  function drawSwitch(){
+    var c=$('#switchCard');c.textContent='';
+    var l=el('label','chk'),cb=el('input');cb.type='checkbox';cb.checked=!!CFG.enabled;cb.disabled=readOnly;
+    cb.addEventListener('change',function(){CFG.enabled=cb.checked;markDirty();drawSwitch()});
+    l.appendChild(cb);var t=el('span',null,'Use these groups to email staff about new submissions');t.appendChild(el('small',null,'When this is off, the Power Automate flow sends to its own built-in list, exactly as it does today. Nothing changes until you switch this on and save.'));l.appendChild(t);c.appendChild(l);
+    var st=el('div','banner '+(CFG.enabled?'ok':'warn'));st.style.marginTop='12px';
+    st.textContent=CFG.enabled?'On: staff are emailed according to the groups below.':'Off: the flow\u2019s own list is being used. Set up your groups below, check the preview for each form, then switch this on.';
+    c.appendChild(st);
+    if(CFG.updatedBy)c.appendChild(el('p','hint','Last saved by '+CFG.updatedBy+' on '+ADM.fmt(CFG.updatedAt)+'.'));
+  }
+  /* ---- groups ---- */
+  function drawGroups(){
+    var host=$('#groups');host.textContent='';
+    CFG.groups.forEach(function(g,i){
+      var card=el('div','item'),head=el('div','head');head.appendChild(el('strong',null,g.name||'New group'));
+      var tools=el('div','tools'),rm=el('button','btn alt small','Remove');rm.type='button';rm.disabled=readOnly;rm.setAttribute('aria-label','Remove group '+(g.name||''));
+      rm.addEventListener('click',function(){
+        var users=Object.keys(CFG.routes.forms).filter(function(f){return CFG.routes.forms[f].indexOf(g.id)>-1}).length+(CFG.routes.default.indexOf(g.id)>-1?1:0);
+        if(!window.confirm('Remove the group \u201c'+(g.name||'')+'\u201d?'+(users?' It is used in '+users+' place'+(users===1?'':'s')+' below and will be taken out of them.':'')))return;
+        CFG.groups.splice(i,1);CFG.routes.default=CFG.routes.default.filter(function(x){return x!==g.id});Object.keys(CFG.routes.forms).forEach(function(f){CFG.routes.forms[f]=CFG.routes.forms[f].filter(function(x){return x!==g.id})});markDirty();drawGroups();drawRoutes()});
+      tools.appendChild(rm);head.appendChild(tools);card.appendChild(head);
+      var nm=el('input');nm.type='text';nm.maxLength=60;nm.value=g.name;nm.disabled=readOnly;nm.addEventListener('input',function(){g.name=nm.value;head.firstChild.textContent=g.name||'New group';markDirty()});nm.addEventListener('change',drawRoutes);
+      card.appendChild(ADM.field('Group name',nm,null,'gn'+i));
+      var ta=el('textarea');ta.value=g.emails.join('\n');ta.disabled=readOnly;ta.setAttribute('spellcheck','false');
+      ta.addEventListener('input',function(){g.emails=splitEmails(ta.value);count.textContent=g.emails.length+' address'+(g.emails.length===1?'':'es');markDirty()});ta.addEventListener('change',drawRoutes);
+      card.appendChild(ADM.field('Email addresses',ta,'One per line, or separated by commas or semicolons. A shared mailbox or distribution list works well, because then adding someone never needs a change here.','ge'+i));
+      var count=el('p','hint',g.emails.length+' address'+(g.emails.length===1?'':'es'));card.appendChild(count);
+      host.appendChild(card);
+    });
+    if(!CFG.groups.length)host.appendChild(el('p','muted','No groups yet. Add one, for example \u201cFinancial Aid - Advisors\u201d.'));
+    $('#addGroup').disabled=readOnly;
+  }
+  $('#addGroup').addEventListener('click',function(){var g={id:rnd(),name:'',emails:[]};CFG.groups.push(g);if(CFG.groups.length===1)CFG.routes.default=[g.id];markDirty();drawGroups();drawRoutes();var inp=$('#gn'+(CFG.groups.length-1));if(inp)inp.focus()});
+  /* ---- routing ---- */
+  function chips(host,selected,onChange,label){
+    var wrap=el('div','chips');wrap.setAttribute('role','group');wrap.setAttribute('aria-label',label);
+    if(!CFG.groups.length)wrap.appendChild(el('span','muted small','Create a group first.'));
+    CFG.groups.forEach(function(g){
+      var l=el('label','chk');l.style.margin='0 14px 0 0';var c=el('input');c.type='checkbox';c.checked=selected.indexOf(g.id)>-1;c.disabled=readOnly;
+      c.addEventListener('change',function(){var now=CFG.groups.filter(function(x){return wrap.querySelector('input[data-g="'+x.id+'"]').checked}).map(function(x){return x.id});onChange(now);markDirty()});
+      c.dataset.g=g.id;l.appendChild(c);l.appendChild(el('span',null,g.name||'(unnamed)'));wrap.appendChild(l);
+    });
+    host.appendChild(wrap);
+  }
+  function drawRoutes(){
+    var host=$('#routes');host.textContent='';
+    var dc=el('div','item');dc.appendChild(el('strong',null,'Default: any form without its own setting'));
+    var dh=el('div');dh.style.marginTop='8px';chips(dh,CFG.routes.default,function(v){CFG.routes.default=v;drawRoutes()},'Default groups');dc.appendChild(dh);host.appendChild(dc);
+    S.forms.forEach(function(f){
+      var card=el('div','item'),custom=CFG.routes.forms.hasOwnProperty(f.id);
+      var head=el('div','head');var t=el('div');t.appendChild(el('strong',null,f.title));t.appendChild(el('span','muted small',' '+f.id));if(!f.published)t.appendChild(el('span','pill draft','Not published yet'));head.appendChild(t);card.appendChild(head);
+      var r1=el('label','chk'),a=el('input');a.type='radio';a.name='r_'+f.id;a.checked=!custom;a.disabled=readOnly;a.addEventListener('change',function(){delete CFG.routes.forms[f.id];markDirty();drawRoutes()});r1.appendChild(a);r1.appendChild(el('span',null,'Use the default groups'));card.appendChild(r1);
+      var r2=el('label','chk'),b=el('input');b.type='radio';b.name='r_'+f.id;b.checked=custom;b.disabled=readOnly;b.addEventListener('change',function(){CFG.routes.forms[f.id]=CFG.routes.default.slice();markDirty();drawRoutes()});r2.appendChild(b);r2.appendChild(el('span',null,'Choose groups for this form'));card.appendChild(r2);
+      if(custom){var h=el('div');h.style.margin='4px 0 4px 30px';chips(h,CFG.routes.forms[f.id],function(v){CFG.routes.forms[f.id]=v;drawRoutes()},'Groups for '+f.title);card.appendChild(h)}
+      var to=recipients(f.id),p=el('p','small');p.style.margin='8px 0 0';p.appendChild(el('strong',null,'Would be emailed ('+to.length+'): '));p.appendChild(document.createTextNode(to.length?to.join(', '):'nobody'));if(!to.length)p.style.color='var(--warn)';card.appendChild(p);
+      host.appendChild(card);
+    });
+  }
+  function preview(){}
+  /* ---- load / save ---- */
+  function showErrors(list){
+    var box=$('#errs');box.textContent='';if(!list||!list.length)return;
+    var b=el('div','errs');b.setAttribute('role','alert');b.appendChild(el('strong',null,'Fix these first:'));var u=el('ul');list.forEach(function(e){u.appendChild(el('li',null,e.message))});b.appendChild(u);box.appendChild(b);b.scrollIntoView({block:'center'});
+  }
+
+  /* ---- send a test notification ---- */
+  var REASON={timeout:'it timed out',unreachable:'it couldn\u2019t be reached',resend_error:'Resend refused it',from_not_allowed:'the From address isn\u2019t allowed',caller_not_allowed:'this site isn\u2019t registered with the email relay',invalid_request:'the relay rejected the message',internal_error:'the relay had an error','no-recipients':'there were no valid addresses',failed:'it failed'};
+  function why(code){if(REASON[code])return REASON[code];if(/^flow-/.test(code||''))return 'the flow answered an error ('+String(code).slice(5)+')';return code||'it failed'}
+  function drawTest(){
+    var host=$('#testCard');host.textContent='';
+    var saved=(S&&S.config&&S.config.groups)||[];
+    host.appendChild(el('p',null,'Send a real test email to check an email group, and to check each way of sending. The test uses the groups as last saved.'));
+    if(!saved.length){host.appendChild(el('p','muted','Save at least one group first.'));return}
+    var canTest=!readOnly;
+    var g=el('div','grid2');host.appendChild(g);
+    var sel=el('select');saved.forEach(function(x){var o=el('option',null,x.name+' ('+x.emails.length+(x.emails.length===1?' address)':' addresses)'));o.value=x.id;sel.appendChild(o)});sel.disabled=!canTest;
+    var w=ADM.field('Group',sel,dirty?'You have unsaved changes. New or edited groups can only be tested after you save.':'The test uses the groups as last saved.','testGroup');var hp=w.querySelector('.hint');if(hp)hp.id='testHint';w.style.marginBottom='8px';g.appendChild(w);
+    var m=el('div');m.appendChild(el('label',null,'How to send it'));
+    var resendOk=S.email==='resend';
+    var opts=[['auto','Automatic','What a live submission does: Resend first, the Power Automate flow if Resend fails.',true],['resend','Resend only','Tests Resend by itself. If it fails you see why, and the flow is not used.',resendOk],['flow','Power Automate flow only','Tests the fallback by itself.',true]];
+    var radios=[];
+    opts.forEach(function(o,i){var l=el('label','chk');var r=el('input');r.type='radio';r.name='tmethod';r.value=o[0];r.checked=i===0;r.disabled=!canTest||!o[3];radios.push(r);l.appendChild(r);var t=el('span',null,o[1]);t.appendChild(el('small',null,o[2]));l.appendChild(t);m.appendChild(l)});
+    g.appendChild(m);
+    if(!resendOk)host.appendChild(el('div','banner warn',S.email==='resend-not-bound'?'Resend is switched on (EMAIL_MODE) but the EMAIL binding is missing, so only the flow can send. Automatic uses the flow.':'Resend is not switched on for this site, so only the flow can send. Automatic uses the flow.'));
+    var ml=el('label','chk');var me=el('input');me.type='checkbox';me.disabled=!canTest;ml.appendChild(me);var mt=el('span',null,'Send only to me ('+((ADM.me&&ADM.me.email)||'your address')+')');mt.appendChild(el('small',null,'Tests the path without emailing the people in the group.'));ml.appendChild(mt);host.appendChild(ml);
+    var row=el('div','toolbar');row.style.marginTop='12px';var go=el('button','btn','Send test');go.type='button';go.disabled=!canTest;row.appendChild(go);host.appendChild(row);
+    var out=el('div');out.setAttribute('aria-live','polite');host.appendChild(out);
+    go.addEventListener('click',function(){
+      var grp=saved.filter(function(x){return x.id===sel.value})[0],how=radios.filter(function(r){return r.checked})[0].value,toMe=me.checked;
+      if(!toMe&&!window.confirm('Send a test email to '+grp.emails.length+(grp.emails.length===1?' address':' addresses')+' in \u201c'+grp.name+'\u201d?'))return;
+      out.textContent='';go.disabled=true;go.textContent='Sending\u2026';
+      ADM.api('/api/admin/notifications/test',{body:{groupId:sel.value,method:how,target:toMe?'me':'group'}}).then(function(r){
+        var b,txt;
+        var to=r.target==='me'?'you':r.sentTo+(r.sentTo===1?' address':' addresses')+' in \u201c'+r.group.name+'\u201d';
+        if(r.delivered&&r.attempts.length===1)txt='Sent through '+(r.via==='resend'?'Resend':'the Power Automate flow')+' to '+to+'. Check the inbox (and the spam folder).';
+        else if(r.delivered){var f1=r.attempts[0];txt='Resend didn\u2019t deliver it ('+why(f1.error)+'), so it was sent through the Power Automate flow to '+to+'. The fallback works.'}
+        else txt='Not delivered. '+r.attempts.map(function(a){return (a.via==='resend'?'Resend':'The flow')+': '+why(a.error)+'.'}).join(' ');
+        b=el('div','banner '+(r.delivered?(r.attempts.length>1?'warn':'ok'):'bad'),txt);out.appendChild(b);
+      }).catch(function(e){
+        var m=e&&e.error==='rate_limited'?'You\u2019ve sent the most tests allowed ('+e.limit+' in '+e.minutes+' minutes). Try again in a few minutes.':e&&e.error==='resend_unavailable'?'Resend isn\u2019t switched on for this site, so it can\u2019t be tested by itself.':e&&e.error==='no_recipients'?'That group has no valid addresses.':ADM.errText(e);
+        out.appendChild(el('div','banner bad',m));
+      }).then(function(){go.disabled=!canTest;go.textContent='Send test'});
+    });
+  }
+  function draw(){drawSwitch();drawGroups();drawRoutes();$('#save').disabled=true;$('#dirty').textContent='';dirty=false;drawTest()}
+  function load(){
+    return ADM.api('/api/admin/notifications').then(function(j){S=j;CFG=clone(j.config);readOnly=!j.canManage;draw();
+      if(readOnly)$('#main .sub').appendChild(document.createTextNode(' You can look but not change this (you need the \u201cChange email recipients\u201d permission).'));
+    });
+  }
+  $('#save').addEventListener('click',function(){
+    showErrors(null);$('#save').disabled=true;$('#dirty').textContent='Saving\u2026';
+    ADM.api('/api/admin/notifications',{body:{baseVersion:S.config.version,config:CFG}}).then(function(j){
+      S=j;CFG=clone(j.config);draw();ADM.toast('Saved.');
+      if(j.warnings&&j.warnings.length){var b=el('div','banner warn');b.appendChild(el('strong',null,'Saved, but check this: '));b.appendChild(document.createTextNode(j.warnings.join(' ')));$('#errs').textContent='';$('#errs').appendChild(b)}
+    }).catch(function(e){
+      $('#dirty').textContent='Not saved';$('#save').disabled=false;
+      if(e&&e.error==='invalid_config')showErrors(e.errors);else ADM.toast(ADM.errText(e),true);
+    });
+  });
+  ADM.init({page:'notifications',need:null}).then(function(){
+    if(!(ADM.can('notifications.view')||ADM.can('notifications.manage'))){var m=$('main');m.textContent='';m.appendChild(el('h1',null,'No access to this area'));m.appendChild(el('p','sub','Your role doesn\u2019t include Notifications.'));return}
+    return load();
+  }).catch(function(e){if(e&&!e.auth&&!e.forbidden)ADM.toast(ADM.errText(e),true)});
+})();
+</script>
+</body>
+</html>

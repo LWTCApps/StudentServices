@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="color-scheme" content="light">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Schedule Admin | Lorenzo Walker Technical College</title>
+<link rel="icon" type="image/png" href="../../assets/fav.png">
+<link rel="stylesheet" href="../../assets/brand-fonts.css?v=20261029">
+<style>
+:root{
+  color-scheme:light;
+  --ink:#231F20;--paper:#FFFFFF;--surface:#F7F5F4;--line:#DDD8D6;--muted:#5D5557;--link:#2B6580;--error:#B3261E;--ok:#2F6B1F;--focus:#3A7B96;
+  --orange-a:#F58220;--orange-b:#F05A2B;--green-a:#BDD14F;--green-b:#6EA141;--gold-a:#FFC45A;--gold-b:#F9A03C;--blue-a:#54ADC3;--blue-b:#3A7B96;
+  --display:"Alfa Slab One","Clarendon Black",Rockwell,"Roboto Slab",Georgia,serif;
+  --text:"Source Sans 3","Source Sans Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{background:#fff;height:100%}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100%;background:#fff;color:var(--ink);font:400 16px/1.5 var(--text)}
+a{color:var(--link)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px 48px}
+.bar{height:8px;display:flex}.bar i{flex:1}
+.h-orange{background:linear-gradient(90deg,var(--orange-a),var(--orange-b))}.h-green{background:linear-gradient(90deg,var(--green-a),var(--green-b))}.h-gold{background:linear-gradient(90deg,var(--gold-a),var(--gold-b))}.h-blue{background:linear-gradient(90deg,var(--blue-a),var(--blue-b))}
+.logo{display:block;width:200px;aspect-ratio:720/309;background:center/contain no-repeat url(../../assets/lwtc-logo.png)}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0;flex-wrap:wrap}
+.who{font-size:14px;color:var(--muted);text-align:right}.who strong{color:var(--ink)}
+h1{font:400 clamp(26px,4vw,38px)/1.1 var(--display);margin:8px 0 4px}
+h2{font:400 22px/1.15 var(--display);margin:0 0 8px}
+h3{font:700 18px/1.2 var(--text);margin:20px 0 8px}
+.sub{margin:0 0 16px;color:var(--muted);max-width:75ch}
+.muted{color:var(--muted)}.small{font-size:14px}
+.status{display:flex;gap:12px;align-items:center;flex-wrap:wrap;border-radius:12px;padding:12px 16px;margin:0 0 16px;font-weight:600}
+.status.live{background:color-mix(in srgb,#92B547 18%,#fff);border:2px solid #6EA141}
+.status.off{background:#FFF6E8;border:2px solid #F9A03C}
+.steps{list-style:none;margin:0 0 20px;padding:0;display:flex;gap:8px;flex-wrap:wrap}
+.steps li{border:2px solid var(--line);border-radius:48px;padding:6px 14px;font-weight:600;font-size:15px;display:flex;gap:8px;align-items:center}
+.steps li.done{border-color:#6EA141}.steps li .d{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px}
+.steps li.done .d{background:linear-gradient(90deg,var(--green-a),var(--green-b));border-color:transparent}.steps li.done .d::after{content:"\2713";font-weight:700}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:2px solid var(--line);margin-bottom:20px}
+.tab{font:700 16px var(--text);background:transparent;color:var(--muted);border:0;border-bottom:4px solid transparent;margin-bottom:-2px;padding:10px 16px;cursor:pointer}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:#F37026}
+.panel[hidden]{display:none}
+.card{border:2px solid var(--line);border-radius:12px;padding:20px;margin-bottom:20px;background:#fff}
+.card.accent{border-color:var(--ink)}
+label{font-weight:700;font-size:14px;display:block;margin-bottom:2px}
+input[type=text],input[type=number],input[type=date],input[type=search],select,textarea{font:inherit;color:var(--ink);background:#fff;border:2px solid var(--line);border-radius:4px;padding:9px 12px;min-height:44px;width:100%}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px}
+.row>div{flex:1 1 180px;min-width:0}
+.row>.fixed{flex:0 0 auto}
+.btn{font:700 15px/1 var(--text);border:0;border-radius:48px;padding:14px 24px;min-height:46px;cursor:pointer;color:#231F20;background:linear-gradient(90deg,var(--orange-a),var(--orange-b))}
+.btn.alt{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+.btn.small{padding:8px 16px;min-height:36px;font-size:14px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.choice{display:flex;gap:10px;align-items:flex-start;padding:8px 0;font-weight:400}
+.choice input{margin-top:5px;width:20px;height:20px;flex:none;accent-color:#6EA141}
+.choice b{display:block}
+.drop{border:2px dashed var(--muted);border-radius:12px;padding:20px;text-align:center;background:var(--surface)}
+.drop.over{border-color:var(--ink);background:#FFF6E8}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:12px 0}
+.stat{border:2px solid var(--line);border-radius:12px;padding:10px 14px}
+.stat b{display:block;font:400 28px/1.1 var(--display)}
+.stat.add{border-color:#6EA141}.stat.chg{border-color:#F9A03C}.stat.rem{border-color:var(--error)}.stat.err{border-color:var(--error);background:#FDECEA}
+.tablewrap{overflow-x:auto;border:2px solid var(--line);border-radius:12px;max-height:520px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+thead th{position:sticky;top:0;background:var(--surface);text-align:left;font-size:13px;color:var(--muted);padding:8px 12px;border-bottom:2px solid var(--line);white-space:nowrap}
+tbody td{padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.mono{font-variant-numeric:tabular-nums}
+.tag{display:inline-block;border-radius:48px;padding:0 10px;font-weight:700;font-size:12px;border:2px solid var(--line);white-space:nowrap}
+.tag.ov{border-color:#F9A03C;background:#FFF6E8}.tag.new{border-color:#6EA141}
+del{color:var(--muted)}ins{text-decoration:none;font-weight:700}
+.err-list td:first-child{font-weight:700}
+.note{border-radius:8px;padding:10px 14px;margin:12px 0;font-weight:600}
+.note.err{background:#FDECEA;border:2px solid var(--error)}.note.ok{background:color-mix(in srgb,#92B547 18%,#fff);border:2px solid #6EA141}.note.warn{background:#FFF6E8;border:2px solid #F9A03C}
+details{margin:10px 0}details>summary{cursor:pointer;font-weight:700;padding:6px 0}
+.sticky{position:sticky;bottom:0;background:#fff;border-top:2px solid var(--ink);padding:14px 0;margin-top:16px;z-index:2}
+.closure-list{list-style:none;margin:0 0 12px;padding:0;display:flex;gap:8px;flex-wrap:wrap}
+.closure-list li{border:2px solid var(--line);border-radius:48px;padding:4px 6px 4px 14px;display:flex;gap:8px;align-items:center;font-weight:600;font-size:14px}
+.closure-list button{border:0;background:var(--surface);border-radius:50%;width:24px;height:24px;cursor:pointer;font-weight:700}
+.denied{max-width:640px;margin:48px auto;text-align:center}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="bar" aria-hidden="true"><i class="h-orange"></i><i class="h-green"></i><i class="h-gold"></i><i class="h-blue"></i></div>
+<div class="wrap">
+  <header class="top">
+    <a href="../" aria-label="Back to the staff console"><span class="logo" role="img" aria-label="Lorenzo Walker Technical College"></span></a>
+    <div class="who">Signed in as <strong id="me">…</strong><br><a href="../">&larr; Staff console</a> &middot; <a href="/cdn-cgi/access/logout">Sign out</a></div>
+  </header>
+
+  <div class="denied" id="denied" hidden>
+    <h1>No access</h1>
+    <p>Schedule Admin is limited to Schedule Administrators. If you need access, ask the Financial Aid office to add you to the Schedule Administrators group.</p>
+    <p><a href="../">Back to the staff console</a></p>
+  </div>
+
+  <main id="app" hidden>
+    <h1>Schedule admin</h1>
+    <p class="sub">The course schedule decides each student's start date and drop/add end date. Upload sections here, check the preview, and publish. Students only ever see published sections.</p>
+
+    <div class="status off" id="status" role="status"></div>
+    <ol class="steps" id="steps" aria-label="Setup progress"></ol>
+
+    <div class="tabs" role="tablist" aria-label="Schedule admin sections">
+      <button class="tab" role="tab" id="t-upload" aria-controls="p-upload" aria-selected="true">Upload &amp; publish</button>
+      <button class="tab" role="tab" id="t-current" aria-controls="p-current" aria-selected="false">Current schedule</button>
+      <button class="tab" role="tab" id="t-settings" aria-controls="p-settings" aria-selected="false">Rules &amp; settings</button>
+      <button class="tab" role="tab" id="t-history" aria-controls="p-history" aria-selected="false">History &amp; audit</button>
+    </div>
+
+    <!-- ================= UPLOAD ================= -->
+    <section class="panel" id="p-upload" role="tabpanel" aria-labelledby="t-upload">
+      <div class="card">
+        <h2>1. Get the file ready</h2>
+        <p class="sub">Use a CSV file with these columns: <b>Program, Term, Section, Start Date</b>, and optionally <b>End Date</b> and <b>Drop/Add Override</b>. Program must match the program names on the student form exactly. Term looks like <b>Spring 2027</b>. Dates can be YYYY-MM-DD or M/D/YYYY. In Excel, choose <i>Save as &rarr; CSV</i>.</p>
+        <button class="btn alt small" id="dlTemplate" type="button">Download blank template</button>
+        <button class="btn alt small" id="dlCurrent" type="button">Download the current schedule as CSV</button>
+      </div>
+      <div class="card accent">
+        <h2>2. Choose the file</h2>
+        <fieldset style="border:0;padding:0;margin:0 0 12px">
+          <legend style="font-weight:700;padding:0;margin-bottom:4px">What should this file do?</legend>
+          <label class="choice"><input type="radio" name="mode" value="terms" checked><span><b>Replace only the terms in this file</b>Sections for other terms stay as they are. Sections of these terms that are missing from the file are removed.</span></label>
+          <label class="choice"><input type="radio" name="mode" value="all"><span><b>Replace the whole schedule</b>Everything not in this file is removed.</span></label>
+        </fieldset>
+        <div class="drop" id="drop">
+          <p style="margin:0 0 8px"><b>Drop a CSV file here</b> or</p>
+          <input type="file" id="file" accept=".csv,text/csv" aria-label="Choose a CSV file" style="max-width:420px">
+          <p class="muted small" id="fileInfo" style="margin:8px 0 0"></p>
+        </div>
+        <div id="parseNote"></div>
+      </div>
+      <div id="previewArea" hidden>
+        <div class="card">
+          <h2>3. Check the preview</h2>
+          <p class="sub">Nothing is published yet. This shows what would change.</p>
+          <div class="cards" id="sumCards"></div>
+          <div id="errBlock" hidden>
+            <h3 id="errTitle">Problems to fix</h3>
+            <p class="small muted">Fix these rows in your file and upload it again. Line numbers match the rows in your file (line 1 is the header).</p>
+            <div class="tablewrap"><table class="err-list"><thead><tr><th>Line</th><th>Column</th><th>Problem</th><th>Value in the file</th></tr></thead><tbody id="errBody"></tbody></table></div>
+          </div>
+          <div id="warnBlock" hidden>
+            <details><summary id="warnTitle">Warnings</summary>
+              <div class="tablewrap"><table><thead><tr><th>Line</th><th>Column</th><th>Note</th><th>Value</th></tr></thead><tbody id="warnBody"></tbody></table></div></details>
+          </div>
+          <div id="diffBlock" hidden>
+            <details id="dAdded"><summary></summary><div class="tablewrap"><table><thead><tr><th>Program</th><th>Term</th><th>Section</th><th>Start</th><th>Drop/add ends</th></tr></thead><tbody></tbody></table></div></details>
+            <details id="dChanged" open><summary></summary><div class="tablewrap"><table><thead><tr><th>Program</th><th>Term</th><th>Section</th><th>Start date</th><th>Drop/add ends</th></tr></thead><tbody></tbody></table></div></details>
+            <details id="dRemoved" open><summary></summary><div class="tablewrap"><table><thead><tr><th>Program</th><th>Term</th><th>Section</th><th>Start</th><th>Drop/add ends</th></tr></thead><tbody></tbody></table></div></details>
+          </div>
+        </div>
+        <div class="sticky" id="publishBar" hidden>
+          <div class="row">
+            <div><label for="pubNote">Note for the history (optional)</label><input type="text" id="pubNote" maxlength="300" placeholder="e.g., Spring 2027 sections from the registrar"></div>
+            <div class="fixed"><button class="btn" id="publishBtn" type="button">Publish</button> <button class="btn alt" id="discardBtn" type="button">Discard</button></div>
+          </div>
+          <label class="choice" id="rmConfirm" hidden><input type="checkbox" id="rmCheck"><span id="rmText"></span></label>
+          <div id="pubMsg" role="status"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CURRENT ================= -->
+    <section class="panel" id="p-current" role="tabpanel" aria-labelledby="t-current" hidden>
+      <div class="card">
+        <div class="row">
+          <div><label for="fTerm">Term</label><select id="fTerm"><option value="">All terms</option></select></div>
+          <div><label for="fProg">Program</label><select id="fProg"><option value="">All programs</option></select></div>
+          <div><label for="fQ">Search</label><input type="search" id="fQ" placeholder="Section or program"></div>
+        </div>
+        <p class="small muted" id="curCount"></p>
+        <div class="tablewrap"><table><thead><tr><th>Program</th><th>Term</th><th>Section</th><th>Start</th><th>End</th><th>Drop/add ends</th></tr></thead><tbody id="curBody"></tbody></table></div>
+        <p class="small muted">Drop/add dates are calculated from the rule in Rules &amp; settings. A <span class="tag ov">set</span> tag means the date was set for that section in the file.</p>
+      </div>
+    </section>
+
+    <!-- ================= SETTINGS ================= -->
+    <section class="panel" id="p-settings" role="tabpanel" aria-labelledby="t-settings" hidden>
+      <div class="card accent">
+        <h2>Drop/add rule</h2>
+        <p class="sub">Every section's drop/add end date is calculated from its start date with this rule. <b>Students only see the schedule once this rule has been confirmed.</b> A section can still have its own date in the file (the Drop/Add Override column).</p>
+        <div class="row">
+          <div><label for="ruleType">The drop/add period ends</label>
+            <select id="ruleType"><option value="businessDays">N business days after the section starts</option><option value="calendarDays">N calendar days after the section starts</option></select></div>
+          <div><label for="ruleDays">Number of days (N)</label><input type="number" id="ruleDays" min="0" max="90" step="1"></div>
+        </div>
+        <label class="choice" id="rollWrap" hidden><input type="checkbox" id="ruleRoll"><span><b>If the date lands on a weekend or closure, move it to the next open day</b></span></label>
+        <p id="ruleText" class="muted"></p>
+        <h3>Days the college is closed</h3>
+        <p class="small muted">Weekends are always skipped. Add holidays and other closures so they are skipped too.</p>
+        <ul class="closure-list" id="closureList"></ul>
+        <div class="row">
+          <div><label for="clDate">Closure date</label><input type="date" id="clDate"></div>
+          <div><label for="clLabel">Name (optional)</label><input type="text" id="clLabel" maxlength="60" placeholder="e.g., MLK Day"></div>
+          <div class="fixed"><button class="btn alt small" id="clAdd" type="button">Add closure</button></div>
+        </div>
+        <h3>Students in more than one section</h3>
+        <label class="choice"><input type="radio" name="multi" value="single" checked><span><b>One section per student (current policy)</b>The form lets a student choose one program, term and section.</span></label>
+        <label class="choice"><input type="radio" name="multi" value="earliest"><span><b>Allow more than one section</b>The student can add more sections, and the earliest drop/add date of all their sections applies. Maximum number of sections in total: <select id="maxSections" style="width:auto;min-height:36px;padding:4px 8px"><option>2</option><option>3</option></select></span></label>
+        <h3>Try the rule</h3>
+        <div class="row">
+          <div><label for="testDate">A section start date</label><input type="date" id="testDate"></div>
+          <div class="fixed"><button class="btn alt small" id="testBtn" type="button">Calculate</button></div>
+          <div><span id="testOut" style="font-weight:700"></span></div>
+        </div>
+        <div class="row"><div class="fixed"><button class="btn alt" id="impactBtn" type="button">Preview the effect</button> <button class="btn" id="saveSettings" type="button">Save and confirm</button></div></div>
+        <div id="setMsg" role="status"></div>
+        <div id="impactBlock" hidden><div class="tablewrap"><table><thead><tr><th>Program</th><th>Term</th><th>Section</th><th>Start</th><th>Drop/add ends</th></tr></thead><tbody id="impactBody"></tbody></table></div></div>
+      </div>
+    </section>
+
+    <!-- ================= HISTORY ================= -->
+    <section class="panel" id="p-history" role="tabpanel" aria-labelledby="t-history" hidden>
+      <div class="card">
+        <h2>Published versions</h2>
+        <p class="small muted">Every publish keeps the previous version. Restoring one makes a new version with the same sections; nothing is erased.</p>
+        <div class="tablewrap"><table><thead><tr><th>Version</th><th>When</th><th>Who</th><th>What</th><th>Sections</th><th></th></tr></thead><tbody id="histBody"></tbody></table></div>
+      </div>
+      <div class="card">
+        <h2>Activity log</h2>
+        <div class="tablewrap"><table><thead><tr><th>When</th><th>Who</th><th>Action</th><th>Detail</th></tr></thead><tbody id="auditBody"></tbody></table></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function(){
+  var $=function(s,r){return (r||document).querySelector(s)};
+  var $$=function(s,r){return [].slice.call((r||document).querySelectorAll(s))};
+  function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
+  function fmtD(v){if(!v)return '';var p=String(v).slice(0,10).split('-');if(p.length!==3)return v;return new Date(+p[0],+p[1]-1,+p[2]).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
+  function fmtDT(v){if(!v)return '';var d=new Date(v);return isNaN(d)?v:d.toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'})}
+  function api(path,opts){
+    opts=opts||{};opts.credentials='same-origin';
+    return fetch(path,opts).then(function(r){
+      return r.json().catch(function(){return {}}).then(function(j){
+        if(r.status===401||r.status===403){throw {auth:true,status:r.status,body:j}}
+        if(!r.ok||j.ok===false){var e={status:r.status,error:j.error,field:j.field,body:j};throw e}
+        return j;
+      });
+    });
+  }
+  function post(path,body){return api(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})}
+  function note(target,cls,text){target.innerHTML='';if(!text)return;var n=el('div','note '+cls,text);target.appendChild(n)}
+
+  var STATE=null,DRAFT=null,CLOSURES=[];
+
+  /* ---------------- tabs ---------------- */
+  var TABS=['upload','current','settings','history'];
+  function showTab(name){
+    TABS.forEach(function(t){
+      var on=t===name;$('#t-'+t).setAttribute('aria-selected',String(on));$('#p-'+t).hidden=!on;
+    });
+  }
+  TABS.forEach(function(t){$('#t-'+t).addEventListener('click',function(){showTab(t)})});
+  $('#t-upload').parentNode.addEventListener('keydown',function(e){
+    var i=TABS.indexOf((document.activeElement.id||'').replace('t-',''));if(i<0)return;
+    if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();var n=TABS[(i+(e.key==='ArrowRight'?1:TABS.length-1))%TABS.length];showTab(n);$('#t-'+n).focus()}
+  });
+
+  /* ---------------- CSV ---------------- */
+  function parseCSV(text){
+    text=text.replace(/^\uFEFF/,'');
+    var rows=[],row=[],f='',q=false,line=1,start=1;
+    for(var i=0;i<text.length;i++){
+      var c=text[i];
+      if(q){
+        if(c==='"'){if(text[i+1]==='"'){f+='"';i++}else q=false}
+        else{f+=c;if(c==='\n')line++}
+      }else if(c==='"'&&f===''){q=true}
+      else if(c===','){row.push(f);f=''}
+      else if(c==='\r'){}
+      else if(c==='\n'){row.push(f);rows.push({line:start,cells:row});row=[];f='';line++;start=line}
+      else f+=c;
+    }
+    if(f!==''||row.length){row.push(f);rows.push({line:start,cells:row})}
+    return rows;
+  }
+  var COLS={program:['program'],term:['term'],section:['section','sectionid','sectioncode'],startDate:['startdate','start','sectionstart','startson'],endDate:['enddate','end'],dropAddOverride:['dropaddoverride','dropaddend','dropadd','dropaddenddate','override']};
+  function normHeader(h){return String(h||'').toLowerCase().replace(/[^a-z0-9]/g,'')}
+  function toRows(parsed){
+    if(!parsed.length)return {error:'The file is empty.'};
+    var head=parsed[0].cells.map(normHeader),idx={};
+    Object.keys(COLS).forEach(function(k){for(var i=0;i<head.length;i++){if(COLS[k].indexOf(head[i])>-1){idx[k]=i;break}}});
+    var missing=['program','term','section','startDate'].filter(function(k){return idx[k]===undefined});
+    if(missing.length){
+      var names={program:'Program',term:'Term',section:'Section',startDate:'Start Date'};
+      return {error:'The first row must be a header with these columns, and '+missing.map(function(m){return names[m]}).join(', ')+(missing.length>1?' are':' is')+' missing. Download the blank template to see the layout.'};
+    }
+    var out=[];
+    parsed.slice(1).forEach(function(r){
+      if(r.cells.every(function(c){return String(c).trim()===''}))return;
+      var o={line:r.line};
+      Object.keys(COLS).forEach(function(k){o[k]=idx[k]===undefined?'':String(r.cells[idx[k]]==null?'':r.cells[idx[k]]).trim()});
+      out.push(o);
+    });
+    return {rows:out};
+  }
+  function csvCell(v){v=String(v==null?'':v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}
+  function download(name,text){
+    var a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+text],{type:'text/csv'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);
+  }
+  $('#dlTemplate').addEventListener('click',function(){download('schedule-template.csv','Program,Term,Section,Start Date,End Date,Drop/Add Override\r\n')});
+  $('#dlCurrent').addEventListener('click',function(){
+    if(!STATE||!STATE.rows.length){note($('#parseNote'),'warn','There is no published schedule to download yet.');return}
+    var lines=['Program,Term,Section,Start Date,End Date,Drop/Add Override'];
+    STATE.rows.forEach(function(r){lines.push([r.program,r.term,r.section,r.startDate,r.endDate||'',r.dropAddOverride||''].map(csvCell).join(','))});
+    download('schedule-v'+STATE.version+'.csv',lines.join('\r\n')+'\r\n');
+  });
+
+  /* ---------------- upload + preview ---------------- */
+  function mode(){return $('input[name=mode]:checked').value}
+  function handleFile(file){
+    if(!file)return;
+    DRAFT=null;$('#previewArea').hidden=true;note($('#parseNote'),'',null);
+    $('#fileInfo').textContent=file.name+' ('+Math.max(1,Math.round(file.size/1024))+' KB)';
+    if(file.size>2*1024*1024){note($('#parseNote'),'err','That file is larger than 2 MB. Split it by term.');return}
+    var rd=new FileReader();
+    rd.onload=function(){
+      var res=toRows(parseCSV(String(rd.result)));
+      if(res.error){note($('#parseNote'),'err',res.error);return}
+      note($('#parseNote'),'ok','Read '+res.rows.length+' row'+(res.rows.length===1?'':'s')+'. Checking them…');
+      post('/api/admin/schedule/preview',{filename:file.name,mode:mode(),rows:res.rows}).then(function(j){
+        DRAFT=j;note($('#parseNote'),'',null);renderPreview(j);
+      }).catch(function(e){
+        note($('#parseNote'),'err',e&&e.auth?'Your sign-in expired. Reload the page.':e&&e.error==='too_large'?'That file is too large.':'Couldn\u2019t check the file. Try again.');
+      });
+    };
+    rd.onerror=function(){note($('#parseNote'),'err','That file could not be read.')};
+    rd.readAsText(file);
+  }
+  $('#file').addEventListener('change',function(){handleFile(this.files[0])});
+  $$('input[name=mode]').forEach(function(r){r.addEventListener('change',function(){var f=$('#file').files[0];if(f)handleFile(f)})});
+  var drop=$('#drop');
+  ['dragover','dragenter'].forEach(function(ev){drop.addEventListener(ev,function(e){e.preventDefault();drop.classList.add('over')})});
+  ['dragleave','drop'].forEach(function(ev){drop.addEventListener(ev,function(e){e.preventDefault();drop.classList.remove('over')})});
+  drop.addEventListener('drop',function(e){var f=e.dataTransfer&&e.dataTransfer.files[0];if(f){try{$('#file').files=e.dataTransfer.files}catch(_){}handleFile(f)}});
+
+  function statCard(cls,n,label){var d=el('div','stat '+cls);d.appendChild(el('b',null,String(n)));d.appendChild(document.createTextNode(label));return d}
+  function dropCell(b){
+    var td=el('td','mono');
+    td.textContent=fmtD(b.dropAddEnds);
+    if(b.dropAddOverride){td.appendChild(document.createTextNode(' '));td.appendChild(el('span','tag ov','set'))}
+    return td;
+  }
+  function fillDiff(id,label,items,kind){
+    var d=$('#'+id),tb=$('tbody',d);tb.innerHTML='';
+    $('summary',d).textContent=label+' ('+items.length+(items.length>=1000?'+':'')+')';
+    d.hidden=items.length===0;
+    items.forEach(function(it){
+      var tr=document.createElement('tr');
+      tr.appendChild(el('td',null,it.program));tr.appendChild(el('td',null,it.term));tr.appendChild(el('td',null,it.section));
+      if(kind==='changed'){
+        var a=el('td','mono'),b2=el('td','mono');
+        var bs=document.createElement('del');bs.textContent=fmtD(it.before.startDate);var as=document.createElement('ins');as.textContent=fmtD(it.after.startDate);
+        a.appendChild(bs);a.appendChild(document.createTextNode(' \u2192 '));a.appendChild(as);
+        var bd=document.createElement('del');bd.textContent=fmtD(it.before.dropAddEnds);var ad=document.createElement('ins');ad.textContent=fmtD(it.after.dropAddEnds);
+        b2.appendChild(bd);b2.appendChild(document.createTextNode(' \u2192 '));b2.appendChild(ad);
+        tr.appendChild(a);tr.appendChild(b2);
+      }else{
+        var rec=kind==='added'?it.after:it.before;
+        tr.appendChild(el('td','mono',fmtD(rec.startDate)));tr.appendChild(dropCell(rec));
+      }
+      tb.appendChild(tr);
+    });
+  }
+  function renderPreview(j){
+    $('#previewArea').hidden=false;
+    var c=$('#sumCards');c.innerHTML='';
+    c.appendChild(statCard('',j.summary.rows,'valid rows'));
+    c.appendChild(statCard('add',j.summary.added,'added'));
+    c.appendChild(statCard('chg',j.summary.changed,'changed'));
+    c.appendChild(statCard('rem',j.summary.removed,'removed'));
+    c.appendChild(statCard('',j.summary.unchanged,'unchanged'));
+    if(j.errorCount)c.appendChild(statCard('err',j.errorCount,'problems'));
+    // errors
+    $('#errBlock').hidden=!j.errorCount;
+    $('#errTitle').textContent=j.errorCount+' problem'+(j.errorCount===1?'':'s')+' to fix'+(j.errorCount>j.errors.length?' (showing the first '+j.errors.length+')':'');
+    var eb=$('#errBody');eb.innerHTML='';
+    j.errors.forEach(function(e){var tr=document.createElement('tr');[e.line||'',e.field,e.message,e.value].forEach(function(v){tr.appendChild(el('td',null,String(v)))});eb.appendChild(tr)});
+    // warnings
+    $('#warnBlock').hidden=!j.warningCount;
+    $('#warnTitle').textContent=j.warningCount+' warning'+(j.warningCount===1?'':'s')+' (these do not stop you publishing)';
+    var wb=$('#warnBody');wb.innerHTML='';
+    j.warnings.forEach(function(e){var tr=document.createElement('tr');[e.line,e.field,e.message,e.value].forEach(function(v){tr.appendChild(el('td',null,String(v)))});wb.appendChild(tr)});
+    // changes
+    $('#diffBlock').hidden=!j.canPublish;
+    if(j.canPublish){
+      fillDiff('dAdded','Added sections',j.diff.added,'added');
+      fillDiff('dChanged','Changed sections (before \u2192 after)',j.diff.changed,'changed');
+      fillDiff('dRemoved','Removed sections',j.diff.removed,'removed');
+    }
+    // publish bar
+    var bar=$('#publishBar');bar.hidden=false;
+    var pb=$('#publishBtn');
+    var next=(STATE?STATE.version:0)+1;
+    pb.textContent='Publish as version '+next;
+    pb.disabled=!j.canPublish;
+    var rm=$('#rmConfirm');rm.hidden=!(j.canPublish&&j.summary.removed>0);$('#rmCheck').checked=false;
+    $('#rmText').textContent='I understand that '+j.summary.removed+' section'+(j.summary.removed===1?'':'s')+' will be removed and students will no longer be able to choose '+(j.summary.removed===1?'it':'them')+'.';
+    note($('#pubMsg'),j.canPublish?'':'err',j.canPublish?'':'Fix the problems above, then choose the file again. Nothing can be published until there are none.');
+    if(j.errorCount)$('#previewArea').scrollIntoView({block:'start'});
+  }
+  $('#discardBtn').addEventListener('click',function(){DRAFT=null;$('#previewArea').hidden=true;$('#file').value='';$('#fileInfo').textContent='';note($('#parseNote'),'',null)});
+  $('#publishBtn').addEventListener('click',function(){
+    if(!DRAFT||!DRAFT.draftId)return;
+    var rmNeeded=DRAFT.summary.removed>0;
+    if(rmNeeded&&!$('#rmCheck').checked){note($('#pubMsg'),'err','Tick the box to confirm the removals first.');return}
+    var btn=this;btn.disabled=true;note($('#pubMsg'),'',null);
+    post('/api/admin/schedule/publish',{draftId:DRAFT.draftId,confirmRemovals:rmNeeded&&$('#rmCheck').checked,note:$('#pubNote').value}).then(function(j){
+      DRAFT=null;$('#previewArea').hidden=true;$('#file').value='';$('#fileInfo').textContent='';$('#pubNote').value='';
+      note($('#parseNote'),'ok','Published as version '+j.version+': '+j.added+' added, '+j.changed+' changed, '+j.removed+' removed. '+j.rows+' sections in total.');
+      return load();
+    }).catch(function(e){
+      btn.disabled=false;
+      var m=e&&e.auth?'Your sign-in expired. Reload the page.':e&&e.error==='stale'?'Someone else published a new version after you checked this file. Choose the file again to see the current differences.':e&&e.error==='no_draft'?'This preview has expired. Choose the file again.':e&&e.error==='confirm_removals'?'Tick the box to confirm the removals first.':'Couldn\u2019t publish. Try again.';
+      note($('#pubMsg'),'err',m);
+    });
+  });
+
+  /* ---------------- current schedule ---------------- */
+  function renderCurrent(){
+    var rows=STATE.rows,terms={},progs={};
+    rows.forEach(function(r){terms[r.term]=1;progs[r.program]=1});
+    function fillSel(sel,list,all){var keep=sel.value;sel.innerHTML='';var o=el('option',null,all);o.value='';sel.appendChild(o);list.forEach(function(v){var x=el('option',null,v);x.value=v;sel.appendChild(x)});sel.value=list.indexOf(keep)>-1?keep:''}
+    fillSel($('#fTerm'),Object.keys(terms).sort(),'All terms');fillSel($('#fProg'),Object.keys(progs).sort(),'All programs');
+    drawCurrent();
+  }
+  function drawCurrent(){
+    var t=$('#fTerm').value,p=$('#fProg').value,q=$('#fQ').value.trim().toLowerCase(),tb=$('#curBody');tb.innerHTML='';
+    var list=STATE.rows.filter(function(r){return (!t||r.term===t)&&(!p||r.program===p)&&(!q||(r.section+' '+r.program).toLowerCase().indexOf(q)>-1)});
+    $('#curCount').textContent=list.length+' of '+STATE.rows.length+' sections'+(STATE.version?' \u00b7 version '+STATE.version+', published '+fmtDT(STATE.publishedAt)+' by '+STATE.publishedBy:'');
+    if(!list.length){var tr=document.createElement('tr'),td=el('td','muted',STATE.rows.length?'No sections match.':'No schedule has been published yet. Use Upload & publish.');td.colSpan=6;tr.appendChild(td);tb.appendChild(tr);return}
+    list.slice(0,1000).forEach(function(r){
+      var tr=document.createElement('tr');
+      tr.appendChild(el('td',null,r.program));tr.appendChild(el('td',null,r.term));tr.appendChild(el('td',null,r.section));
+      tr.appendChild(el('td','mono',fmtD(r.startDate)));tr.appendChild(el('td','mono',fmtD(r.endDate)));tr.appendChild(dropCell(r));
+      tb.appendChild(tr);
+    });
+  }
+  ['fTerm','fProg'].forEach(function(id){$('#'+id).addEventListener('change',drawCurrent)});$('#fQ').addEventListener('input',drawCurrent);
+
+  /* ---------------- settings ---------------- */
+  function ruleFromForm(){
+    var t=$('#ruleType').value,n=parseInt($('#ruleDays').value,10);
+    return t==='businessDays'?{type:t,days:n}:{type:t,days:n,rollForward:$('#ruleRoll').checked};
+  }
+  function ruleText(){
+    var r=ruleFromForm();if(!(r.days>=0))return 'Enter a number of days.';
+    var d=r.days+(r.type==='businessDays'?(r.days===1?' business day':' business days'):(r.days===1?' calendar day':' calendar days'));
+    return 'Drop/add ends '+d+' after the section starts'+(r.type==='calendarDays'&&r.rollForward?' (moved to the next open day if it falls on a weekend or closure)':'')+'.';
+  }
+  function syncRuleUI(){
+    var cal=$('#ruleType').value==='calendarDays';
+    $('#rollWrap').hidden=!cal;
+    $('#ruleDays').min=cal?0:1;
+    $('#ruleText').textContent=ruleText();
+  }
+  ['ruleType','ruleDays','ruleRoll'].forEach(function(id){$('#'+id).addEventListener('input',syncRuleUI);$('#'+id).addEventListener('change',syncRuleUI)});
+  function drawClosures(){
+    var ul=$('#closureList');ul.innerHTML='';
+    CLOSURES.sort(function(a,b){return a.date.localeCompare(b.date)});
+    if(!CLOSURES.length){var li=el('li','muted','No closure dates yet');ul.appendChild(li)}
+    CLOSURES.forEach(function(c,i){
+      var li=document.createElement('li');li.appendChild(document.createTextNode(fmtD(c.date)+(c.label?' \u00b7 '+c.label:'')));
+      var b=el('button',null,'\u00d7');b.type='button';b.setAttribute('aria-label','Remove '+fmtD(c.date));
+      b.addEventListener('click',function(){CLOSURES.splice(i,1);drawClosures()});li.appendChild(b);ul.appendChild(li);
+    });
+  }
+  $('#clAdd').addEventListener('click',function(){
+    var d=$('#clDate').value;if(!d)return;
+    if(!CLOSURES.some(function(c){return c.date===d}))CLOSURES.push({date:d,label:$('#clLabel').value.trim()});
+    $('#clDate').value='';$('#clLabel').value='';drawClosures();
+  });
+  function settingsBody(extra){
+    var multi=$('input[name=multi]:checked').value;
+    return Object.assign({dropAddRule:ruleFromForm(),closures:CLOSURES,multiSection:multi,maxSections:multi==='earliest'?parseInt($('#maxSections').value,10):2},extra||{});
+  }
+  function loadSettingsUI(){
+    var s=STATE.settings;
+    $('#ruleType').value=s.dropAddRule.type;$('#ruleDays').value=s.dropAddRule.days;$('#ruleRoll').checked=!!s.dropAddRule.rollForward;
+    CLOSURES=s.closures.map(function(c){return {date:c.date,label:c.label||''}});
+    $('input[name=multi][value='+s.multiSection+']').checked=true;$('#maxSections').value=String(s.maxSections);
+    syncRuleUI();drawClosures();
+  }
+  $('#testBtn').addEventListener('click',function(){
+    if(!$('#testDate').value){$('#testOut').textContent='Choose a start date first.';return}
+    post('/api/admin/settings',settingsBody({dryRun:true,testDate:$('#testDate').value})).then(function(j){
+      $('#testOut').textContent=j.testResult?'Starts '+fmtD(j.testResult.startDate)+' \u2192 drop/add ends '+fmtD(j.testResult.dropAddEnds):''
+    }).catch(function(){$('#testOut').textContent='Check the rule and closure dates, then try again.'});
+  });
+  function showImpact(j){
+    var blk=$('#impactBlock'),tb=$('#impactBody');tb.innerHTML='';blk.hidden=!j.impact.count;
+    j.impact.rows.forEach(function(r){
+      var tr=document.createElement('tr');[r.program,r.term,r.section,fmtD(r.startDate)].forEach(function(v){tr.appendChild(el('td',null,v))});
+      var td=el('td','mono');var d=document.createElement('del');d.textContent=fmtD(r.before);var i=document.createElement('ins');i.textContent=fmtD(r.after);td.appendChild(d);td.appendChild(document.createTextNode(' \u2192 '));td.appendChild(i);tr.appendChild(td);tb.appendChild(tr);
+    });
+  }
+  $('#impactBtn').addEventListener('click',function(){
+    note($('#setMsg'),'',null);
+    post('/api/admin/settings',settingsBody({dryRun:true})).then(function(j){
+      showImpact(j);
+      note($('#setMsg'),j.impact.count?'warn':'ok',j.impact.count?j.impact.count+' section'+(j.impact.count===1?'':'s')+' would get a different drop/add date. Nothing has been saved.':'No section dates would change. Nothing has been saved.');
+    }).catch(function(e){note($('#setMsg'),'err',e&&e.field?'Check the '+({dropAddRule:'rule',closures:'closure dates',multiSection:'policy',maxSections:'maximum sections'}[e.field]||'settings')+'.':'Couldn\u2019t preview. Try again.')});
+  });
+  $('#saveSettings').addEventListener('click',function(){
+    note($('#setMsg'),'',null);
+    post('/api/admin/settings',settingsBody({dryRun:true})).then(function(j){
+      showImpact(j);
+      var msg=[];
+      if(!j.wasConfirmed)msg.push('This confirms the drop/add rule. Once a schedule is published, students will see sections and their dates will come from it.');
+      if(j.impact.count)msg.push(j.impact.count+' section(s) will get a different drop/add date.');
+      msg.push('Save these settings?');
+      if(!window.confirm(msg.join('\n\n')))return;
+      return post('/api/admin/settings',settingsBody()).then(function(){
+        note($('#setMsg'),'ok','Saved and confirmed.');return load();
+      });
+    }).catch(function(e){if(e)note($('#setMsg'),'err',e&&e.field?'Check the '+({dropAddRule:'rule',closures:'closure dates',multiSection:'policy',maxSections:'maximum sections'}[e.field]||'settings')+'.':'Couldn\u2019t save. Try again.')});
+  });
+
+  /* ---------------- history ---------------- */
+  function renderHistory(){
+    var hb=$('#histBody');hb.innerHTML='';
+    if(!STATE.history.length){var tr=document.createElement('tr'),td=el('td','muted','Nothing has been published yet.');td.colSpan=6;tr.appendChild(td);hb.appendChild(tr)}
+    STATE.history.forEach(function(h){
+      var tr=document.createElement('tr');
+      var v=el('td',null,'v'+h.version);if(h.version===STATE.version)v.appendChild(el('span','tag new',' current'));
+      tr.appendChild(v);tr.appendChild(el('td','mono',fmtDT(h.publishedAt)));tr.appendChild(el('td',null,h.publishedBy));
+      tr.appendChild(el('td',null,(h.action==='rollback'?'Restore. ':'')+(h.filename?h.filename+'. ':'')+(h.note||'')));tr.appendChild(el('td','mono',String(h.rows)));
+      var act=el('td');
+      if(h.version<STATE.version&&h.action!=='rollback'){var b=el('button','btn alt small','Restore this version');b.type='button';b.addEventListener('click',function(){rollback(h.version)});act.appendChild(b)}
+      tr.appendChild(act);hb.appendChild(tr);
+    });
+    var ab=$('#auditBody');ab.innerHTML='';
+    STATE.audit.forEach(function(a){var tr=document.createElement('tr');[fmtDT(a.at),a.by,a.action,a.detail].forEach(function(v,i){tr.appendChild(el('td',i===0?'mono':null,v))});ab.appendChild(tr)});
+  }
+  function rollback(version){
+    if(!window.confirm('Restore version '+version+'? It becomes a new version, and students will see its sections straight away.'))return;
+    var why=window.prompt('Reason (optional):','')||'';
+    post('/api/admin/schedule/rollback',{version:version,note:why}).then(function(j){
+      note($('#parseNote'),'ok','Restored version '+version+' as version '+j.version+'.');return load();
+    }).catch(function(e){window.alert(e&&e.auth?'Your sign-in expired. Reload the page.':'Couldn\u2019t restore that version.')});
+  }
+
+  /* ---------------- overview / status ---------------- */
+  function renderStatus(){
+    var s=STATE,st=$('#status');
+    var hasSched=s.rows.length>0,conf=s.settings.confirmed;
+    st.className='status '+(s.live?'live':'off');
+    st.textContent=s.live?'Live: students are choosing from '+s.rows.length+' published sections (version '+s.version+'). The drop/add rule is '+ruleDesc(s.settings.dropAddRule)+'.'
+      :'Not live yet: the student form is still using the earlier entry fields. '+(!conf?'Confirm the drop/add rule in Rules & settings. ':'')+(!hasSched?'Publish a schedule in Upload & publish.':'');
+    var ol=$('#steps');ol.innerHTML='';
+    [['Confirm the drop/add rule',conf],['Publish a schedule',hasSched],['Live for students',s.live]].forEach(function(x){
+      var li=el('li',x[1]?'done':'');li.appendChild(el('span','d'));li.appendChild(document.createTextNode(x[0]));ol.appendChild(li);
+    });
+  }
+  function ruleDesc(r){return r.days+(r.type==='businessDays'?(r.days===1?' business day':' business days'):(r.days===1?' calendar day':' calendar days'))+' after the section starts'}
+  function load(){
+    return api('/api/admin/schedule').then(function(j){
+      STATE=j;renderStatus();renderCurrent();renderHistory();
+      if(!$('#t-settings').dataset.loaded||true){loadSettingsUI()}
+    });
+  }
+
+  /* ---------------- start ---------------- */
+  api('/api/admin/me').then(function(j){
+    $('#me').textContent=j.email;$('#app').hidden=false;
+    if(!j.kv){note($('#parseNote'),'err','The schedule storage (SCHEDULE_KV) is not connected to the Worker yet. See the build guide, step 1.');return}
+    return load().then(function(){if(!STATE.settings.confirmed)showTab('settings')});
+  }).catch(function(e){
+    if(e&&e.auth){
+      $('#denied').hidden=false;$('#me').textContent='';
+      if(e.body&&e.body.reason){var d=el('p','muted small','Details (debug mode is on): '+e.body.reason+(e.body.signedInAs?' You are signed in as '+e.body.signedInAs+'.':''));$('#denied').insertBefore(d,$('#denied').lastElementChild)}
+    }
+    else{$('#app').hidden=false;note($('#parseNote'),'err','Couldn\u2019t load the schedule. Reload the page.')}
+  });
+})();
+</script>
+</body>
+</html>
