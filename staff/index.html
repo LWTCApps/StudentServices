@@ -5,7 +5,7 @@
 <meta name="color-scheme" content="light">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
-<title>Financial Aid Submissions | Lorenzo Walker Technical College</title>
+<title>Student Services Submissions | Lorenzo Walker Technical College</title>
 <link rel="icon" type="image/png" href="../assets/fav.png">
 <link rel="stylesheet" href="../assets/brand-fonts.css?v=20261028">
 <link rel="stylesheet" href="../assets/print-sheet.css?v=20261028">
@@ -142,13 +142,13 @@ fieldset.checks input{width:20px;height:20px;min-height:0;margin:2px 0 0;flex:no
 <div class="bar" aria-hidden="true"><i class="h-orange"></i><i class="h-green"></i><i class="h-gold"></i><i class="h-blue"></i></div>
 <div class="wrap">
   <header class="top">
-    <a href="../" aria-label="Financial Aid home"><span class="logo" role="img" aria-label="Lorenzo Walker Technical College"></span></a>
-    <div class="who">Signed in as <strong id="me">…</strong><br><a href="../">Financial Aid home</a> &middot; <a href="schedule/" id="schedLink" hidden>Schedule admin</a><span id="schedSep" hidden> &middot; </span><a href="/cdn-cgi/access/logout">Sign out</a></div>
+    <a href="../" aria-label="Student Services home"><span class="logo" role="img" aria-label="Lorenzo Walker Technical College"></span></a>
+    <div class="who">Signed in as <strong id="me">…</strong><br><a href="../">Student Services home</a> &middot; <a href="schedule/" id="schedLink" hidden>Schedule admin</a><span id="schedSep" hidden> &middot; </span><a href="/cdn-cgi/access/logout">Sign out</a></div>
   </header>
 
   <main>
     <h1>Submissions</h1>
-    <p class="sub">Every Financial Aid form, newest first. Choose a form type, then select a row to review it and set its status.</p>
+    <p class="sub">Every form submission, newest first. Choose a form type, then select a row to review it and set its status.</p>
 
     <div class="banner" id="banner" role="status"></div>
 
@@ -210,8 +210,7 @@ fieldset.checks input{width:20px;height:20px;min-height:0;margin:2px 0 0;flex:no
 <script src="../assets/console-export.js?v=20261104"></script>
 <script src="../assets/qrcode.js?v=20261030"></script>
 <script src="../assets/form-runtime.js?v=20261030"></script>
-<script src="../assets/form-defaults.js?v=20261030"></script>
-<script src="../assets/print-sheet.js?v=20261030"></script>
+<script src="../assets/print-sheet.js?v=20261112"></script>
 <script>
 (function(){
   var STATUSES=['New','In review','Funding on file','Balance due','Complete'];
@@ -418,7 +417,7 @@ fieldset.checks input{width:20px;height:20px;min-height:0;margin:2px 0 0;flex:no
       $('#updated').textContent='Updated '+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})+'. Refreshes automatically every minute.';
     }).catch(function(e){
       if(e&&e.auth){banner('Your sign-in expired. Reload the page to sign in again.');return}
-      if(e&&e.forbidden){banner('You don\u2019t have permission to see submissions. Ask a Financial Aid administrator to give you access.');return}
+      if(e&&e.forbidden){banner('You don\u2019t have permission to see submissions. Ask a Student Services administrator to give you access.');return}
       failures++;banner('Reconnecting\u2026 showing the last data we received.');
     }).then(function(){loading=false;$('#refresh').disabled=false;schedule()});
   }
@@ -567,8 +566,8 @@ fieldset.checks input{width:20px;height:20px;min-height:0;margin:2px 0 0;flex:no
   $('#dClose').addEventListener('click',function(){if(changedKeys().length&&!window.confirm('Discard your unsaved changes?'))return;$('#dlg').close()});
 
   /* ---- Print: the paper document ----
-     Financial Responsibility submissions print as the Financial Aid form (assets/print-sheet.js),
-     filled in with the saved values. Anything else prints the detail window. */
+     Submissions saved with their full answers print as a clean form document (assets/print-sheet.js).
+     Anything else (including older submissions from the removed built-in form) prints the detail window. */
   function sheetValues(i){
     var m={};(i.fields||[]).forEach(function(f){if(f.key)m[f.key]=f.value});
     var pr=i.print||{};
@@ -579,13 +578,6 @@ fieldset.checks input{width:20px;height:20px;min-height:0;margin:2px 0 0;flex:no
       under18:String(m.under18||'').toLowerCase()==='yes',guardianSignature:m.guardianSignature,guardianDate:m.guardianDate,
       agreed:pr.agreed||[],customAnswers:pr.customAnswers||[],documents:pr.documents||[]
     };
-    if((i.formType||'')!=='financial-responsibility')return base;
-    base.term=m.term;base.dropAddEnds=m.dropAddEnds;base.program=m.program;base.startDate=m.startDate;
-    base.fafsaStatus=m.fafsaStatus;base.fundingSources=Array.isArray(m.fundingSources)?m.fundingSources:[];base.otherFunding=m.otherFunding;
-    base.section=m.section;base.dropAddBasis=m.dropAddBasis;base.dropAddOverride=m.dropAddOverride;
-    base.additionalSections=m.additionalSections?String(m.additionalSections).split('\n').filter(Boolean):[];
-    // Office-use box: only what the console already knows. The rest is left for staff to complete by hand.
-    base.office={docOnFile:st(i)==='Funding on file',balanceDue:(i.balanceDue===''||i.balanceDue==null)?'':Number(i.balanceDue).toFixed(2),reviewedBy:i.reviewedBy||'',reviewedAt:i.reviewedAt||''};
     return base;
   }
   // Only submissions saved with their full set of values (new format) can print as the form.
@@ -593,20 +585,19 @@ fieldset.checks input{width:20px;height:20px;min-height:0;margin:2px 0 0;flex:no
   $('#dPrint').addEventListener('click',function(){
     if(!current)return;
     if(changedKeys().length&&!window.confirm('You have unsaved changes. Print the last saved version?'))return;
-    var i=current,fin=(i.formType||'')==='financial-responsibility';
+    var i=current;
     if(printable(i)){
       setMsg('');
       // print it with the wording the student saw: the version of the form it was submitted under
       var v=(i.print&&i.print.formVersion)||0;
       api('/api/staff/form-config/'+encodeURIComponent(i.formType)+(v?'?version='+v:'')).catch(function(){return null}).then(function(j){
-        var cfg=j&&j.config?j.config:(fin?window.LWTC_DEFAULT_FINANCIAL:null);
+        var cfg=j&&j.config?j.config:null;
         var meta={config:cfg,office:j&&j.office,title:i.formLabel+' - '+(i.studentName||'')+' - '+(i.reference||''),note:i.reference?('Ref. '+i.reference+' \u00b7 received '+fmtDT(i.submitted)):''};
-        if(fin)window.LWTCSheet.print(sheetValues(i),meta);else window.LWTCSheet.printGeneric(sheetValues(i),meta);
+        window.LWTCSheet.printGeneric(sheetValues(i),meta);
       });
       return;
     }
     document.body.classList.remove('print-sheet');
-    if(fin)setMsg('This submission was saved before its full answers were stored, so it prints as a detail sheet. New submissions print as the form.');
     window.print();
   });
   $('#dSave').addEventListener('click',function(){
@@ -734,7 +725,7 @@ fieldset.checks input{width:20px;height:20px;min-height:0;margin:2px 0 0;flex:no
     }
     $('#dPrint').hidden=!ME.can('console.print');
     if(!ME.can('console.edit')){$('#dSave').hidden=true;['fStatus','fNotes','fBal'].forEach(function(id){var e=$('#'+id);if(e)e.disabled=true})}
-    if(m.console===false){banner('You can sign in, but you don\u2019t have permission to see submissions. Ask a Financial Aid administrator to give you access.');return false}
+    if(m.console===false){banner('You can sign in, but you don\u2019t have permission to see submissions. Ask a Student Services administrator to give you access.');return false}
     return true;
   }
   api('/api/staff/me').then(function(j){

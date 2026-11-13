@@ -1,0 +1,74 @@
+/* LWTC Student Services: layout for the home page and custom pages. The content comes from site.js. */
+:root{
+  color-scheme:light;
+  --ink:#231F20;--paper:#FFFFFF;--surface:#F7F5F4;--line:#DDD8D6;--muted:#5D5557;--link:#2B6580;--focus:#3A7B96;
+  --orange-a:#F58220;--orange-b:#F05A2B;--green-a:#BDD14F;--green-b:#6EA141;--gold-a:#FFC45A;--gold-b:#F9A03C;--blue-a:#54ADC3;--blue-b:#3A7B96;
+  --display:"Alfa Slab One","Clarendon Black",Rockwell,"Roboto Slab",Georgia,serif;
+  --text:"Source Sans 3","Source Sans Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{background:#fff;height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+html.site-loading main{visibility:hidden}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100%;background:#fff;color:var(--ink);font:400 18px/1.55 var(--text);-webkit-text-size-adjust:100%}
+a{color:var(--link);text-underline-offset:3px}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+.skip{position:absolute;left:-999px;top:0;background:var(--ink);color:#fff;padding:10px 14px;z-index:99}.skip:focus{left:8px;top:8px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+.bar{height:8px;display:flex}.bar i{flex:1}
+.h-orange{background:linear-gradient(90deg,var(--orange-a),var(--orange-b))}.h-green{background:linear-gradient(90deg,var(--green-a),var(--green-b))}.h-gold{background:linear-gradient(90deg,var(--gold-a),var(--gold-b))}.h-blue{background:linear-gradient(90deg,var(--blue-a),var(--blue-b))}
+
+header.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0;flex-wrap:wrap}
+.logo{display:block;width:clamp(190px,30vw,270px);aspect-ratio:720/309;background:center/contain no-repeat url(lwtc-logo.png)}
+.office{font-size:15px;color:var(--muted);text-align:right;line-height:1.4}
+.office strong{color:var(--ink)}.office a{color:inherit}
+
+.hero{display:grid;grid-template-columns:1fr;gap:24px;padding:48px 0 32px}
+.hero h1{font:400 clamp(44px,9vw,92px)/.98 var(--display);margin:0 0 20px;letter-spacing:-.01em}
+.hero .lede{font-size:20px;max-width:46ch;color:var(--muted)}
+.hero .lede p{margin:0}.hero .lede p+p{margin-top:10px}
+.hero-art{display:none;aspect-ratio:360/351;background:center/contain no-repeat url(lwtc-icon-cluster.png)}
+@media(min-width:820px){.hero{grid-template-columns:1fr 300px;align-items:center}.hero.no-art{grid-template-columns:1fr}.hero-art{display:block}}
+
+.blk{margin:0 0 48px}
+h2.section{font:400 clamp(26px,4vw,34px)/1.1 var(--display);margin:0 0 8px}
+.section-sub,.prose{color:var(--muted);max-width:65ch}
+.section-sub{margin:0 0 24px}
+.section-sub p,.prose p{margin:0 0 12px}.section-sub p:last-child,.prose p:last-child{margin-bottom:0}
+.prose ul,.section-sub ul{margin:0 0 12px;padding-left:22px}
+.blk.style-highlight{background:var(--surface);border-radius:12px;padding:32px}
+.blk.style-outline{border:2px solid var(--ink);border-radius:12px;padding:30px}
+.blk.style-highlight .prose,.blk.style-outline .prose{color:var(--ink)}
+
+.forms{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:24px}
+.form-card{display:grid;grid-template-columns:84px 1fr;gap:20px;border:2px solid var(--ink);border-radius:12px;padding:24px;background:#fff}
+.form-card.closed{border-color:var(--line)}
+.form-card img{width:84px;height:auto;display:block}
+.form-card h3{font:400 24px/1.15 var(--display);margin:0 0 8px}
+.form-card p{margin:0 0 12px}
+.closed-note{font-weight:600;color:var(--muted)}
+.meta{display:flex;gap:8px 16px;flex-wrap:wrap;margin:0 0 16px;padding:0;list-style:none;font-size:15px;color:var(--muted);font-weight:600}
+.btn{font:700 17px/1 var(--text);border:0;border-radius:48px;padding:16px 28px;min-height:52px;cursor:pointer;color:#231F20;background:linear-gradient(90deg,var(--orange-a),var(--orange-b));text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.btn:hover{filter:brightness(1.06);box-shadow:0 0 0 3px color-mix(in srgb,var(--orange-b) 30%,transparent)}
+@media(max-width:520px){.form-card{grid-template-columns:1fr}.form-card img{width:64px}}
+.more{border:2px dashed var(--line);border-radius:12px;padding:24px;color:var(--muted);display:flex;align-items:center}
+.more p{margin:0}
+
+.blk-contact{display:grid;gap:24px;grid-template-columns:1fr}
+@media(min-width:720px){.blk-contact{grid-template-columns:1.2fr 1fr}}
+.blk-contact h2.section{font-size:26px}
+.blk-contact dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:17px;align-content:start}
+.blk-contact dt{font-weight:700}.blk-contact dd{margin:0}
+
+.link-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:16px;margin-top:16px}
+.link-card{display:block;border:2px solid var(--ink);border-radius:12px;padding:18px 20px;text-decoration:none;color:var(--ink);background:#fff}
+.link-card:hover{box-shadow:0 0 0 3px color-mix(in srgb,var(--blue-b) 30%,transparent)}
+.link-card strong{display:block;font:400 20px/1.2 var(--display);margin-bottom:4px}
+.link-card span{display:block;color:var(--muted);font-size:16px}
+
+.notice-box{border:2px solid var(--line);background:var(--surface);border-radius:12px;padding:24px;margin:48px 0}
+
+footer{border-top:2px solid var(--line);padding:24px 0 48px;color:var(--muted);font-size:15px}
+footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
+.prog-icons{display:flex;gap:8px;align-items:flex-end}.prog-icons img{height:30px;width:auto;display:block}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}

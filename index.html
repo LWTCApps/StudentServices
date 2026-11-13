@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="site-loading">
 <head>
 <meta charset="utf-8">
 <meta name="color-scheme" content="light">
@@ -10,94 +10,36 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-:root{
-  color-scheme:light;
-  --ink:#231F20;--paper:#FFFFFF;--surface:#F7F5F4;--line:#DDD8D6;--muted:#5D5557;--link:#2B6580;--focus:#3A7B96;
-  --orange-a:#F58220;--orange-b:#F05A2B;--green-a:#BDD14F;--green-b:#6EA141;--gold-a:#FFC45A;--gold-b:#F9A03C;--blue-a:#54ADC3;--blue-b:#3A7B96;
-  --display:"Alfa Slab One","Clarendon Black",Rockwell,"Roboto Slab",Georgia,serif;
-  --text:"Source Sans 3","Source Sans Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
-}
-html{background:#fff;height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
-*,*::before,*::after{box-sizing:inherit}
-body{margin:0;min-height:100%;background:#fff;color:var(--ink);font:400 18px/1.55 var(--text);-webkit-text-size-adjust:100%}
-a{color:var(--link);text-underline-offset:3px}
-:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
-.wrap{max-width:1040px;margin:0 auto;padding:0 24px}
-.bar{height:8px;display:flex}.bar i{flex:1}
-.h-orange{background:linear-gradient(90deg,var(--orange-a),var(--orange-b))}.h-green{background:linear-gradient(90deg,var(--green-a),var(--green-b))}.h-gold{background:linear-gradient(90deg,var(--gold-a),var(--gold-b))}.h-blue{background:linear-gradient(90deg,var(--blue-a),var(--blue-b))}
-
-header.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0;flex-wrap:wrap}
-.logo{display:block;width:clamp(190px,30vw,270px);aspect-ratio:720/309;background:center/contain no-repeat url(assets/lwtc-logo.png)}
-.office{font-size:15px;color:var(--muted);text-align:right;line-height:1.4}
-.office strong{color:var(--ink)}.office a{color:inherit}
-
-.hero{display:grid;grid-template-columns:1fr;gap:24px;padding:48px 0 32px;position:relative}
-.hero h1{font:400 clamp(44px,9vw,92px)/.98 var(--display);margin:0 0 20px;letter-spacing:-.01em}
-.hero p{font-size:20px;max-width:46ch;margin:0;color:var(--muted)}
-.hero-art{display:none;aspect-ratio:360/351;background:center/contain no-repeat url(assets/lwtc-icon-cluster.png)}
-@media(min-width:820px){.hero{grid-template-columns:1fr 300px;align-items:center}.hero-art{display:block}}
-
-h2.section{font:400 clamp(26px,4vw,34px)/1.1 var(--display);margin:0 0 8px}
-.section-sub{margin:0 0 24px;color:var(--muted);max-width:60ch}
-.forms{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:24px;margin-bottom:48px}
-.form-card{display:grid;grid-template-columns:84px 1fr;gap:20px;border:2px solid var(--ink);border-radius:12px;padding:24px;background:#fff}
-.form-card img{width:84px;height:auto;display:block}
-.form-card h3{font:400 24px/1.15 var(--display);margin:0 0 8px}
-.form-card p{margin:0 0 12px}
-.meta{display:flex;gap:8px 16px;flex-wrap:wrap;margin:0 0 16px;padding:0;list-style:none;font-size:15px;color:var(--muted);font-weight:600}
-.btn{font:700 17px/1 var(--text);border:0;border-radius:48px;padding:16px 28px;min-height:52px;cursor:pointer;color:#231F20;background:linear-gradient(90deg,var(--orange-a),var(--orange-b));text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
-.btn:hover{filter:brightness(1.06);box-shadow:0 0 0 3px color-mix(in srgb,var(--orange-b) 30%,transparent)}
-@media(max-width:520px){.form-card{grid-template-columns:1fr}.form-card img{width:64px}}
-.more{border:2px dashed var(--line);border-radius:12px;padding:24px;color:var(--muted);display:flex;align-items:center}
-
-.help{background:var(--surface);border-radius:12px;padding:32px;margin-bottom:48px;display:grid;gap:24px;grid-template-columns:1fr}
-@media(min-width:720px){.help{grid-template-columns:1.2fr 1fr}}
-.help h2{font:400 26px/1.1 var(--display);margin:0 0 8px}
-.help p{margin:0}
-.help dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:17px}
-.help dt{font-weight:700}.help dd{margin:0}
-
-footer{border-top:2px solid var(--line);padding:24px 0 48px;color:var(--muted);font-size:15px}
-footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
-.prog-icons{display:flex;gap:8px;align-items:flex-end}.prog-icons img{height:30px;width:auto;display:block}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-</style>
+<link rel="stylesheet" href="assets/site.css?v=20261112">
+<link rel="stylesheet" href="assets/site-chrome.css?v=20261112">
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 <div class="bar" aria-hidden="true"><i class="h-orange"></i><i class="h-green"></i><i class="h-gold"></i><i class="h-blue"></i></div>
 <div class="wrap">
   <header class="top">
-    <a href="./" aria-label="Lorenzo Walker Technical College Student Services home"><span class="logo" role="img" aria-label="Lorenzo Walker Technical College"></span></a>
+    <a href="./" data-home aria-label="Student Services home"><span class="logo" role="img" aria-label="Lorenzo Walker Technical College"></span></a>
     <div class="office">
       <strong>Student Services Office</strong><br>
       3702 Estey Avenue, Naples, FL 34104<br>
       <a href="tel:+12393770900">239-377-0900</a> &middot; Mon&ndash;Fri, 7:00 a.m.&ndash;3:00 p.m.
     </div>
   </header>
+  <nav class="site-nav" id="siteNav" aria-label="Site" hidden></nav>
 
-  <main id="top">
+  <!-- Everything inside <main> is drawn from the Site Content page. What is written here only shows if that can't be loaded. -->
+  <main id="main">
     <section class="hero" aria-labelledby="pageTitle">
       <div>
         <h1 id="pageTitle">Student Services</h1>
-        <p>Student Services Forms and help for your program at Lorenzo Walker Technical College. Pick the form you need to get started.</p>
+        <div class="lede"><p>Student Services forms and help for your program at Lorenzo Walker Technical College.</p></div>
       </div>
       <div class="hero-art" aria-hidden="true"></div>
     </section>
-
-    <section aria-labelledby="formsTitle">
-      <h2 class="section" id="formsTitle">Student forms</h2>
-      <p class="section-sub">Complete a form online and the Student Services Office will receive it right away. You’ll get a reference number to keep.</p>
-      <div class="forms" id="forms">
-        <noscript><div class="form-card"><div><h3>Financial Options &amp; Payment Responsibility</h3><p>Tell us how you plan to pay for your program.</p><a class="btn" href="forms/financial-responsibility/">Start the form</a></div></div></noscript>
-      </div>
-    </section>
-
-    <section class="help" aria-labelledby="helpTitle">
+    <section class="blk blk-contact style-highlight" aria-labelledby="helpTitle">
       <div>
-        <h2 id="helpTitle">Questions about paying for school?</h2>
-        <p>Stop by or call the Student Services Office. We can help you Navigate your program, educational track, and confirm what is on file for you.</p>
+        <h2 class="section" id="helpTitle">Questions?</h2>
+        <div class="prose"><p>The online forms couldn&rsquo;t be loaded just now. Reload the page, or stop by or call the Student Services Office.</p></div>
       </div>
       <dl>
         <dt>Visit</dt><dd>3702 Estey Avenue<br>Naples, FL 34104</dd>
@@ -109,38 +51,24 @@ footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;a
 
   <footer>
     <div class="row">
-      <span>Lorenzo Walker Technical College &middot; Student Services Office</span>
+      <span id="footText">Lorenzo Walker Technical College &middot; Student Services Office</span>
       <span class="prog-icons" aria-hidden="true"><img alt="" src="assets/lwtc-bubble-orange.png"><img alt="" src="assets/lwtc-bubble-green.png"><img alt="" src="assets/lwtc-bubble-gold.png"><img alt="" src="assets/lwtc-bubble-blue.png"></span>
-      <a href="staff/">Staff sign in</a>
+      <span class="foot-links" id="footLinks"><a href="staff/">Staff sign in</a></span>
     </div>
   </footer>
 </div>
 
-<script src="assets/forms.js"></script>
+<script src="assets/site.js?v=20261112"></script>
 <script>
 (function(){
-  var box=document.getElementById('forms');
-  var list=window.LWTC_FORMS||[];
-  var bubbles={orange:1,green:1,gold:1,blue:1};
-  if(!list.length)return;
-  box.innerHTML='';
-  list.forEach(function(f){
-    var card=document.createElement('article');card.className='form-card';
-    var img=document.createElement('img');img.alt='';img.setAttribute('aria-hidden','true');
-    img.src='assets/lwtc-bubble-'+(bubbles[f.bubble]?f.bubble:'blue')+'.png';
-    var body=document.createElement('div');
-    var h=document.createElement('h3');h.textContent=f.title;
-    var p=document.createElement('p');p.textContent=f.description;
-    var meta=document.createElement('ul');meta.className='meta';
-    if(f.audience){var a=document.createElement('li');a.textContent=f.audience;meta.appendChild(a)}
-    if(f.minutes){var m=document.createElement('li');m.textContent='About '+f.minutes+' minutes';meta.appendChild(m)}
-    var go=document.createElement('a');go.className='btn';go.href=f.path;go.textContent='Start the form';
-    go.setAttribute('aria-label','Start the form: '+f.title);
-    [h,p,meta,go].forEach(function(n){body.appendChild(n)});
-    card.appendChild(img);card.appendChild(body);box.appendChild(card);
-  });
-  var more=document.createElement('div');more.className='more';more.textContent='More forms will be added here as they become available.';
-  box.appendChild(more);
+  var S=window.LWTCSite;
+  S.load().then(function(d){
+    var H=d.home,g=d.general,main=document.getElementById('main');
+    S.meta(g.siteName+' | '+g.collegeName,g.description);
+    S.chrome(d,{root:'./',isHome:true});
+    S.hero(main,H.title,H.intro,H.showArt);
+    S.blocks(main,H.blocks,d,{root:'./'});
+  }).catch(function(){}).then(S.reveal);
 })();
 </script>
 </body>

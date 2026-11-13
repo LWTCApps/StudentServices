@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" class="site-loading">
+<head>
+<meta charset="utf-8">
+<meta name="color-scheme" content="light">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Student Services | Lorenzo Walker Technical College</title>
+<link rel="icon" type="image/png" href="../assets/fav.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css?v=20261112">
+<link rel="stylesheet" href="../assets/site-chrome.css?v=20261112">
+</head>
+<body>
+<!-- Custom pages: page/?p=<web address>. Each page and its sections are made on the Site Content page. -->
+<a class="skip" href="#main">Skip to content</a>
+<div class="bar" aria-hidden="true"><i class="h-orange"></i><i class="h-green"></i><i class="h-gold"></i><i class="h-blue"></i></div>
+<div class="wrap">
+  <header class="top">
+    <a href="../" data-home aria-label="Student Services home"><span class="logo" role="img" aria-label="Lorenzo Walker Technical College"></span></a>
+    <div class="office"></div>
+  </header>
+  <nav class="site-nav" id="siteNav" aria-label="Site" hidden></nav>
+  <main id="main"></main>
+  <footer>
+    <div class="row">
+      <span id="footText"></span>
+      <span class="prog-icons" aria-hidden="true"><img alt="" src="../assets/lwtc-bubble-orange.png"><img alt="" src="../assets/lwtc-bubble-green.png"><img alt="" src="../assets/lwtc-bubble-gold.png"><img alt="" src="../assets/lwtc-bubble-blue.png"></span>
+      <span class="foot-links" id="footLinks"><a href="../staff/">Staff sign in</a></span>
+    </div>
+  </footer>
+</div>
+
+<script src="../assets/site.js?v=20261112"></script>
+<script>
+(function(){
+  var S=window.LWTCSite,main=document.getElementById('main');
+  var slug=(new URLSearchParams(location.search).get('p')||'').toLowerCase();
+  function missing(msg){
+    main.textContent='';var b=S.el('div','notice-box');b.setAttribute('role','status');
+    b.appendChild(document.createTextNode(msg+' '));var a=S.el('a',null,'Go to the home page');a.href='../';b.appendChild(a);b.appendChild(document.createTextNode('.'));main.appendChild(b);
+  }
+  S.load().then(function(d){
+    var g=d.general;S.chrome(d,{root:'../'});
+    var p=(d.pages||[]).filter(function(x){return x.slug===slug})[0];
+    if(!p){S.meta('Page not found | '+g.siteName,'');missing('This page isn\u2019t available. Check the link.');return}
+    S.meta(p.title+' | '+g.siteName+' | '+g.collegeName,p.description||g.description);
+    S.hero(main,p.title,p.intro,false);
+    S.blocks(main,p.blocks,d,{root:'../'});
+  }).catch(function(){missing('This page couldn\u2019t be loaded. Reload to try again.')}).then(S.reveal);
+})();
+</script>
+</body>
+</html>

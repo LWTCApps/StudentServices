@@ -2,144 +2,313 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Site content | LWTC Financial Aid</title><meta name="robots" content="noindex">
+<title>Site content | LWTC Student Services</title><meta name="robots" content="noindex">
 <link rel="icon" type="image/png" href="../../assets/fav.png">
-<link rel="stylesheet" href="../../assets/brand-fonts.css"><link rel="stylesheet" href="../../assets/admin.css?v=20261030">
+<link rel="stylesheet" href="../../assets/brand-fonts.css"><link rel="stylesheet" href="../../assets/admin.css?v=20261112">
+<style>
+.blk-item .head h3{margin:0;font:700 17px/1.3 var(--text)}
+.blk-item .kind{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;display:block}
+.blk-item .fld,.page-item .fld{margin-bottom:12px}
+.addrow{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 18px}
+.linkrow{display:grid;grid-template-columns:1fr 1.4fr 1.4fr auto;gap:8px;align-items:end;margin-bottom:8px}
+.linkrow .fld{margin:0}
+@media(max-width:760px){.linkrow{grid-template-columns:1fr}}
+.linkrow .tools{display:flex;gap:4px;padding-bottom:2px}
+details.page-item{border:2px solid var(--line);border-radius:12px;margin:0 0 14px;background:#fff}
+details.page-item>summary{cursor:pointer;padding:14px 16px;font-weight:700;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+details.page-item>summary .muted{font-weight:400}
+details.page-item>.pbody{padding:0 16px 16px}
+.fmt{font-size:14px;color:var(--muted);background:var(--surface);border-radius:8px;padding:8px 12px;margin:0 0 16px}
+.fmt code{font-size:13px}
+.dirtymsg{font-weight:700;color:var(--warn)}
+</style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <div class="bar" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <div class="wrap">
-  <header class="top"><a href="../../" aria-label="Financial Aid home"><span class="logo" role="img" aria-label="Lorenzo Walker Technical College"></span></a><div class="who">Signing in…</div></header>
+  <header class="top"><a href="../../" aria-label="Student Services home"><span class="logo" role="img" aria-label="Lorenzo Walker Technical College"></span></a><div class="who">Signing in…</div></header>
   <nav class="main" aria-label="Administration"></nav>
   <main id="main">
     <h1>Site content</h1>
-    <p class="sub">The words and contact details students see on the home page and at the top of every form. Changes go live as soon as you save.</p>
-    <div id="errs"></div>
-    <form id="siteForm" novalidate>
-      <h2>Announcement banner</h2>
-      <div class="card">
-        <label class="chk"><input type="checkbox" id="bEnabled"><span>Show a banner across the top of the home page<small>For closures, deadlines or anything students must see first.</small></span></label>
-        <div class="grid2"><div id="bText"></div><div id="bLevel"></div></div>
-        <div id="bUntil" style="max-width:260px"></div>
+    <p class="sub">Everything students see on the public pages: the home page and its sections, your own extra pages, the words around every form, the banner, the header and the footer. Changes go live as soon as you save.</p>
+    <div class="sticky" id="saveBar">
+      <div class="toolbar" style="margin:0">
+        <button class="btn" type="button" id="save">Save site content</button>
+        <a class="btn alt" href="../../" target="_blank" rel="noopener">View the site</a>
+        <span id="saveMsg" class="muted" role="status" aria-live="polite"></span>
       </div>
-      <h2>Home page</h2>
-      <div class="card" id="homeCard"></div>
-      <h2>Office details</h2>
-      <div class="card" id="officeCard"></div>
-      <div class="sticky" style="margin-top:24px"><button class="btn" type="submit" id="save">Save site content</button> <span id="saveMsg" class="muted" role="status"></span></div>
-    </form>
-    <section id="terms" hidden>
-      <h2>Term list</h2>
-      <div class="card" id="termsCard"></div>
-    </section>
-    <section id="docs" hidden>
-      <h2>Document uploads</h2>
-      <div class="card" id="docsCard"></div>
-    </section>
+    </div>
+    <div id="errs"></div>
+    <div class="tabs" role="tablist" aria-label="Site content areas" id="tabs"></div>
+    <div id="panel" role="tabpanel"></div>
   </main>
 </div>
-<script src="../../assets/admin.js?v=20261104"></script>
+<script src="../../assets/admin.js?v=20261112"></script>
 <script>
 (function(){
-  var el=ADM.el,$=ADM.$,inputs={};
-  function mk(host,key,label,type,hint,opts){
-    var c;opts=opts||{};
-    if(type==='textarea'){c=el('textarea');c.maxLength=opts.max||600}
-    else if(type==='select'){c=el('select');(opts.options||[]).forEach(function(o){var op=el('option',null,o[1]);op.value=o[0];c.appendChild(op)})}
-    else{c=el('input');c.type=type||'text';if(opts.max)c.maxLength=opts.max}
-    var w=ADM.field(label,c,hint,'f_'+key.replace(/\W/g,'_'));w.style.marginBottom='12px';host.appendChild(w);inputs[key]=c;return c;
+  var el=ADM.el,$=ADM.$;
+  var SITE=null,LIMITS={blocks:20,links:12,pages:20,navLinks:8,footerLinks:8},DOCS=null,dirty=false,tab='home',canContent=false,canDocs=false;
+  var TABS=[['home','Home page'],['pages','Custom pages'],['forms','Form pages'],['general','Site & header'],['banner','Banner'],['contact','Contact & footer'],['docs','Document uploads']];
+  var TYPES={forms:'List of forms',text:'Text',contact:'Contact details',links:'Link cards'};
+  var STYLES=[['plain','Plain'],['highlight','Shaded box'],['outline','Outlined box']];
+  var FMT='Formatting: leave a blank line between paragraphs. Start lines with "- " for a bulleted list. **bold** makes text bold. [link text](https://example.com) makes a link (a page on this site can start with /, for example /page/?p=about).';
+
+  function touch(){if(!dirty){dirty=true;$('#saveMsg').textContent='';$('#saveMsg').appendChild(el('span','dirtymsg','Unsaved changes'))}}
+  window.addEventListener('beforeunload',function(e){if(dirty){e.preventDefault();e.returnValue=''}});
+  var uid=0;function nid(p){return 'c'+(++uid)+'_'+(p||'x')}
+
+  /* ---------- small bound controls ---------- */
+  function fld(host,label,obj,key,o){
+    o=o||{};var c;
+    if(o.rows){c=el('textarea');c.rows=o.rows}else{c=el('input');c.type=o.type||'text'}
+    if(o.max)c.maxLength=o.max;if(o.placeholder)c.placeholder=o.placeholder;
+    c.value=obj[key]==null?'':obj[key];
+    c.addEventListener('input',function(){obj[key]=c.value;touch();if(o.onInput)o.onInput(c.value)});
+    var w=ADM.field(label,c,o.hint,nid(key));w.style.marginBottom='12px';host.appendChild(w);return c;
   }
-  function build(site){
-    var h=$('#homeCard'),o=$('#officeCard');h.textContent='';o.textContent='';
-    var b=$('#bText');b.textContent='';var bl=$('#bLevel');bl.textContent='';var bu=$('#bUntil');bu.textContent='';
-    $('#bEnabled').checked=!!site.banner.enabled;inputs['banner.enabled']=$('#bEnabled');
-    mk(b,'banner.text','Banner message','text','Keep it short.',{max:400}).value=site.banner.text;
-    mk(bl,'banner.level','Style','select','',{options:[['info','Information (blue)'],['warning','Warning (amber)']]}).value=site.banner.level;
-    mk(bu,'banner.until','Hide it automatically after','date','Optional. The banner disappears the day after this date.').value=site.banner.until;
-    var H=site.home;
-    mk(h,'home.title','Page title','text','',{max:80}).value=H.title;
-    mk(h,'home.intro','Introduction under the title','textarea','',{max:600}).value=H.intro;
-    mk(h,'home.formsTitle','Heading above the forms','text','',{max:80}).value=H.formsTitle;
-    mk(h,'home.formsIntro','Text under that heading','textarea','',{max:400}).value=H.formsIntro;
-    mk(h,'home.moreText','Line under the form cards','text','Leave empty to show nothing.',{max:200}).value=H.moreText;
-    mk(h,'home.helpTitle','Help box heading','text','',{max:100}).value=H.helpTitle;
-    mk(h,'home.helpText','Help box text','textarea','',{max:600}).value=H.helpText;
-    var O=site.office;
-    mk(o,'office.name','Office name','text','',{max:80}).value=O.name;
-    mk(o,'office.address1','Street address','text','',{max:80}).value=O.address1;
-    mk(o,'office.address2','City, state, ZIP','text','',{max:80}).value=O.address2;
-    mk(o,'office.phone','Phone','text','Digits, spaces and - ( ) + only.',{max:30}).value=O.phone;
-    mk(o,'office.hours','Hours','text','',{max:80}).value=O.hours;
-    mk(o,'footer.text','Footer text','text','Shown at the bottom of the home page and forms.',{max:200}).value=site.footer.text;
+  function sel(host,label,obj,key,options,hint){
+    var c=el('select');options.forEach(function(x){var op=el('option',null,x[1]);op.value=x[0];c.appendChild(op)});c.value=obj[key];
+    c.addEventListener('change',function(){obj[key]=c.value;touch()});var w=ADM.field(label,c,hint,nid(key));w.style.marginBottom='12px';host.appendChild(w);return c;
   }
-  function val(k){var c=inputs[k];return c.type==='checkbox'?c.checked:c.value}
-  function payload(){
-    return {home:{title:val('home.title'),intro:val('home.intro'),formsTitle:val('home.formsTitle'),formsIntro:val('home.formsIntro'),moreText:val('home.moreText'),helpTitle:val('home.helpTitle'),helpText:val('home.helpText')},
-      office:{name:val('office.name'),address1:val('office.address1'),address2:val('office.address2'),phone:val('office.phone'),hours:val('office.hours')},
-      banner:{enabled:val('banner.enabled'),text:val('banner.text'),level:val('banner.level'),until:val('banner.until')},footer:{text:val('footer.text')}};
+  function chk(host,label,hint,obj,key,invert){
+    var l=el('label','chk'),i=el('input');i.type='checkbox';i.checked=invert?obj[key]===false:!!obj[key];
+    i.addEventListener('change',function(){obj[key]=invert?!i.checked:i.checked;touch()});
+    var s=el('span',null,label);if(hint)s.appendChild(el('small',null,hint));l.appendChild(i);l.appendChild(s);host.appendChild(l);return i;
   }
-  $('#siteForm').addEventListener('submit',function(e){
-    e.preventDefault();var er=$('#errs');er.textContent='';$('#saveMsg').textContent='Saving\u2026';$('#save').disabled=true;
-    ADM.api('/api/admin/site',{body:{site:payload()}}).then(function(j){build(j.site);$('#saveMsg').textContent='';ADM.toast('Saved. The home page now shows this.')}).catch(function(x){
-      $('#saveMsg').textContent='';
-      if(x&&x.errors){var b=el('div','errs');b.setAttribute('role','alert');b.appendChild(el('strong',null,'Fix these first:'));var u=el('ul');x.errors.forEach(function(r){u.appendChild(el('li',null,r.message))});b.appendChild(u);er.appendChild(b);b.scrollIntoView({block:'center'})}
-      else ADM.toast(ADM.errText(x),true);
-    }).then(function(){$('#save').disabled=false});
-  });
-  function docs(d){
-    var host=$('#docsCard');host.textContent='';$('#docs').hidden=false;
-    if(!d.available)host.appendChild(el('div','banner warn','Document storage (R2) is not connected, so uploads are switched off on every form. See the guide, "Connect document storage".'));
-    host.appendChild(el('p',null,'Students can upload '+d.types.join(', ').toUpperCase()+' files. Files are private: only people with the "Open uploaded documents" permission can open them, and every opening is logged.'));
-    var row=el('div','toolbar');var mb=el('input');mb.type='number';mb.min=1;mb.max=25;mb.value=d.maxMB;mb.style.maxWidth='110px';mb.setAttribute('aria-label','Largest file in MB');
-    row.appendChild(el('label',null,'Largest file (MB):'));row.appendChild(mb);var sv=el('button','btn alt small','Save');sv.type='button';sv.disabled=!d.available;
-    sv.addEventListener('click',function(){ADM.api('/api/admin/documents/settings',{body:{maxMB:Number(mb.value)}}).then(function(){ADM.toast('Saved.')}).catch(function(e){ADM.toast(e&&e.field?'Enter a whole number from 1 to 25.':ADM.errText(e),true)})});row.appendChild(sv);host.appendChild(row);
-    host.appendChild(el('h3',null,'Delete old documents'));
-    host.appendChild(el('p','hint','Delete uploaded documents older than a number of days (and abandoned uploads that were never submitted). Check your records-retention policy first. This cannot be undone.'));
-    var r2=el('div','toolbar');var dy=el('input');dy.type='number';dy.min=1;dy.max=3650;dy.value=365;dy.style.maxWidth='110px';dy.setAttribute('aria-label','Older than this many days');
-    r2.appendChild(el('label',null,'Older than (days):'));r2.appendChild(dy);
-    var pv=el('button','btn alt small','Preview');pv.type='button';pv.disabled=!d.available;var del=el('button','btn danger small','Delete them');del.type='button';del.disabled=true;
-    var res=el('p','muted');res.setAttribute('aria-live','polite');
-    pv.addEventListener('click',function(){ADM.api('/api/admin/documents/purge',{body:{olderThanDays:Number(dy.value),dryRun:true}}).then(function(j){res.textContent=j.documents+' document'+(j.documents===1?'':'s')+' older than '+dy.value+' days, and '+j.abandoned+' abandoned upload'+(j.abandoned===1?'':'s')+', would be deleted.';del.disabled=!(j.documents||j.abandoned)}).catch(function(e){res.textContent=ADM.errText(e)})});
-    del.addEventListener('click',function(){if(!window.confirm('Permanently delete these documents? This cannot be undone.'))return;ADM.api('/api/admin/documents/purge',{body:{olderThanDays:Number(dy.value)}}).then(function(j){res.textContent='Deleted '+j.deleted+' document'+(j.deleted===1?'':'s')+' and '+j.abandoned+' abandoned upload'+(j.abandoned===1?'':'s')+'.';del.disabled=true}).catch(function(e){res.textContent=ADM.errText(e)})});
-    r2.appendChild(pv);r2.appendChild(del);host.appendChild(r2);host.appendChild(res);
-  }
-  /* ---- term list (the manual term dropdown and the terms the Worker accepts when no schedule is live) ---- */
-  var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'],TC=null,TV=0;
-  function easternYM(){var p=new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit'}).formatToParts(new Date()),g=function(t){return +p.filter(function(x){return x.type===t})[0].value};return {y:g('year'),m:g('month')}}
-  function tname(i){return ['Spring','Summer','Fall'][((i%3)+3)%3]+' '+Math.floor(i/3)}
-  function tlist(c){var e=easternYM(),cur=e.y*3+(e.m>=c.fallStart?2:e.m>=c.summerStart?1:0),out=[];for(var i=cur+c.ahead;i>=cur-c.back;i--)out.push({n:tname(i),now:i===cur});return out}
-  function terms(j){
-    TC=j.config;TV=j.config.version;var host=$('#termsCard');host.textContent='';$('#terms').hidden=false;
-    host.appendChild(el('p',null,'The terms students can choose on the form when the course schedule is not being used (manual mode). When a schedule is published, students choose from the terms in your schedule file instead.'));
-    var g=el('div','grid2');host.appendChild(g);
-    function num(label,key,hint,max){var c=el('input');c.type='number';c.min=0;c.max=max;c.value=TC[key];c.addEventListener('input',function(){TC[key]=c.value===''?NaN:Number(c.value);draw()});var w=ADM.field(label,c,hint,'t_'+key);w.style.marginBottom='12px';g.appendChild(w)}
-    function mon(label,key,hint,lo){var c=el('select');MONTHS.forEach(function(m,i){if(i+1<lo)return;var o=el('option',null,m);o.value=i+1;c.appendChild(o)});c.value=TC[key];c.addEventListener('change',function(){TC[key]=Number(c.value);draw()});var w=ADM.field(label,c,hint,'t_'+key);w.style.marginBottom='12px';g.appendChild(w)}
-    num('Terms to show ahead','ahead','How many future terms after the current one (0 to 8).',8);
-    num('Past terms to show','back','How many earlier terms (0 to 12).',12);
-    mon('Summer starts in','summerStart','Spring runs from January until Summer starts.',2);
-    mon('Fall starts in','fallStart','Summer runs until Fall starts; Fall runs to December.',3);
-    var pv=el('div');pv.setAttribute('aria-live','polite');host.appendChild(pv);
+  function btn(text,cls,fn,label){var b=el('button','btn '+(cls||'alt small'),text);b.type='button';if(label)b.setAttribute('aria-label',label);b.addEventListener('click',fn);return b}
+  function moveIn(arr,i,d){var j=i+d;if(j<0||j>=arr.length)return false;var t=arr[i];arr[i]=arr[j];arr[j]=t;touch();return true}
+
+  /* ---------- links editor ---------- */
+  function linksEditor(host,arr,max,what,withText){
+    var box=el('div');host.appendChild(box);
     function draw(){
-      pv.textContent='';var ok=[TC.ahead,TC.back,TC.summerStart,TC.fallStart].every(function(x){return Number.isInteger(x)})&&TC.fallStart>TC.summerStart;
-      if(!ok){pv.appendChild(el('div','banner warn','Check the numbers: whole numbers only, and Fall must start after Summer.'));return}
-      var l=tlist(TC);pv.appendChild(el('h3',null,'Students will be offered ('+l.length+', newest first)'));
-      var ch=el('div','chips');l.forEach(function(t){var c=el('span','chip',t.n+(t.now?' · current term':''));if(t.now)c.style.background='var(--gold-a)';ch.appendChild(c)});pv.appendChild(ch);
-      pv.appendChild(el('p','hint','Terms one step beyond either end are still accepted on submit, so a form opened just as a term changes still goes through.'));
+      box.textContent='';
+      if(!arr.length)box.appendChild(el('p','hint','No links yet.'));
+      arr.forEach(function(l,i){
+        var row=el('div','linkrow');
+        fld(row,'Label',l,'label',{max:80});
+        fld(row,'Address',l,'url',{max:500,placeholder:'https://\u2026 or /page/?p=\u2026'});
+        if(withText)fld(row,'Short description (optional)',l,'text',{max:300});else row.appendChild(el('div'));
+        var t=el('div','tools');
+        t.appendChild(btn('\u2191','alt small',function(){if(moveIn(arr,i,-1))draw()},'Move '+what+' '+(i+1)+' up'));
+        t.appendChild(btn('\u2193','alt small',function(){if(moveIn(arr,i,1))draw()},'Move '+what+' '+(i+1)+' down'));
+        t.appendChild(btn('Remove','danger alt small',function(){arr.splice(i,1);touch();draw()},'Remove '+what+' '+(i+1)));
+        row.appendChild(t);
+        Array.prototype.forEach.call(row.querySelectorAll('.fld'),function(f){f.style.marginBottom='0'});
+        box.appendChild(row);
+      });
+      var add=btn('Add a link','alt small',function(){arr.push({label:'',url:'',text:''});touch();draw();var ins=box.querySelectorAll('input');if(ins.length)ins[ins.length-(withText?3:2)].focus()});
+      add.disabled=arr.length>=max;var r=el('div','toolbar');r.style.marginTop='8px';r.appendChild(add);if(add.disabled)r.appendChild(el('span','hint','At most '+max+'.'));box.appendChild(r);
     }
     draw();
-    var row=el('div','toolbar');var sv=el('button','btn','Save term list');sv.type='button';
-    sv.addEventListener('click',function(){
-      ADM.api('/api/admin/terms',{body:{baseVersion:TV,config:{ahead:TC.ahead,back:TC.back,summerStart:TC.summerStart,fallStart:TC.fallStart}}}).then(function(r){TC=r.config;TV=r.config.version;ADM.toast('Saved. The form now offers '+r.terms.length+' terms.');draw()}).catch(function(e){ADM.toast(e&&e.errors?e.errors[0].message:ADM.errText(e),true)});
-    });
-    row.appendChild(sv);if(TC.updatedBy)row.appendChild(el('span','hint','Last saved by '+TC.updatedBy+' on '+ADM.fmt(TC.updatedAt)+'.'));host.appendChild(row);
   }
+
+  /* ---------- sections editor ---------- */
+  function newBlock(type,list){
+    var base={forms:'forms',text:'section',contact:'contact',links:'links'}[type],id=base,n=1;
+    while(list.some(function(b){return b.id===id}))id=base+'-'+(++n);
+    var b={id:id,type:type,title:'',text:'',style:type==='contact'?'highlight':'plain',moreText:'',emptyText:'',links:[]};
+    if(type==='forms'){b.title='Student forms';b.emptyText='There are no forms to fill in online right now.'}
+    if(type==='contact')b.title='Questions?';
+    if(type==='links')b.links=[{label:'',url:'',text:''}];
+    return b;
+  }
+  function blocksEditor(host,blocks,where,viewUrl){
+    var box=el('div');host.appendChild(box);
+    function draw(focusIdx){
+      box.textContent='';
+      if(!blocks.length)box.appendChild(el('p','muted','No sections yet. Add one below.'));
+      blocks.forEach(function(b,i){
+        var it=el('div','item blk-item'),head=el('div','head'),h=el('h3');
+        h.appendChild(el('span','kind','Section '+(i+1)+' \u00b7 '+TYPES[b.type]));h.appendChild(document.createTextNode(b.title||'(no heading)'));head.appendChild(h);
+        var t=el('div','tools');
+        t.appendChild(btn('Move up','alt small',function(){if(moveIn(blocks,i,-1))draw(i-1)}));
+        t.appendChild(btn('Move down','alt small',function(){if(moveIn(blocks,i,1))draw(i+1)}));
+        t.appendChild(btn('Remove','danger alt small',function(){if(!window.confirm('Remove this section from '+where+'?'))return;blocks.splice(i,1);touch();draw()}));
+        head.appendChild(t);it.appendChild(head);
+        var g=el('div','grid2');it.appendChild(g);
+        fld(g,'Heading',b,'title',{max:120,hint:b.type==='text'?'':'Optional.',onInput:function(v){h.lastChild.textContent=v||'(no heading)'}});
+        sel(g,'Look',b,'style',STYLES);
+        var txtLabel={forms:'Text under the heading',text:'Text',contact:'Text beside the contact details',links:'Text above the links'}[b.type];
+        fld(it,txtLabel,b,'text',{rows:b.type==='text'?6:3,max:4000,hint:b.type==='contact'?'The office address, phone, email and hours (Contact & footer tab) are shown beside this.':''});
+        if(b.type==='forms'){
+          var g2=el('div','grid2');it.appendChild(g2);
+          fld(g2,'Note after the form cards',b,'moreText',{max:200,hint:'Optional, for example \u201cMore forms will be added here.\u201d'});
+          fld(g2,'Shown when no forms are listed',b,'emptyText',{max:300});
+          it.appendChild(el('p','hint','The cards themselves come from the forms you publish with \u201cShow this form on the home page\u201d switched on (Forms area).'));
+        }
+        if(b.type==='links'){it.appendChild(el('h3',null,'Links'));linksEditor(it,b.links,LIMITS.links,'link',true)}
+        var idf=fld(it,'Section name for links',b,'id',{max:40,hint:'Lets you link straight to this section: '+(viewUrl||'/')+'#'+b.id+'. Lowercase letters, numbers, - and _ only.'});
+        idf.addEventListener('input',function(){idf.value=idf.value.toLowerCase().replace(/[^a-z0-9_-]/g,'');b.id=idf.value});
+        box.appendChild(it);
+        if(focusIdx===i)setTimeout(function(){it.scrollIntoView({block:'nearest'});var f=it.querySelector('input');if(f)f.focus()},0);
+      });
+      var add=el('div','addrow');add.appendChild(el('strong',null,'Add a section:'));
+      Object.keys(TYPES).forEach(function(k){var b=btn(TYPES[k],'alt small',function(){blocks.push(newBlock(k,blocks));touch();draw(blocks.length-1)});b.disabled=blocks.length>=LIMITS.blocks;add.appendChild(b)});
+      box.appendChild(add);
+    }
+    draw();
+  }
+
+  /* ---------- tabs ---------- */
+  function allowed(id){return id==='docs'?canDocs:canContent}
+  function drawTabs(){
+    var host=$('#tabs');host.textContent='';var list=TABS.filter(function(t){return allowed(t[0])});
+    list.forEach(function(t,i){
+      var b=el('button','tab',t[1]);b.type='button';b.setAttribute('role','tab');b.id='tab-'+t[0];b.setAttribute('aria-selected',String(t[0]===tab));b.tabIndex=t[0]===tab?0:-1;
+      b.addEventListener('click',function(){setTab(t[0])});
+      b.addEventListener('keydown',function(e){var d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(!d)return;e.preventDefault();var x=list[(i+d+list.length)%list.length];setTab(x[0]);$('#tab-'+x[0]).focus()});
+      host.appendChild(b);
+    });
+  }
+  function setTab(id){tab=id;history.replaceState(null,'','#'+id);drawTabs();draw()}
+  function draw(){
+    var p=$('#panel');p.textContent='';p.setAttribute('aria-labelledby','tab-'+tab);
+    $('#saveBar').hidden=tab==='docs';
+    ({home:home,pages:pages,forms:formsTab,general:general,banner:banner,contact:contact,docs:docs})[tab](p);
+  }
+  function card(host){var c=el('div','card');c.style.marginBottom='18px';host.appendChild(c);return c}
+
+  function home(p){
+    var H=SITE.home,c=card(p);
+    fld(c,'Page title',H,'title',{max:80,hint:'The big heading at the top of the home page.'});
+    fld(c,'Introduction under the title',H,'intro',{rows:3,max:800});
+    chk(c,'Show the LWTC picture beside the title','The cluster of program icons, on wider screens.',H,'showArt');
+    p.appendChild(el('h2',null,'Sections'));
+    p.appendChild(el('p','sub','The home page shows these in order, below the title. Add as many as you need (up to '+LIMITS.blocks+'), change the order, or remove any of them.'));
+    p.appendChild(el('p','fmt',FMT));
+    blocksEditor(p,H.blocks,'the home page','/');
+  }
+  function slugify(t){return String(t||'').toLowerCase().replace(/&/g,' and ').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40)}
+  function pages(p){
+    p.appendChild(el('p','sub','Your own pages, for example \u201cAbout us\u201d, \u201cNew students\u201d or \u201cVeterans\u201d. Each one lives at /page/?p=<web address>, is built from sections like the home page, and can be shown in the header of every page.'));
+    p.appendChild(el('p','fmt',FMT));
+    var list=SITE.pages,box=el('div');p.appendChild(box);
+    function drawPages(openIdx){
+      box.textContent='';
+      if(!list.length)box.appendChild(el('p','muted','No custom pages yet.'));
+      list.forEach(function(pg,i){
+        var d=el('details','page-item');if(openIdx===i)d.open=true;
+        var s=el('summary');var st=el('span',null,pg.title||'Untitled page');s.appendChild(st);var sl=el('span','muted small','/page/?p='+(pg.slug||'\u2026'));s.appendChild(sl);
+        if(pg.showInNav)s.appendChild(el('span','pill blue','In the header'));d.appendChild(s);
+        var b=el('div','pbody');d.appendChild(b);
+        var g=el('div','grid2');b.appendChild(g);
+        var autoSlug=!pg.slug;
+        var slugIn;
+        fld(g,'Page title',pg,'title',{max:120,onInput:function(v){st.textContent=v||'Untitled page';if(autoSlug){pg.slug=slugify(v);slugIn.value=pg.slug;sl.textContent='/page/?p='+(pg.slug||'\u2026')}}});
+        slugIn=fld(g,'Web address',pg,'slug',{max:40,hint:'Lowercase letters, numbers and - only. Changing it breaks links that use the old address.',onInput:function(){autoSlug=false}});
+        slugIn.addEventListener('input',function(){slugIn.value=slugIn.value.toLowerCase().replace(/[^a-z0-9-]/g,'');pg.slug=slugIn.value;sl.textContent='/page/?p='+(pg.slug||'\u2026')});
+        fld(b,'Introduction under the title',pg,'intro',{rows:3,max:800});
+        fld(b,'Description for search engines',pg,'description',{max:300,hint:'Optional. One sentence about the page.'});
+        var g2=el('div','grid2');b.appendChild(g2);
+        var nc=el('div');g2.appendChild(nc);chk(nc,'Show this page in the header','A link to it appears on every public page.',pg,'showInNav');
+        fld(g2,'Header link text',pg,'navLabel',{max:40,hint:'Optional. Uses the page title if empty.'});
+        b.appendChild(el('h3',null,'Sections'));
+        blocksEditor(b,pg.blocks,'this page','/page/?p='+(pg.slug||''));
+        var row=el('div','toolbar');row.style.marginTop='12px';
+        if(pg.slug){var v=el('a','btn alt small','View this page');v.href='/page/?p='+pg.slug;v.target='_blank';v.rel='noopener';row.appendChild(v)}
+        row.appendChild(btn('Move up','alt small',function(){if(moveIn(list,i,-1))drawPages(i-1)}));
+        row.appendChild(btn('Move down','alt small',function(){if(moveIn(list,i,1))drawPages(i+1)}));
+        row.appendChild(btn('Delete this page','danger alt small',function(){if(!window.confirm('Delete the page \u201c'+(pg.title||'Untitled')+'\u201d? It is removed from the site when you save.'))return;list.splice(i,1);touch();drawPages()}));
+        b.appendChild(row);
+        box.appendChild(d);
+      });
+      var add=btn('Add a page','btn',function(){list.push({slug:'',title:'',intro:'',showInNav:false,navLabel:'',description:'',blocks:[newBlock('text',[])]});touch();drawPages(list.length-1);var ins=box.querySelectorAll('details[open] input');if(ins.length)ins[0].focus()});
+      add.disabled=list.length>=LIMITS.pages;var r=el('div','toolbar');r.appendChild(add);if(add.disabled)r.appendChild(el('span','hint','At most '+LIMITS.pages+' pages.'));box.appendChild(r);
+    }
+    drawPages(list.length===1?0:undefined);
+  }
+  function formsTab(p){
+    var F=SITE.formPage;
+    p.appendChild(el('p','sub','The words around every form. Each form\u2019s own title, questions and statements are edited in the Forms area.'));
+    var c=card(p),g=el('div','grid2');c.appendChild(g);
+    fld(g,'Submit button',F,'submitLabel',{max:40});
+    fld(g,'\u201cBack\u201d button after submitting',F,'backLabel',{max:60});
+    fld(c,'Upload instructions',F,'uploadIntro',{rows:2,max:400,hint:'Shown above the document uploads, on forms that ask for documents.'});
+    fld(c,'Help line when sending fails',F,'helpLine',{max:200,hint:'Added to the error message if a form can\u2019t be sent, for example \u201cIf it keeps failing, call 239-377-0900.\u201d'});
+    p.appendChild(el('h2',null,'After a student submits'));
+    var c2=card(p);
+    fld(c2,'Confirmation heading',F,'doneTitle',{max:120});
+    fld(c2,'Confirmation message',F,'doneText',{rows:2,max:400,hint:'Shown with the reference number.'});
+    fld(c2,'Extra text in the confirmation email',F,'emailText',{rows:4,max:1500,hint:'Optional. Added to every student confirmation email, after the reference number. The office phone and hours are added automatically. Plain text; a blank line starts a new paragraph.'});
+  }
+  function general(p){
+    var G=SITE.general,c=card(p);
+    var g=el('div','grid2');c.appendChild(g);
+    fld(g,'Site name',G,'siteName',{max:80,hint:'Used in browser tabs, breadcrumbs and \u201cBack to \u2026\u201d links.'});
+    fld(g,'College name',G,'collegeName',{max:120});
+    fld(c,'Description for search engines',G,'description',{max:300,hint:'One sentence describing the site.'});
+    p.appendChild(el('h2',null,'Header links'));
+    p.appendChild(el('p','sub','Links shown across the top of every public page, after \u201cHome\u201d. Custom pages can add themselves here too (Custom pages tab). With no links, the header shows no menu.'));
+    linksEditor(card(p),SITE.nav.links,LIMITS.navLinks,'header link',false);
+  }
+  function banner(p){
+    var B=SITE.banner,c=card(p);
+    chk(c,'Show a banner across the top of every public page','For closures, deadlines or anything students must see first.',B,'enabled');
+    fld(c,'Banner message',B,'text',{rows:2,max:400,hint:'Keep it short. Links and **bold** work here.'});
+    var g=el('div','grid2');c.appendChild(g);
+    sel(g,'Style',B,'level',[['info','Information (blue)'],['warning','Warning (amber)']]);
+    fld(g,'Hide it automatically after',B,'until',{type:'date',hint:'Optional. The banner disappears the day after this date.'});
+  }
+  function contact(p){
+    var O=SITE.office,c=card(p);
+    p.insertBefore(el('p','sub','Shown in the header of every public page, in \u201cContact details\u201d sections, and in form confirmation emails.'),c);
+    var g=el('div','grid2');c.appendChild(g);
+    fld(g,'Office name',O,'name',{max:80});
+    fld(g,'Phone',O,'phone',{max:30,hint:'Digits, spaces and - ( ) + only.'});
+    fld(g,'Street address',O,'address1',{max:80});
+    fld(g,'City, state, ZIP',O,'address2',{max:80});
+    fld(g,'Hours',O,'hours',{max:80});
+    fld(g,'Email',O,'email',{type:'email',max:120,hint:'Optional.'});
+    p.appendChild(el('h2',null,'Footer'));
+    var f=card(p),F=SITE.footer;
+    fld(f,'Footer text',F,'text',{max:200});
+    chk(f,'Show the \u201cStaff sign in\u201d link','Staff can always go to /staff/ directly.',F,'showStaffLink');
+    f.appendChild(el('h3',null,'Footer links'));
+    linksEditor(f,F.links,LIMITS.footerLinks,'footer link',false);
+  }
+
+  /* ---------- document uploads (separate permission and save) ---------- */
+  function docs(host){
+    var d=DOCS;if(!d){host.appendChild(el('p','muted','Loading\u2026'));return}
+    var c=card(host);
+    if(!d.available)c.appendChild(el('div','banner warn','Document storage (R2) is not connected, so uploads are switched off on every form. See the guide, "Connect document storage".'));
+    c.appendChild(el('p',null,'Students can upload '+d.types.join(', ').toUpperCase()+' files. Files are private: only people with the "Open uploaded documents" permission can open them, and every opening is logged. This setting saves on its own.'));
+    var row=el('div','toolbar');var mb=el('input');mb.type='number';mb.min=1;mb.max=25;mb.value=d.maxMB;mb.style.maxWidth='110px';mb.id='maxMB';
+    var lb=el('label',null,'Largest file (MB):');lb.htmlFor='maxMB';row.appendChild(lb);row.appendChild(mb);
+    var sv=btn('Save','alt small',function(){ADM.api('/api/admin/documents/settings',{body:{maxMB:Number(mb.value)}}).then(function(){d.maxMB=Number(mb.value);ADM.toast('Saved.')}).catch(function(e){ADM.toast(e&&e.field?'Enter a whole number from 1 to 25.':ADM.errText(e),true)})});sv.disabled=!d.available;row.appendChild(sv);c.appendChild(row);
+    c.appendChild(el('h3',null,'Delete old documents'));
+    c.appendChild(el('p','hint','Delete uploaded documents older than a number of days (and abandoned uploads that were never submitted). Check your records-retention policy first. This cannot be undone.'));
+    var r2=el('div','toolbar');var dy=el('input');dy.type='number';dy.min=1;dy.max=3650;dy.value=365;dy.style.maxWidth='110px';dy.id='olderDays';
+    var l2=el('label',null,'Older than (days):');l2.htmlFor='olderDays';r2.appendChild(l2);r2.appendChild(dy);
+    var res=el('p','muted');res.setAttribute('aria-live','polite');
+    var del=btn('Delete them','danger small',function(){if(!window.confirm('Permanently delete these documents? This cannot be undone.'))return;ADM.api('/api/admin/documents/purge',{body:{olderThanDays:Number(dy.value)}}).then(function(j){res.textContent='Deleted '+j.deleted+' document'+(j.deleted===1?'':'s')+' and '+j.abandoned+' abandoned upload'+(j.abandoned===1?'':'s')+'.';del.disabled=true}).catch(function(e){res.textContent=ADM.errText(e)})});del.disabled=true;
+    var pv=btn('Preview','alt small',function(){ADM.api('/api/admin/documents/purge',{body:{olderThanDays:Number(dy.value),dryRun:true}}).then(function(j){res.textContent=j.documents+' document'+(j.documents===1?'':'s')+' older than '+dy.value+' days, and '+j.abandoned+' abandoned upload'+(j.abandoned===1?'':'s')+', would be deleted.';del.disabled=!(j.documents||j.abandoned)}).catch(function(e){res.textContent=ADM.errText(e)})});pv.disabled=!d.available;
+    r2.appendChild(pv);r2.appendChild(del);c.appendChild(r2);c.appendChild(res);
+  }
+
+  /* ---------- save ---------- */
+  $('#save').addEventListener('click',function(){
+    var er=$('#errs'),b=$('#save');er.textContent='';$('#saveMsg').textContent='Saving\u2026';b.disabled=true;
+    ADM.api('/api/admin/site',{body:{site:SITE}}).then(function(j){
+      SITE=j.site;if(j.limits)LIMITS=j.limits;dirty=false;$('#saveMsg').textContent='Saved.';draw();ADM.toast('Saved. The site now shows this.');
+    }).catch(function(x){
+      $('#saveMsg').textContent='';
+      if(x&&x.errors){var box=el('div','errs');box.setAttribute('role','alert');box.appendChild(el('strong',null,'Nothing was saved yet. Fix these first:'));var u=el('ul');x.errors.forEach(function(r){u.appendChild(el('li',null,r.message))});box.appendChild(u);er.appendChild(box);box.scrollIntoView({block:'center'})}
+      else ADM.toast(ADM.errText(x),true);
+    }).then(function(){b.disabled=false});
+  });
+
   ADM.init({page:'content'}).then(function(){
+    canContent=ADM.can('site.content');canDocs=ADM.can('documents.manage');
+    if(!canContent&&!canDocs){var m=$('main');m.textContent='';m.appendChild(el('h1',null,'No access to this area'));m.appendChild(el('p','sub','Your role doesn\u2019t include site content or document storage.'));return}
+    var want=(location.hash||'').slice(1);
+    tab=TABS.some(function(t){return t[0]===want&&allowed(t[0])})?want:(canContent?'home':'docs');
     var jobs=[];
-    if(ADM.can('site.content')){jobs.push(ADM.api('/api/admin/site').then(function(j){build(j.site)}));jobs.push(ADM.api('/api/admin/terms').then(terms).catch(function(e){var h=$('#termsCard');$('#terms').hidden=false;h.textContent='';h.appendChild(el('div','banner warn',e&&e.error==='not_found'?'The Term list needs Worker version 2026-11-03.1 or later. The Worker that is running is older. Update worker.financial-aid.js and reload.':ADM.errText(e)))}))}else $('#siteForm').hidden=true;
-    if(ADM.can('documents.manage'))jobs.push(ADM.api('/api/admin/documents').then(docs));
-    if(!jobs.length){var m=$('main');m.textContent='';m.appendChild(el('h1',null,'No access to this area'));m.appendChild(el('p','sub','Your role doesn\u2019t include site content or document storage.'))}
-    return Promise.all(jobs);
+    if(canContent)jobs.push(ADM.api('/api/admin/site').then(function(j){SITE=j.site;if(j.limits)LIMITS=j.limits}));else $('#saveBar').hidden=true;
+    if(canDocs)jobs.push(ADM.api('/api/admin/documents').then(function(j){DOCS=j}));
+    return Promise.all(jobs).then(function(){drawTabs();draw()});
   }).catch(function(e){if(e&&!e.auth&&!e.forbidden)ADM.toast(ADM.errText(e),true)});
 })();
 </script>

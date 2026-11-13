@@ -1,0 +1,13 @@
+/* LWTC Student Services: banner, header navigation and footer links shared by every public page (see site.js). */
+.site-banner{padding:12px 0;font-weight:600;font-size:16px;line-height:1.45}
+.site-banner.info{background:#E7F3F7;color:#17394A;border-bottom:2px solid #54ADC3}
+.site-banner.warn{background:#FFF1D6;color:#5A3A00;border-bottom:2px solid #F9A03C}
+.site-banner-in{max-width:1040px;margin:0 auto;padding:0 24px}
+.site-banner p{margin:0}.site-banner p+p,.site-banner ul{margin-top:6px}.site-banner ul{padding-left:20px}
+.site-banner a{color:inherit}
+nav.site-nav{display:flex;flex-wrap:wrap;gap:4px;border-bottom:2px solid #DDD8D6;margin:0 0 8px}
+nav.site-nav a{padding:10px 14px;text-decoration:none;color:#231F20;font-weight:700;border-bottom:4px solid transparent;margin-bottom:-2px}
+nav.site-nav a:hover{background:#F7F5F4}
+nav.site-nav a[aria-current=page]{border-bottom-color:#F05A2B}
+.foot-links{display:flex;flex-wrap:wrap;gap:6px 18px}
+.foot-links a{color:inherit}

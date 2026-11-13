@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Notifications | LWTC Financial Aid administration</title><meta name="robots" content="noindex">
+<title>Notifications | LWTC Student Services administration</title><meta name="robots" content="noindex">
 <link rel="icon" type="image/png" href="../../assets/fav.png">
 <link rel="stylesheet" href="../../assets/brand-fonts.css"><link rel="stylesheet" href="../../assets/admin.css?v=20261102">
 </head>
@@ -10,11 +10,11 @@
 <a class="skip" href="#main">Skip to content</a>
 <div class="bar" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <div class="wrap">
-  <header class="top"><a href="../../" aria-label="Financial Aid home"><span class="logo" role="img" aria-label="Lorenzo Walker Technical College"></span></a><div class="who">Signing in…</div></header>
+  <header class="top"><a href="../../" aria-label="Student Services home"><span class="logo" role="img" aria-label="Lorenzo Walker Technical College"></span></a><div class="who">Signing in…</div></header>
   <nav class="main" aria-label="Administration"></nav>
   <main id="main">
     <h1>Notifications</h1>
-    <p class="sub">Choose who is emailed when a student submits a form. Make groups of addresses (for example Financial Aid Advisors, Program Administrators, a VA desk), then choose which groups hear about each form.</p>
+    <p class="sub">Choose who is emailed when a student submits a form. Make groups of addresses (for example Advisors, Program Administrators, a front desk), then choose which groups hear about each form.</p>
     <div id="errs"></div>
     <div class="card" id="switchCard"></div>
     <h2>Email groups</h2>
@@ -31,7 +31,7 @@
     <p class="hint">Staff emails never include the student’s name or ID. They say a submission arrived and point staff to the console, where access is controlled by role.</p>
   </main>
 </div>
-<script src="../../assets/admin.js?v=20261104"></script>
+<script src="../../assets/admin.js?v=20261112"></script>
 <script>
 (function(){
   var el=ADM.el,$=ADM.$,S=null,CFG=null,dirty=false,readOnly=true;
@@ -74,7 +74,7 @@
       var count=el('p','hint',g.emails.length+' address'+(g.emails.length===1?'':'es'));card.appendChild(count);
       host.appendChild(card);
     });
-    if(!CFG.groups.length)host.appendChild(el('p','muted','No groups yet. Add one, for example \u201cFinancial Aid - Advisors\u201d.'));
+    if(!CFG.groups.length)host.appendChild(el('p','muted','No groups yet. Add one, for example \u201cStudent Services - Advisors\u201d.'));
     $('#addGroup').disabled=readOnly;
   }
   $('#addGroup').addEventListener('click',function(){var g={id:rnd(),name:'',emails:[]};CFG.groups.push(g);if(CFG.groups.length===1)CFG.routes.default=[g.id];markDirty();drawGroups();drawRoutes();var inp=$('#gn'+(CFG.groups.length-1));if(inp)inp.focus()});

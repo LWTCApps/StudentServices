@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Forms | LWTC Financial Aid administration</title><meta name="robots" content="noindex">
+<title>Forms | LWTC Student Services administration</title><meta name="robots" content="noindex">
 <link rel="icon" type="image/png" href="../../assets/fav.png">
 <link rel="stylesheet" href="../../assets/brand-fonts.css"><link rel="stylesheet" href="../../assets/admin.css?v=20261030">
 </head>
@@ -10,7 +10,7 @@
 <a class="skip" href="#main">Skip to content</a>
 <div class="bar" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <div class="wrap">
-  <header class="top"><a href="../../" aria-label="Financial Aid home"><span class="logo" role="img" aria-label="Lorenzo Walker Technical College"></span></a><div class="who">Signing in…</div></header>
+  <header class="top"><a href="../../" aria-label="Student Services home"><span class="logo" role="img" aria-label="Lorenzo Walker Technical College"></span></a><div class="who">Signing in…</div></header>
   <nav class="main" aria-label="Administration"></nav>
   <main id="main">
     <section id="listView">
@@ -38,7 +38,7 @@
     </section>
   </main>
 </div>
-<script src="../../assets/admin.js?v=20261104"></script>
+<script src="../../assets/admin.js?v=20261112"></script>
 <script>
 (function(){
   var el=ADM.el,$=ADM.$;
@@ -168,7 +168,7 @@
     text(p,'Introduction',function(){return CFG.intro},function(v){CFG.intro=v},{area:true,max:1000,hint:'A sentence or two under the title. Leave empty to show nothing.'});
     check(p,'Accepting submissions','Switch off to close the form. Students see your closed message and nothing can be submitted.',function(){return CFG.enabled!==false},function(v){CFG.enabled=v});
     p.appendChild(el('h2',null,'On the home page'));
-    check(p,'Show this form on the Financial Aid home page','A form that isn\u2019t listed still works for anyone with its link.',function(){return CFG.listed===true},function(v){CFG.listed=v});
+    check(p,'Show this form on the home page','A form that isn\u2019t listed still works for anyone with its link.',function(){return CFG.listed===true},function(v){CFG.listed=v});
     text(p,'Short description',function(){return CFG.description},function(v){CFG.description=v},{area:true,max:300});
     var g=el('div','grid3');p.appendChild(g);
     text(g,'Who it is for',function(){return CFG.audience},function(v){CFG.audience=v},{max:80});
@@ -376,7 +376,7 @@
   }
   function updateBar(){
     $('#discardBtn').hidden=!S.draft||readOnly;
-    $('#previewBtn').href=(FID==='financial-responsibility'?'../../forms/financial-responsibility/?preview=1':'../../forms/view/?f='+FID+'&preview=1');
+    $('#previewBtn').href='../../forms/view/?f='+FID+'&preview=1';
     var cur=S.current;$('#edSub').textContent=(cur&&cur.version>0?'Live: version '+cur.version+'. ':KIND==='financial'?'Live: the built-in version. ':'Not published yet. ')+(S.draft?'A draft is in progress.':'No draft: you are looking at the live version.')+(readOnly?' You can look but not change (you need the \u201cEdit form drafts\u201d permission).':'');
     drawTabs();
   }
@@ -394,7 +394,7 @@
       S=j;KIND=j.kind;readOnly=!ADM.can('forms.edit');
       var base=j.draft?j.draft.config:(j.current?j.current.config:null);
       CFG=clone(base);dirty=false;$('#listView').hidden=true;$('#editView').hidden=false;
-      $('#edTitle').textContent=CFG.title||id;document.title=(CFG.title||id)+' | Forms | LWTC Financial Aid administration';
+      $('#edTitle').textContent=CFG.title||id;document.title=(CFG.title||id)+' | Forms | LWTC Student Services administration';
       $('#dirty').textContent=j.draft?'Editing the saved draft':'';$('#saveBtn').disabled=true;
       if(tab==='builtin'&&false)tab='general';
       updateBar();drawPanel();
